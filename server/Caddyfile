@@ -1,0 +1,12 @@
+# غيّري example.com إلى نطاقك
+example.com {
+  encode zstd gzip
+  @api {
+    path /healthz /readyz /auth/* /cases* /assign* /me
+  }
+  reverse_proxy @api api:3000
+
+  # لو عندك فرونت React مَبني (dist) حطيه هنا:
+  # root * /srv/www
+  # file_server
+}

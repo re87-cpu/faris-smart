@@ -1,0 +1,39 @@
+name: CI - faris-smart
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  api-ci:
+    name: Build API (Docker)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node (for lint/basic check)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install api deps (server/)
+        working-directory: server
+        run: npm ci
+
+      - name: Lint/Build check (no tests yet)
+        working-directory: server
+        run: |
+          node -v
+          npm -v
+
+      - name: Build API docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          file: ./server/Dockerfile
+          push: false
+          tags: faris-smart-api:ci

@@ -1,0 +1,20 @@
+### 1) Login (Founder) — أولاً اصدري توكن جديد
+POST http://localhost:3003/auth/login
+Content-Type: application/json
+
+{
+  "email": "founder@example.com",
+  "password": "Founder#2025"
+}
+
+### 2) /me — الصقي التوكن الخام مكان <PASTE_TOKEN_HERE>
+GET http://localhost:3003/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MjkzNjBjMC1hNDM5LTRiNDctYTczZi1hZTIwNDgwMWJlZmEiLCJpYXQiOjE3NjI3MzIyNDksImV4cCI6MTc2Mjc3NTQ0OX0.PaJmwrjwZ26njWI6ilcz1Cyrn1qOfIyCESWYW1aTNK0
+
+### /cases
+GET http://localhost:3003/cases
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MjkzNjBjMC1hNDM5LTRiNDctYTczZi1hZTIwNDgwMWJlZmEiLCJpYXQiOjE3NjI3MzIyNDksImV4cCI6MTc2Mjc3NTQ0OX0.PaJmwrjwZ26njWI6ilcz1Cyrn1qOfIyCESWYW1aTNK0
+POST http://localhost:3003/auth/login
+Content-Type: application/json
+
+{ "email": "founder@example.com", "password": "Founder#2025" }

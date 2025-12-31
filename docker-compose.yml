@@ -1,0 +1,43 @@
+services:
+  api:
+    container_name: faris_api
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+
+    # نستخدم فقط ملف env الإنتاجي
+    env_file:
+      - ./server/.env.production
+
+    restart: unless-stopped
+
+    ports:
+      - "3003:3000"
+
+    volumes:
+      - ./server/logs:/app/logs
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >
+          node -e "http=require('http');
+          r=http.request({host:'127.0.0.1',port:process.env.PORT,path:'/healthz',timeout:2000},
+          res=>{process.exit(res.statusCode===200?0:1)});
+          r.on('error',()=>process.exit(1));r.end();"
+
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  # خدمة Postgres المحلية (قديمة، ما نستخدمها الآن لأن عندنا Neon)
+  db:
+    image: postgres:16-alpine
+    container_name: faris_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: faris
+      POSTGRES_USER: faris
+      POSTGRES_PASSWORD: faris_dev_123
+    ports:
+      - "5433:5432"

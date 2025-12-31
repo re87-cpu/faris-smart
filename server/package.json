@@ -1,0 +1,33 @@
+{
+  "name": "faris-smart-server",
+  "version": "1.0.0",
+  "description": "Backend API for faris-smart",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node --watch ./src/server.mjs",
+    "start": "node ./src/server.mjs",
+    "prisma:gen": "prisma generate",
+    "prisma:dev": "prisma migrate dev --name init"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.18.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.2.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "pg": "^8.16.3",
+    "uuid": "^13.0.0",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.18.0"
+  }
+}
