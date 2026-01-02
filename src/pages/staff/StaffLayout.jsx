@@ -3,8 +3,6 @@ import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import StaffTopbar from "../../components/StaffTopbar.jsx"; // ← هيدر الموظف
 
-const linkClass = ({ isActive }) => "q-chip" + (isActive ? " is-active" : "");
-
 // أيقونات SVG صغيرة (محلية)
 const IHome = () => (
   <svg className="stf-ico" viewBox="0 0 24 24" aria-hidden>
@@ -39,7 +37,7 @@ const INotif = () => (
 
 export default function StaffLayout() {
   return (
-    <div className="page staff-scope" dir="rtl" style={{ minHeight: "100vh" }}>
+    <div className="page" dir="rtl" style={{ minHeight: "100vh" }}>
       <StaffTopbar />
 
       <div
@@ -61,8 +59,8 @@ export default function StaffLayout() {
           >
             القائمة
           </b>
-          <nav style={{ display: "grid", gap: 6 }}>
-            <NavLink to="/staff" end className={linkClass}>
+          <nav className="sidebar-nav" style={{ display: "grid", gap: 8 }}>
+            <NavLink to="/staff" end className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",
@@ -73,7 +71,7 @@ export default function StaffLayout() {
                 <IHome /> لوحة التحكم
               </span>
             </NavLink>
-            <NavLink to="/staff/cases" className={linkClass}>
+            <NavLink to="/staff/cases" className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",
@@ -84,7 +82,7 @@ export default function StaffLayout() {
                 <ICases /> قضاياي
               </span>
             </NavLink>
-            <NavLink to="/staff/calendar" className={linkClass}>
+            <NavLink to="/staff/calendar" className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",
@@ -95,7 +93,7 @@ export default function StaffLayout() {
                 <ICal /> التقويم
               </span>
             </NavLink>
-            <NavLink to="/staff/tasks" className={linkClass}>
+            <NavLink to="/staff/tasks" className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",
@@ -106,7 +104,7 @@ export default function StaffLayout() {
                 <ITasks /> المهام
               </span>
             </NavLink>
-            <NavLink to="/staff/documents" className={linkClass}>
+            <NavLink to="/staff/documents" className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",
@@ -117,7 +115,7 @@ export default function StaffLayout() {
                 <IDocs /> المستندات
               </span>
             </NavLink>
-            <NavLink to="/staff/notifications" className={linkClass}>
+            <NavLink to="/staff/notifications" className={({ isActive }) => `q-btn navlink ${isActive ? "primary" : "ghost"}`}>
               <span
                 style={{
                   display: "inline-flex",

@@ -1,60 +1,82 @@
 // FILE: src/components/StaffTopbar.jsx
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getUser, getRole, clearAuth } from "../utils/auth.js";
+import { useNavigate, Link } from "react-router-dom";
+import { getUser, getRole, clearAuth, minutesLeft } from "../utils/auth.js";
 import NotificationsBell from "./NotificationsBell.jsx";
 
 export default function StaffTopbar() {
   const nav = useNavigate();
   const user = getUser();
   const role = getRole();
+  const mins = minutesLeft();
 
-  const displayName =
-    user?.name || user?.full_name || user?.email || "مستخدم غير معرّف";
-  const roleLabel = role === "admin" ? "مدير" : "موظف";
-
-  function logout() {
+  function onLogout() {
     clearAuth();
     nav("/login", { replace: true });
   }
 
   return (
-    <header className="q-nav" dir="rtl">
-      {/* الجهة اليمنى: رجوع / شعار بسيط */}
-      <div className="q-left" style={{ gap: 8 }}>
-        <Link className="q-link" to="/">
-          ← الرجوع
+    <header
+      className="q-card"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "10px 14px",
+        gap: 12,
+      }}
+      dir="rtl"
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <Link
+          to="/staff"
+          className="brand-mini"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            textDecoration: "none",
+          }}
+          title="العودة للوحة الموظف"
+        >
+          <img
+            src="/logo.png"
+            alt="شعار"
+            style={{ width: 32, height: 32, objectFit: "contain" }}
+          />
+          <b style={{ color: "var(--accent-dark)" }}>واجهة فارس المكتبية</b>
         </Link>
       </div>
 
-      {/* الجهة اليسرى: جرس + معلومات الموظف + تسجيل الخروج */}
-      <div
-        className="q-left"
-        style={{ gap: 12, alignItems: "center", display: "flex" }}
-      >
-        {/* جرس الإشعارات */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <NotificationsBell />
 
-        {/* معلومات المستخدم بشكل مرتب */}
-        <span
-          className="q-link"
-          style={{
-            cursor: "default",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
-          <span style={{ fontWeight: 700 }}>👤 {displayName}</span>
-          <span style={{ color: "var(--ink-700)" }}>— {roleLabel}</span>
-        </span>
+        {user && (
+          <div
+            style={{
+              padding: "6px 10px",
+              border: "1px solid var(--border)",
+              borderRadius: 999,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              background: "#fff",
+            }}
+            title="معلومات الجلسة"
+          >
+            <span style={{ fontWeight: 800 }}>
+              {user.name || user.full_name || user.email}
+            </span>
+            <span style={{ marginInlineStart: 4, color: "var(--muted)" }}>
+              ({role === "admin" ? "مدير" : "موظف"})
+            </span>
+            <span style={{ marginInlineStart: 4, fontSize: 12, color: "var(--muted)" }}>
+              ينتهي خلال ~{mins} دقيقة
+            </span>
+          </div>
+        )}
 
-        {/* زر تسجيل الخروج */}
-        <button
-          className="q-link"
-          onClick={logout}
-          style={{ background: "none", border: "none", cursor: "pointer" }}
-        >
+        <button className="q-btn ghost" onClick={onLogout}>
           تسجيل الخروج
         </button>
       </div>

@@ -10,9 +10,8 @@ import {
   getTeamKPIs,
   getDashboardTopCounts,
 } from "../../mock/api.js";
-import SecretarySearch from "../../components/SecretarySearch.jsx";
 import AdminSecretarySearch from "../../components/AdminSecretarySearch.jsx";
-<AdminSecretarySearch />
+
 
 export default function DashboardAdmin() {
   const [loading, setLoading] = useState(true);
@@ -110,40 +109,38 @@ export default function DashboardAdmin() {
 
   return (
     <div className="q-container" dir="rtl">
-      <section className="q-sec">
-        <h2 className="q-sec-title">لوحة المدير</h2>
-        <div style={{ color: "#6b7280" }}>
-          نظرة سريعة على حالة القضايا، المهل، وأداء الفريق في المكتب.
-        </div>
-      </section>
-
-      {/* ✅ السكرتير للمدير (بحث + نتائج + ملخص) */}
       <section className="q-sec" style={{ paddingTop: 0 }}>
-<AdminSecretarySearch />
-      </section>
+        <div className="q-feats" style={{ gridTemplateColumns: "2fr 1fr", alignItems: "start" }}>
+          <div>
+            <div
+                      className="q-feats"
+                      style={{
+                        gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+                      }}
+                    >
+                      <CardStat
+                        label="إجمالي القضايا"
+                        value={loading ? "—" : tops.totalCases}
+                        to="/admin/cases"
+                      />
+                      <CardStat
+                        label="طلبات موظفين معلّقة"
+                        value={loading ? "—" : tops.pendingUsers}
+                        to="/admin/staff-requests"
+                      />
+                      <CardStat
+                        label="قضايا مُسنّدة"
+                        value={loading ? "—" : tops.assignedCases}
+                        to="/admin/assign"
+                      />
+                    </div>
+      
+          </div>
 
-      <section className="q-sec" style={{ paddingTop: 0 }}>
-        <div
-          className="q-feats"
-          style={{
-            gridTemplateColumns: "repeat(3, minmax(0,1fr))",
-          }}
-        >
-          <CardStat
-            label="إجمالي القضايا"
-            value={loading ? "—" : tops.totalCases}
-            to="/admin/cases"
-          />
-          <CardStat
-            label="طلبات موظفين معلّقة"
-            value={loading ? "—" : tops.pendingUsers}
-            to="/admin/staff-requests"
-          />
-          <CardStat
-            label="قضايا مُسنّدة"
-            value={loading ? "—" : tops.assignedCases}
-            to="/admin/assign"
-          />
+          <div style={{ position: "sticky", top: 88 }}>
+            {/* ✅ السكرتير للمدير (بحث + نتائج + ملخص) */}
+            <AdminSecretarySearch />
+          </div>
         </div>
       </section>
 

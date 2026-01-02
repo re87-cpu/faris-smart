@@ -30,7 +30,7 @@
   display:inline-block;
   animation:qspin .9s linear infinite;
 }
-@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap");
+/* NOTE: Font import moved to src/index.css to satisfy PostCSS rule (@import must be first). */
 
 /* ===== Landing Scope (عشان ما نأثر على صفحات ثانية) ===== */
 .page{

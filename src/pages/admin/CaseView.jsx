@@ -148,6 +148,14 @@ export default function CaseView() {
     const assigned = row?.assignedTo ?? row?.assigned_to ?? null;
     if (!assigned) return "—";
     const u = emps.find((e) => String(e.id) === String(assigned));
+
+  const staffEmps = useMemo(() => {
+    return (emps || []).filter((e) => {
+      const role = String(e.role || "").toLowerCase();
+      const active = (e.is_active ?? e.active ?? true) === true;
+      return role === "staff" && active;
+    });
+  }, [emps]);
     return u ? (u.full_name || u.name || u.email) : String(assigned);
   }, [row, emps]);
 
@@ -178,14 +186,28 @@ export default function CaseView() {
 
   async function onAssign() {
     if (!row) return;
-    if (!form.assignedTo) return;
+
+    const caseId = Number(row.id);
+    const assigneeId = Number(form.assignedTo);
+
+    if (!caseId || Number.isNaN(caseId)) {
+      return setErr("تعذر الإسناد: رقم القضية غير صحيح.");
+    }
+    if (!assigneeId || Number.isNaN(assigneeId)) {
+      return setErr("تعذر الإسناد: اختاري موظفًا صحيحًا.");
+    }
+
+    // ✅ منع إسناد القضية لغير الموظفين (حتى لو صار خطأ بالواجهة)
+    const chosen = (emps || []).find((e) => Number(e.id) === assigneeId);
+    const chosenRole = String(chosen?.role || "").toLowerCase();
+    if (chosenRole && chosenRole !== "staff") {
+      return setErr("لا يمكن إسناد القضية لمدير. اختاري موظفًا فقط.");
+    }
 
     setSavingAssign(true);
     setErr("");
     try {
-      // ✅ لازم case_id رقم (row.id)
-      await assignCaseTo(row.id, form.assignedTo || null);
-      // ✅ بعد الإسناد: نعيد التحميل
+      await assignCaseTo(caseId, assigneeId);
       await loadMain();
     } catch (ex) {
       console.error(ex);
@@ -490,9 +512,9 @@ export default function CaseView() {
                   <select className="input" value={form.assignedTo}
                     onChange={(e) => setForm((s) => ({ ...s, assignedTo: e.target.value }))}>
                     <option value="">— بدون —</option>
-                    {emps.map((u) => (
+                    {staffEmps.map((u) => (
                       <option key={u.id} value={u.id}>
-                        {u.full_name || u.name || u.email}
+                        {u.full_name || u.email}
                       </option>
                     ))}
                   </select>

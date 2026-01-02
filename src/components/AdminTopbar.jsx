@@ -44,7 +44,7 @@ export default function AdminTopbar() {
             alt="شعار"
             style={{ width: 32, height: 32, objectFit: "contain" }}
           />
-          <b style={{ color: "var(--accent-dark)" }}>واجهة الفارس الذكية</b>
+          <b style={{ color: "var(--accent-dark)" }}>واجهة فارس المكتبية</b>
         </Link>
       </div>
 

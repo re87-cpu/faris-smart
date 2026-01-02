@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "./assets/logo.png";
-import SecretarySearch from "./components/SecretarySearch.jsx";
+// سكرتير الواجهة الرئيسية (تمت إزالته حسب الطلب)
 
 /* أيقونات SVG */
 const IconDoc = () => (
@@ -78,7 +78,7 @@ export default function LandingPage() {
 
       {/* الترحيب */}
       <section className="q-hero reveal">
-        <h1 className="q-h1">واجهة الفارس الذكية</h1>
+        <h1 className="q-h1">واجهة فارس المكتبية</h1>
         <p className="q-sub">
           نظام داخلي لإدارة القضايا — تنظيم الملفات، متابعة الجلسات، وإظهار ملخصات القضايا بسرعة ووضوح.
         </p>
@@ -89,11 +89,6 @@ export default function LandingPage() {
       </section>
 
       <main className="q-container">
-        {/* ✅ سكرتير القضايا (بدل الذكاء) */}
-        <section className="q-sec reveal">
-          <SecretarySearch />
-        </section>
-
         {/* مميزات للموظفين */}
         <section className="q-sec reveal">
           <h2 className="q-sec-title">مزايا أساسية للموظفين</h2>
@@ -119,13 +114,13 @@ export default function LandingPage() {
 
         {/* مؤسس الشركة */}
         <section className="q-sec reveal">
-          <h2 className="q-sec-title">من هو مؤسس الشركة</h2>
+          <h2 className="q-sec-title">من هو المؤسس </h2>
           <div className="q-card">
             <div style={{ fontWeight: 900, color: "var(--accent-dark)", marginBottom: 8 }}>
               المحامي فارس محمد الغامدي
             </div>
             <div style={{ color: "#475569", lineHeight: 1.9 }}>
-              مؤسس شركة الفارس للمحاماة والاستشارات القانونية. قيادة مؤسسية قائمة على الدقة والالتزام،
+              مؤسس شركة فارس للمحاماة والاستشارات القانونية. قيادة مؤسسية قائمة على الدقة والالتزام،
               مع تنظيم عملي لإدارة القضايا وسير العمل داخل المكتب.
             </div>
           </div>
@@ -145,7 +140,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="q-footer">© 2025 واجهة الفارس — جميع الحقوق محفوظة</footer>
+      <footer className="q-footer">© 2025 واجهة فارس — جميع الحقوق محفوظة</footer>
     </div>
   );
 }

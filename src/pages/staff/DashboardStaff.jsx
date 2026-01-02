@@ -5,13 +5,12 @@ import { toast } from "../../utils/toast.js";
 import Loader from "../../components/Loader.jsx";
 import { getAuth } from "../../utils/auth.js";
 import { fetchMyCases } from "../../mock/api.js";
+import StaffSecretarySearch from "../../components/StaffSecretarySearch.jsx";
 
 export default function DashboardStaff() {
   const navigate = useNavigate();
   const auth = getAuth();
   const user = auth?.user || null;
-
-  const [ask, setAsk] = useState("");
   const [caseNo, setCaseNo] = useState("");
   const [myCases, setMyCases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -83,7 +82,7 @@ export default function DashboardStaff() {
                 placeholder="اكتب رقم القضية (مثال: C-0001) ثم Enter ..."
               />
               <button
-                className="q-btn q-outline"
+                className="q-btn ghost"
                 onClick={openByNumber}
                 disabled={!String(caseNo).trim()}
                 style={{
@@ -101,8 +100,13 @@ export default function DashboardStaff() {
           </div>
         </section>
 
+        {/* ✅ سكرتير الموظف (بحث داخل قضايا الموظف فقط) */}
         <section className="q-sec" style={{ paddingTop: 0 }}>
-          <div className="q-feats" style={{ gridTemplateColumns: "2fr 1fr" }}>
+          <StaffSecretarySearch myCases={myCases} />
+        </section>
+
+        <section className="q-sec" style={{ paddingTop: 0 }}>
+          <div className="q-feats" style={{ gridTemplateColumns: "1fr" }}>
             <div className="q-card">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <b>قضاياي</b>
@@ -143,7 +147,7 @@ export default function DashboardStaff() {
                           <span className="badge">{c.status || "—"}</span>
                         </div>
                         <div>
-                          <Link className="q-btn q-outline" to={`/staff/cases/${c.id}`}>
+                          <Link className="q-btn ghost" to={`/staff/cases/${c.id}`}>
                             فتح
                           </Link>
                         </div>
@@ -159,22 +163,6 @@ export default function DashboardStaff() {
                 )}
               </div>
             </div>
-
-            <div className="q-card">
-              <b>المساعد السريع (عام)</b>
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                <input
-                  className="ai-input"
-                  value={ask}
-                  onChange={(e) => setAsk(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && setAsk("")}
-                  placeholder="اطلب تلخيصًا أو أفكارًا لمذكرة..."
-                />
-                <button className="ai-send" onClick={() => setAsk("")}>
-                  إرسال
-                </button>
-              </div>
-</div>
           </div>
         </section>
       </div>

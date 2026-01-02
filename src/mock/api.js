@@ -51,16 +51,27 @@ export async function approveUser(userId) {
   return await http("POST", "/auth/approve", { userId: userId, user_id: userId });
 }
 
-export async function rejectUser() {
-  throw new Error("reject_endpoint_not_ready");
+export async function rejectUser(userId) {
+  if (!userId) throw new Error("userId_required");
+  return await http("POST", "/auth/reject", { userId: userId, user_id: userId });
 }
 
 /* ===================== Employees ===================== */
 
 export async function fetchEmployees() {
-  var res = await http("GET", "/employees");
-  return Array.isArray(res) ? res : [];
+  try {
+    const res = await http("GET", "/employees");
+    return Array.isArray(res) ? res : [];
+  } catch (e) {
+    // 403 للموظف شيء طبيعي — نسكت ونرجع []
+    const msg = String(e?.message || "");
+    if (msg.includes("403") || msg.toLowerCase().includes("forbidden")) {
+      return [];
+    }
+    return [];
+  }
 }
+
 
 /* ===================== Helpers ===================== */
 
@@ -251,12 +262,20 @@ export async function assignCaseTo(case_id, user_id, note) {
   if (!case_id || !String(case_id).trim()) throw new Error("case_id مطلوب.");
   if (!user_id || !String(user_id).trim()) throw new Error("user_id مطلوب.");
 
+  // ✅ تأكد أن القضية موجودة قبل الإسناد (حتى لا يكون الصمت)
+  try {
+    await http("GET", "/cases/" + encodeURIComponent(String(case_id)));
+  } catch (e) {
+    throw new Error("القضية غير موجودة في قاعدة البيانات (case_not_found).");
+  }
+
   return await http("POST", "/assign", {
     case_id: Number(case_id),
     user_id: Number(user_id),
     note: note ? String(note) : null,
   });
 }
+
 
 /* ===================== Dashboard ===================== */
 
@@ -478,8 +497,19 @@ export async function addCaseDoc(caseId, payload) {
 }
 
 export async function updateCaseDoc(caseId, docId, patch) {
-  // الباكند ما عنده PATCH docs حسب كودك — نخليها Placeholder عشان ما تكسر
-  throw new Error("docs_patch_not_ready");
+  var cid = String(caseId || "").trim();
+  var did = String(docId || "").trim();
+  patch = patch || {};
+  if (!cid || !did) throw new Error("invalid_doc_id");
+
+  var body = {};
+  if (patch.name !== undefined) body.name = patch.name;
+
+  var hasAny = false;
+  for (var k in body) { hasAny = true; break; }
+  if (!hasAny) throw new Error("nothing_to_update");
+
+  return await http("PATCH", "/cases/" + encodeURIComponent(cid) + "/docs/" + encodeURIComponent(did), body);
 }
 
 export async function removeCaseDoc(caseId, docId) {
@@ -702,8 +732,9 @@ export async function updateDraft(id, patch) {
 }
 
 export async function deleteDraft(id) {
-  // الباكند ما عنده DELETE drafts حسب كودك
-  throw new Error("drafts_delete_not_ready");
+  var did = String(id || "").trim();
+  if (!did) throw new Error("draft_id_required");
+  return await http("DELETE", "/drafts/" + encodeURIComponent(did));
 }
 
 export async function approveDraft(id) {
