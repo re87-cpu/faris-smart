@@ -36,20 +36,31 @@ const port = Number(process.env.PORT || 3000);
 /* ================== Middleware أساسية ================== */
 app.set('trust proxy', 1);
 
-// CORS
-const ORIGINS = (process.env.CORS_ORIGINS || 'http://localhost:5173,http://localhost:3000')
-  .split(',')
-  .map(s => s.trim())
+// ===================== CORS =====================
+const ORIGINS = (
+  process.env.CORS_ORIGINS ||
+  "http://localhost:5173,http://localhost:3000,https://www.faris-legal.com,https://faris-legal.com,https://faris-legal.onrender.com"
+)
+  .split(",")
+  .map((s) => s.trim())
   .filter(Boolean);
 
-app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true);          // يسمح لأدوات مثل curl/VSCode
-    if (ORIGINS.includes(origin)) return cb(null, true);
-    return cb(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      // يسمح لأدوات مثل curl/VSCode (بدون origin)
+      if (!origin) return cb(null, true);
+
+      // قارن بنفس النص
+      if (ORIGINS.includes(origin)) return cb(null, true);
+
+      return cb(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+  })
+);
+// ===============================================
+
 
 // Rate limit عام
 app.use(rateLimit({

@@ -148,7 +148,10 @@ export default function CaseView() {
     const assigned = row?.assignedTo ?? row?.assigned_to ?? null;
     if (!assigned) return "—";
     const u = emps.find((e) => String(e.id) === String(assigned));
+    return u ? (u.full_name || u.name || u.email) : String(assigned);
+  }, [row, emps]);
 
+  // ✅ الموظفون النشطون فقط (لا نجلب مدراء في قائمة الإسناد)
   const staffEmps = useMemo(() => {
     return (emps || []).filter((e) => {
       const role = String(e.role || "").toLowerCase();
@@ -156,8 +159,6 @@ export default function CaseView() {
       return role === "staff" && active;
     });
   }, [emps]);
-    return u ? (u.full_name || u.name || u.email) : String(assigned);
-  }, [row, emps]);
 
   const lastUpdated = row ? row.updatedAt || row.updated_at || row.created_at || null : null;
   const caseNo = row?.case_number || row?.caseNumber || row?.no || row?.id || id;

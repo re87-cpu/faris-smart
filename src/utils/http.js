@@ -1,10 +1,19 @@
 // FILE: src/utils/http.js
 import { clearAuth } from "./auth.js";
 
-// إذا ما تم تحديد VITE_API_BASE، نستخدم نفس الدومين (أفضل للنشر برابط واحد)
-export const API_BASE = String(import.meta.env.VITE_API_BASE || "")
-  .trim()
-  .replace(/\/+$/g, "");
+/**
+ * ✅ Base URL logic:
+ * - إذا فيه VITE_API_BASE استخدمه (اختياري)
+ * - إذا نحن على localhost => API = http://localhost:3003
+ * - غير كذا (إنتاج) => نفس الدومين window.location.origin
+ */
+const envBase = String(import.meta.env.VITE_API_BASE || "").trim();
+
+export const API_BASE = (envBase ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:3003"
+    : window.location.origin)
+).replace(/\/+$/g, "");
 
 function normalizeToken(raw) {
   if (!raw) return "";
@@ -17,14 +26,12 @@ function normalizeToken(raw) {
 }
 
 function getToken() {
-  // 1) المفتاح الأساسي اللي نخزّن فيه
   const direct = localStorage.getItem("faris_token");
   if (direct) {
     const t = normalizeToken(direct);
     if (t) return t;
   }
 
-  // 2) مفتاح قديم ممكن موجود
   const authRaw = localStorage.getItem("auth");
   if (authRaw) {
     try {
@@ -33,20 +40,16 @@ function getToken() {
     } catch {}
   }
 
-  // 3) token كسترنق JSON
   const tokenRaw = localStorage.getItem("token");
   if (tokenRaw) {
     const t = normalizeToken(tokenRaw);
     if (t) return t;
   }
 
-  // 4) (اختياري) مفتاح آخر
   const fsAuthRaw = localStorage.getItem("fs_auth_v1");
   if (fsAuthRaw) {
-    try {
-      const fsAuth = JSON.parse(fsAuthRaw);
-      if (fsAuth && fsAuth.token) return String(fsAuth.token);
-    } catch {}
+    const t = normalizeToken(fsAuthRaw);
+    if (t) return t;
   }
 
   return "";
@@ -55,8 +58,11 @@ function getToken() {
 export async function http(method, path, body, headers) {
   const token = getToken();
 
-  const normalizedPath = String(path || "").startsWith("/") ? String(path || "") : "/" + String(path || "");
-  const url = API_BASE ? API_BASE + normalizedPath : normalizedPath;
+  const normalizedPath = String(path || "").startsWith("/")
+    ? String(path || "")
+    : "/" + String(path || "");
+
+  const url = API_BASE + normalizedPath;
 
   let res;
   try {
@@ -70,7 +76,8 @@ export async function http(method, path, body, headers) {
       body: body ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new Error("تعذّر الاتصال بالخادم. تأكدي أن الخادم يعمل وأن VITE_API_BASE صحيح.");
+    // ✅ رسالة أوضح للجوال
+    throw new Error("Load failed");
   }
 
   let data = null;
@@ -78,13 +85,13 @@ export async function http(method, path, body, headers) {
     data = await res.json();
   } catch {}
 
-  // 401 -> امسحي الجلسة
   if (res.status === 401) {
     try { clearAuth(); } catch {}
     localStorage.removeItem("faris_token");
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("auth");
+    localStorage.removeItem("fs_auth_v1");
     throw new Error((data && (data.error || data.message)) || "غير مصرح. سجلي دخول مرة أخرى.");
   }
 

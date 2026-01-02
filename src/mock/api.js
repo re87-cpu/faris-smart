@@ -9,9 +9,58 @@ import { http } from "../utils/http.js";
 /* ===================== Auth ===================== */
 
 function saveToken(token) {
-  localStorage.setItem("auth", JSON.stringify({ token: token }));
-  localStorage.setItem("token", JSON.stringify(token));
-  localStorage.setItem("faris_token", JSON.stringify(token));
+  if (!token) return;
+
+  // خزّنيه كنص خام (أفضل وأبسط)
+  localStorage.setItem("token", token);
+  localStorage.setItem("faris_token", token);
+  localStorage.setItem("fs_auth_v1", token);
+
+  // للتوافق إذا عندك كود قديم يقرأ auth كـ JSON
+  localStorage.setItem("auth", JSON.stringify({ token }));
+}
+
+// ✅ قراءة التوكن من أي مكان بدون ما نخرب بسبب JSON.parse
+function getTokenAny() {
+  // أولاً: المفاتيح المباشرة (نص خام)
+  const direct =
+    localStorage.getItem("faris_token") ||
+    localStorage.getItem("fs_auth_v1") ||
+    localStorage.getItem("token");
+
+  if (direct && typeof direct === "string") {
+    const t = direct.trim();
+    // لو كان "eyJ..." بس داخل اقتباسات (قديم) نشيله
+    if ((t.startsWith('"') && t.endsWith('"')) || (t.startsWith("'") && t.endsWith("'"))) {
+      return t.slice(1, -1);
+    }
+    // لو كان JSON نصي بالغلط
+    if (t.startsWith("{")) {
+      try {
+        const obj = JSON.parse(t);
+        const tok = obj?.token || obj?.accessToken || null;
+        if (tok) return String(tok);
+      } catch (e) {
+        // ignore
+      }
+    }
+    // النص الخام JWT
+    return t;
+  }
+
+  // ثانيًا: auth كـ JSON { token }
+  const authRaw = localStorage.getItem("auth");
+  if (authRaw && typeof authRaw === "string") {
+    try {
+      const obj = JSON.parse(authRaw);
+      const tok = obj?.token || obj?.accessToken || null;
+      if (tok) return String(tok).trim();
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  return null;
 }
 
 export async function fetchMe() {
@@ -20,15 +69,22 @@ export async function fetchMe() {
 
 export async function signIn(payload) {
   payload = payload || {};
-  var email = payload.email;
-  var password = payload.password;
+  const email = payload.email;
+  const password = payload.password;
 
-  var res = await http("POST", "/auth/login", { email: email, password: password });
-  var token = res ? res.token : null;
+  const res = await http("POST", "/auth/login", { email, password });
+  const token = res ? res.token : null;
+
+  // 🧹 نظّفي القديم (اختياري لكنه ممتاز)
+  localStorage.removeItem("token");
+  localStorage.removeItem("faris_token");
+  localStorage.removeItem("fs_auth_v1");
+  localStorage.removeItem("auth");
+
   saveToken(token);
 
-  var me = await fetchMe();
-  return { role: me && me.role === "manager" ? "admin" : "staff", user: me, token: token };
+  const me = await fetchMe();
+  return { role: me && me.role === "manager" ? "admin" : "staff", user: me, token };
 }
 
 /* ========= تسجيل/اعتماد موظفين ========= */
@@ -71,7 +127,6 @@ export async function fetchEmployees() {
     return [];
   }
 }
-
 
 /* ===================== Helpers ===================== */
 
@@ -275,7 +330,6 @@ export async function assignCaseTo(case_id, user_id, note) {
     note: note ? String(note) : null,
   });
 }
-
 
 /* ===================== Dashboard ===================== */
 
@@ -538,15 +592,8 @@ export async function uploadCaseDocFile(caseId, file, meta) {
   form.append("name", meta.name || file.name);
   form.append("kind", meta.kind || "session_memo");
 
-  // token من نفس مكان saveToken()
-  var token = null;
-  try {
-    var raw = localStorage.getItem("auth") || localStorage.getItem("faris_token") || localStorage.getItem("token");
-    var parsed = raw ? JSON.parse(raw) : null;
-    token = (parsed && parsed.token) ? parsed.token : parsed;
-  } catch (e) {
-    token = null;
-  }
+  // ✅ token من كل الأماكن المحتملة + بدون JSON.parse غلط
+  var token = getTokenAny();
 
   var API_BASE = String(import.meta.env.VITE_API_BASE || "").trim().replace(/\/+$/g, "");
   var base = API_BASE || "";
