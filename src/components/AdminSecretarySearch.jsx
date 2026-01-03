@@ -1,25 +1,13 @@
 // FILE: src/components/AdminSecretarySearch.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { http } from "../utils/http.js";
 
 function normalize(v = "") {
   return String(v ?? "").trim().toLowerCase();
 }
 
-// يحاول يلقط التوكن مهما كان اسم المفتاح
-function getToken() {
-  return (
-    localStorage.getItem("token") ||
-    localStorage.getItem("auth_token") ||
-    localStorage.getItem("faris_token") ||
-    ""
-  );
-}
-
-function apiBase() {
-  // لو عندك VITE_API_URL خليه مثل: http://localhost:3003
-  return (import.meta.env?.VITE_API_URL || "http://localhost:3003").replace(/\/$/, "");
-}
+// التوكن والـ API_BASE يتم التعامل معها داخل utils/http.js
 
 function fmtDate(v) {
   if (!v) return "—";
@@ -47,27 +35,7 @@ export default function AdminSecretarySearch({ title = "سكرتير القضا�
       setErr("");
 
       try {
-        const token = getToken();
-        if (!token) {
-          setCases([]);
-          setErr("لا يوجد توكن دخول. سجّل دخولك كمدير أولاً.");
-          return;
-        }
-
-        const res = await fetch(`${apiBase()}/cases`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          setCases([]);
-          setErr(data?.error || "فشل تحميل القضايا من السيرفر.");
-          return;
-        }
+        const data = await http("GET", "/cases");
 
         // API يرجّع حقول: id, case_number, title, status, court, next, created_at, updated_at, assigned_to
         const list = Array.isArray(data) ? data : [];

@@ -2,11 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { setAuth } from "../../utils/auth.js";
-
-const API_BASE = (import.meta.env.VITE_API_BASE || "http://localhost:3003").replace(
-  /\/+$/g,
-  ""
-);
+import { http } from "../../utils/http.js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,14 +23,8 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const r1 = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const b1 = await r1.json().catch(() => ({}));
-      if (!r1.ok || !b1?.token) {
+      const b1 = await http("POST", "/auth/login", { email, password });
+      if (!b1?.token) {
         const code = b1?.error || b1?.message;
         if (code === "account_inactive" || code === "inactive") {
           throw new Error("حسابك غير مفعّل بعد. انتظر موافقة المدير على طلبك.");
@@ -48,14 +38,9 @@ export default function Login() {
       const token = b1.token;
       localStorage.setItem("faris_token", token);
 
-      const r2 = await fetch(`${API_BASE}/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      const me = await r2.json().catch(() => ({}));
-      if (!r2.ok || !me?.id) {
-        throw new Error(me?.error || "تعذّر جلب بيانات المستخدم بعد الدخول.");
-      }
+      // استخدم http مع تمرير الهيدر مباشرة (لأن التوكن توه انحفظ)
+      const me = await http("GET", "/me", null, { Authorization: `Bearer ${token}` });
+      if (!me?.id) throw new Error(me?.error || "تعذّر جلب بيانات المستخدم بعد الدخول.");
 
       const role = me.role === "manager" ? "admin" : "staff";
       setAuth({ role, user: me, token });
