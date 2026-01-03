@@ -20,6 +20,7 @@ import {
   addCaseNote,
   removeCaseNote,
 } from "../../mock/api.js";
+import { toFileUrl } from "../../utils/files";
 
 const STATUS_LABELS = {
   open: "قيد الترافع",
@@ -675,8 +676,11 @@ export default function CaseView() {
 
                         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                           {url ? (
-                            <a className="q-btn q-outline" href={url} target="_blank" rel="noreferrer">فتح</a>
-                          ) : null}
+  <a className="q-btn q-outline" href={toFileUrl(url)} target="_blank" rel="noreferrer">
+    فتح
+  </a>
+) : null}
+
                           {did ? (
                             <button className="q-btn ghost" type="button" onClick={() => onRemoveDoc(did)} disabled={tabLoading}>حذف</button>
                           ) : null}
