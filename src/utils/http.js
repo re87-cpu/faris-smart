@@ -1,82 +1,71 @@
-// FILE: src/utils/http.js
 import { clearAuth } from "./auth.js";
 
 /**
- * ✅ Base URL logic:
- * - إذا فيه VITE_API_BASE استخدمه (اختياري)
- * - إذا نحن على localhost => API = http://localhost:3003
- * - غير كذا (إنتاج) => نفس الدومين window.location.origin
+ * ✅ Production-safe API base
+ * - لو فيه VITE_API_BASE → استخدمه
+ * - غير كذا → استخدم نفس الدومين (faris-legal.com)
+ * ❌ ممنوع localhost في الإنتاج
  */
-const envBase = String(import.meta.env.VITE_API_BASE || "").trim();
+const RAW_ENV_BASE = String(import.meta.env.VITE_API_BASE || "").trim();
 
-export const API_BASE = (envBase ||
-  (window.location.hostname === "localhost"
-    ? "http://localhost:3003"
-    : window.location.origin)
-).replace(/\/+$/g, "");
+export const API_BASE = (
+  RAW_ENV_BASE
+    ? RAW_ENV_BASE
+    : window.location.origin
+).replace(/\/+$/, "");
+
+/* ================= TOKEN ================= */
 
 function normalizeToken(raw) {
   if (!raw) return "";
   try {
     const parsed = JSON.parse(raw);
     if (typeof parsed === "string") return parsed;
-    if (parsed && typeof parsed === "object" && parsed.token) return String(parsed.token);
+    if (parsed?.token) return String(parsed.token);
+    if (parsed?.accessToken) return String(parsed.accessToken);
   } catch {}
   return String(raw).replace(/^"|"$/g, "");
 }
 
 function getToken() {
-  const direct = localStorage.getItem("faris_token");
-  if (direct) {
-    const t = normalizeToken(direct);
-    if (t) return t;
-  }
+  const keys = [
+    "faris_token",
+    "token",
+    "auth",
+    "auth_token",
+    "fs_auth_v1",
+  ];
 
-  const authRaw = localStorage.getItem("auth");
-  if (authRaw) {
-    try {
-      const auth = JSON.parse(authRaw);
-      if (auth && auth.token) return String(auth.token);
-    } catch {}
-  }
-
-  const tokenRaw = localStorage.getItem("token");
-  if (tokenRaw) {
-    const t = normalizeToken(tokenRaw);
-    if (t) return t;
-  }
-
-  const fsAuthRaw = localStorage.getItem("fs_auth_v1");
-  if (fsAuthRaw) {
-    const t = normalizeToken(fsAuthRaw);
+  for (const k of keys) {
+    const raw = localStorage.getItem(k);
+    if (!raw) continue;
+    const t = normalizeToken(raw);
     if (t) return t;
   }
 
   return "";
 }
 
-export async function http(method, path, body, headers) {
+/* ================= HTTP ================= */
+
+export async function http(method, path, body, headers = {}) {
   const token = getToken();
 
-  const normalizedPath = String(path || "").startsWith("/")
-    ? String(path || "")
-    : "/" + String(path || "");
-
-  const url = API_BASE + normalizedPath;
+  const cleanPath = path.startsWith("/") ? path : "/" + path;
+  const url = API_BASE + cleanPath;
 
   let res;
   try {
     res = await fetch(url, {
-      method: String(method || "GET").toUpperCase(),
+      method: method.toUpperCase(),
       headers: {
         ...(body ? { "Content-Type": "application/json" } : {}),
-        ...(token ? { Authorization: "Bearer " + token } : {}),
-        ...(headers || {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...headers,
       },
       body: body ? JSON.stringify(body) : undefined,
     });
-  } catch {
-    // ✅ رسالة أوضح للجوال
+  } catch (err) {
     throw new Error("Load failed");
   }
 
@@ -87,19 +76,17 @@ export async function http(method, path, body, headers) {
 
   if (res.status === 401) {
     try { clearAuth(); } catch {}
-    localStorage.removeItem("faris_token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("auth");
-    localStorage.removeItem("fs_auth_v1");
-    throw new Error((data && (data.error || data.message)) || "غير مصرح. سجلي دخول مرة أخرى.");
+    localStorage.clear();
+    throw new Error("انتهت الجلسة، سجّل الدخول مرة أخرى");
   }
 
   if (!res.ok) {
-    const msg = (data && (data.error || data.message)) || ("HTTP " + res.status);
-    throw new Error(msg);
+    throw new Error(
+      data?.error ||
+      data?.message ||
+      `HTTP ${res.status}`
+    );
   }
 
-  if (res.status === 204) return null;
   return data;
 }
