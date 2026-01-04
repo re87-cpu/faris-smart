@@ -6,9 +6,9 @@ export default function Home(){
       {/* Hero */}
       <section className="hero section">
         <div className="container">
-          <h1 className="h1">شركة الفارس ترحب بكم</h1>
+          <h1 className="h1">واجهة الفارس ترحب بكم</h1>
           <p className="muted" style={{marginBottom: 18}}>
-            واجهة الفارس الذكية لإدارة القضايا القانونية — تصميم رسمي بسيط على نمط "قانونية".
+           حيث تُصان الحقوق، وتُؤدى الأمانة، ويُحتكم إلى الشريعة والأنظمة.
           </p>
 
           {/* البحث الشامل */}
@@ -43,7 +43,7 @@ export default function Home(){
       {/* مميزات متقدمة للموظفين */}
       <section className="section">
         <div className="container">
-          <h2 className="h2">مميزات متقدمة للموظفين</h2>
+          <h2 className="h2">المميزات  </h2>
           <div className="grid grid-4">
             <div className="card"><b>قوالب قانونية ذكية</b><div className="muted">عقود/مذكرات/مرافعات بمتغيّرات جاهزة</div></div>
             <div className="card"><b>ملخص الجلسة إلزامي</b><div className="muted">لا تُغلق الجلسة قبل كتابة الملخّص</div></div>

@@ -78,10 +78,10 @@ export default function LandingPage() {
 
       {/* الترحيب */}
       <section className="q-hero reveal">
-        <h1 className="q-h1">واجهة فارس المكتبية</h1>
+        <h1 className="q-h1">واجهة الفارس ترحب بكم
+</h1>
         <p className="q-sub">
-          نظام داخلي لإدارة القضايا — تنظيم الملفات، متابعة الجلسات، وإظهار ملخصات القضايا بسرعة ووضوح.
-        </p>
+حيث تُصان الحقوق، وتُؤدى الأمانة، ويُحتكم إلى الشريعة والأنظمة.</p>
         <div className="q-actions">
           <Link className="q-btn q-primary" to="/dashboard-admin">لوحة المدير</Link>
           <Link className="q-btn q-outline" to="/dashboard-staff">لوحة الموظف</Link>
@@ -91,7 +91,7 @@ export default function LandingPage() {
       <main className="q-container">
         {/* مميزات للموظفين */}
         <section className="q-sec reveal">
-          <h2 className="q-sec-title">مزايا أساسية للموظفين</h2>
+          <h2 className="q-sec-title"> مميزات</h2>
           <div className="q-feats">
             {[
               { icon: <IconDoc />, title: "نماذج جاهزة للمذكرات", desc: "قوالب معيارية تُسهّل إعداد المذكرات وتضمن اتساق الصياغة." },

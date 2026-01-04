@@ -73,7 +73,7 @@ export default function Login() {
             <div className="auth-logo" aria-label="شعار">
               <img src="/logo.png" alt="شعار واجهة الفارس الذكية" />
             </div>
-            <div className="auth-title">واجهة الفارس الذكية</div>
+            <div className="auth-title">واجهة فارس  </div>
             <div className="auth-subtitle">تسجيل الدخول</div>
           </div>
 
