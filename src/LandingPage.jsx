@@ -114,7 +114,7 @@ export default function LandingPage() {
 
       {/* الترحيب */}
       <section className="q-hero reveal">
-        <h1 className="q-h1">أهلًا بكم</h1>
+        <h1 className="q-h1 ">أهلًا بك</h1>
         <p className="q-sub" style={{ lineHeight: 2 }}>
           ﴿ إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالإِحْسَانِ ﴾
           <br />
@@ -133,7 +133,7 @@ export default function LandingPage() {
               { icon: <IconDoc />, title: "صياغة ومراجعة العقود", desc: "صياغة احترافية أو مراجعة دقيقة لضمان الحقوق وتخفيف المخاطر." },
               { icon: <IconDoc />, title: "مذكرات ولوائح", desc: "إعداد لوائح ومذكرات قانونية بصياغة منضبطة وحجج مرتبة." },
               { icon: <IconTags />, title: "خطابات وإنذارات", desc: "خطابات قانونية وإنذارات رسمية بصيغة قوية وواضحة." },
-              { icon: <IconDoc />, title: "وكالات وتفويضات", desc: "إعداد صيغ وكالات وتفويضات بما يتوافق مع المتطلبات النظامية." },
+              { icon: <IconDoc />, title: "خدمات التوثيق", desc:"الافراغ العقاري -اصدار وفسخ الوكالات - الاقرارات المالية -الرهن وفك الرهن -توثيق العقود " },
               { icon: <IconCalendar />, title: "متابعة المواعيد", desc: "تنظيم المواعيد والجلسات وفق إجراءات واضحة ومتابعة دقيقة." },
             ].map((f, i) => (
               <div key={i} className="q-card q-feat reveal">
@@ -227,7 +227,7 @@ export default function LandingPage() {
 
             <div className="q-card reveal">
               <h3 className="h2">العدل ومخافة الله</h3>
-              <div className="muted">“اتقوا الله في أعمالكم، فإن العدل أساس الملك.”</div>
+              <div className="muted"> العدل مسؤولية,ومخافة الله أمانة</div>
             </div>
           </div>
         </section>

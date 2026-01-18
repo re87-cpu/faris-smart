@@ -132,7 +132,7 @@ export default function LawyerProfile() {
   }}
 >
   <b>المؤهل العلمي:</b><br />
-  بكالوريوس قانون – جامعة الباحة<br />
+  بكالوريوس قانون – مع مرتبة الشرف<br />
 </div>
 
               </div>
