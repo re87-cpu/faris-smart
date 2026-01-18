@@ -1,6 +1,8 @@
 // FILE: src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./LandingPage.jsx";
+import ClientServices from "./pages/ClientServices.jsx";
+import LawyerProfile from "./pages/LawyerProfile.jsx";
 import Forbidden403 from "./pages/Forbidden403.jsx";
 import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
 
@@ -51,6 +53,8 @@ export default function App() {
     <Routes>
       {/* الواجهة العامة */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/services" element={<ClientServices />} />
+      <Route path="/lawyer" element={<LawyerProfile />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forbidden" element={<Forbidden403 />} />

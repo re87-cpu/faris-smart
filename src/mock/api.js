@@ -411,15 +411,22 @@ export async function getWeekSessions() {
 
   for (var i = 0; i < rows.length; i++) {
     var r = rows[i] || {};
-    var raw = r.session_at || r.sessionAt || null;
+    // ✅ نفضّل استخدام sessionAt القادم من الـ API (ISO) عشان ما نخسر الدقة
+    var raw = r.sessionAt || r.session_at || r.session_at || null;
     var dt = raw ? new Date(raw) : null;
-    var date = dt ? dt.toLocaleDateString("ar-SA") : "—";
-    var time = dt ? dt.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" }) : "—";
+
+    // نعرض تاريخ/وقت بشكل مفهوم، لكن نخلي raw موجود للتقويم
+    var date = dt && !isNaN(dt) ? dt.toLocaleDateString("ar-SA") : (r.date || "—");
+    var time = dt && !isNaN(dt) ? dt.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" }) : (r.time || "—");
 
     out.push({
+      id: r.id,
+      sessionAt: raw || r.sessionAt || r.session_at || null,
+      session_at: raw || r.sessionAt || r.session_at || null,
       date: date,
       time: time,
-      caseNo: r.case_number || r.caseNo || r.caseId || r.case_id || "—",
+      caseId: r.caseId || r.case_id || r.caseId || null,
+      caseNo: r.caseNo || r.case_number || r.case_number || r.caseId || r.case_id || "—",
       title: r.title || "—",
       court: r.court || "",
     });
