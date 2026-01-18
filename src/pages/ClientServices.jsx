@@ -46,7 +46,6 @@ export default function ClientServices() {
       {/* Title */}
       <section className="q-hero" style={{ paddingTop: 24 }}>
         <h1 className="q-h1">الخدمات </h1>
-        <p className="q-sub">اختر الخدمة واضغط ابدأ الخدمة للتواصل عبر واتساب</p>
 
         {/* ثقة مختصرة */}
         <div className="q-card" style={{ maxWidth: 700, margin: "16px auto" }}>
