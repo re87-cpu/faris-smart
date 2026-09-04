@@ -7,10 +7,6 @@ import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
 
-const DEFAULT_MAPS_URL = "https://www.google.com/maps/place/21.28821262,39.27168497";
-const MAPS_URL = (import.meta.env.VITE_GOOGLE_MAPS_URL || "").toString().trim() || DEFAULT_MAPS_URL;
-const MAP_EMBED = "https://www.google.com/maps?q=21.28821262,39.27168497&z=16&output=embed";
-
 const SERVICES = [
   { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
   { tag: "عقود", n: "02", title: "صياغة العقود", desc: "عقود محكمة الصياغة تحمي مصالحك وتتوقّع النزاع قبل وقوعه." },
@@ -265,36 +261,6 @@ export default function LandingPage() {
                 <p>{a}</p>
               </details>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* موقع الشركة */}
-      <section id="contact" className="site-pad site-bg-soft">
-        <div className="site-wrap" style={{ maxWidth: 900 }}>
-          <div className="rv" style={{ marginBottom: "2.4rem" }}>
-            <div className="site-kicker"><span /><span>الموقع</span></div>
-            <h2 className="site-h2">موقع الشركة</h2>
-          </div>
-          <div className="site-card rv d1" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "1rem", padding: "1.6rem 2rem" }}>
-              <div>
-                <p style={{ fontWeight: 800, color: "var(--s-navy)" }}>جدة — حي الفضيلة</p>
-                <p style={{ color: "var(--s-muted)", fontSize: ".9rem" }}>يتم استقبال العملاء حسب موعد مسبق.</p>
-              </div>
-              <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary site-btn-sm">فتح في خرائط Google</a>
-            </div>
-            <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
-              <iframe
-                title="موقع الشركة على الخريطة"
-                src={MAP_EMBED}
-                width="100%"
-                height="300"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                style={{ border: 0, display: "block", pointerEvents: "none" }}
-              />
-            </a>
           </div>
         </div>
       </section>

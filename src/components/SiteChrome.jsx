@@ -113,7 +113,7 @@ export function SiteFooter() {
             <p className="h">تواصل معنا</p>
             <a href="mailto:FLF.LAWYER@gmail.com"><MailIcon /> FLF.LAWYER@gmail.com</a>
             <a href={waHref(WA_CONSULT)} target="_blank" rel="noopener noreferrer"><PhoneIcon /> واتساب</a>
-            <span>المملكة العربية السعودية — جدة</span>
+            <span>المملكة العربية السعودية</span>
           </div>
         </div>
         <div className="site-footer-bottom">
