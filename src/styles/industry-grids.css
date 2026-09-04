@@ -1,0 +1,4 @@
+/* FILE: src/styles/industry-grids.css — small grid helpers used by converted admin pages */
+.ind-grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.ind-grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+@media (max-width: 900px) { .ind-grid-3, .ind-grid-4 { grid-template-columns:1fr; } }

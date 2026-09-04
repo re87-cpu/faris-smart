@@ -1,103 +1,74 @@
+// FILE: src/pages/ClientServices.jsx
+// صفحة الخدمات — تصميم "Services.dc.html"
 import React from "react";
-import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import { SiteHeader, SiteFooter } from "../components/SiteChrome.jsx";
+import { useReveal, waHref } from "../utils/site.js";
 
-const WHATSAPP = (import.meta.env.VITE_WHATSAPP_NUMBER || "966536679918").trim();
-
-const services = [
-  { title: "استشارة قانونية", icon: "⚖️" },
-  { title: "صياغة العقود", icon: "📝" },
-  { title: "مراجعة العقود", icon: "📄" },
-  { title: "مذكرات ولوائح", icon: "📑" },
-  { title: "اعمال التوثيق", icon: "✍️" },
-  { title: "خطابات وإنذارات", icon: "📨" },
-  { title: "خدمات الشركات", icon: "🏢" },
-  { title: "متابعة الطلبات", icon: "📆" },
+const SERVICES = [
+  ["استشارة قانونية", "رأي قانوني واضح لحالتك بعد دراسة مستنداتك."],
+  ["صياغة العقود", "عقود محكمة تحمي مصالحك وتتوقّع النزاع."],
+  ["مراجعة العقود", "تقييم بنود العقد ومخاطره قبل التوقيع."],
+  ["إعداد المذكرات واللوائح", "لوائح ومذكرات مبنية على الأنظمة والسوابق."],
+  ["أعمال التوثيق", "إتمام التوثيق أمام الجهات المختصة نيابة عنك."],
+  ["الخطابات والإنذارات", "خطابات وإنذارات نظامية تحفظ الحق وتوثّق الموقف."],
+  ["خدمات الشركات", "من التأسيس إلى الحوكمة والتغييرات النظامية."],
+  ["متابعة الطلبات", "متابعة معاملاتك أمام الجهات حتى إنهائها."],
+  ["التحكيم", "تسوية النزاعات عبر التحكيم لمسار أسرع وأكثر خصوصية من التقاضي."],
 ];
 
-const waLink = (service) =>
-  `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(
-    `السلام عليكم، أرغب بطلب خدمة: ${service}`
-  )}`;
-
 export default function ClientServices() {
+  useReveal();
   return (
-    <div dir="rtl" className="page">
-      {/* Header */}
-     <header className="q-nav" style={{ justifyContent: "space-between" }}>
-  <Link to="/" className="q-link">
-    <img src={logo} className="q-logo" alt="شعار المكتب" />
-  </Link>
+    <div className="site" dir="rtl">
+      <SiteHeader active="services" />
 
-  <Link
-    to="/"
-    className="q-btn q-outline"
-    style={{
-      borderRadius: 999,
-      padding: "8px 14px",
-      fontWeight: 800,
-    }}
-  >
-    عودة
-  </Link>
-</header>
-
-
-      {/* Title */}
-      <section className="q-hero" style={{ paddingTop: 24 }}>
-        <h1 className="q-h1">الخدمات </h1>
-
-        {/* ثقة مختصرة */}
-        <div className="q-card" style={{ maxWidth: 700, margin: "16px auto" }}>
-          <div style={{ color: "#475569", marginTop: 6 }}>
-            نخاف الله في أعمالنا، نؤدي الأمانة، ونحفظ أسرار عملائنا.
+      <section className="site-pad-sm site-bg-grad" style={{ paddingTop: "9rem" }}>
+        <div className="site-wrap">
+          <div className="rv" style={{ maxWidth: 760 }}>
+            <div className="site-kicker"><span /><span>خدماتنا</span></div>
+            <h1 className="site-h2" style={{ marginBottom: "1.4rem", fontSize: "clamp(2.1rem,4vw,3.4rem)" }}>الخدمات القانونية</h1>
+            <p className="site-lead">
+              نطاق عمل يغطي الاستشارات والعقود والمذكرات والتوثيق والخطابات وخدمات الشركات ومتابعة الطلبات والتحكيم.
+              اختر الخدمة واطلبها مباشرة عبر واتساب.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Services Grid */}
-      <main className="q-container">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-            gap: 18,
-          }}
-        >
-          {services.map((s, i) => (
-            <div
-              key={i}
-              className="q-card"
-              style={{
-                textAlign: "center",
-                padding: 22,
-                borderRadius: 16,
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-              }}
+      <section className="site-pad-sm">
+        <div className="site-wrap site-grid-4">
+          {SERVICES.map(([title, desc], i) => (
+            <a
+              key={title}
+              href={waHref(`السلام عليكم، أرغب في الاستفسار عن خدمة ${title}.`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-card hoverable rv"
+              style={{ padding: "2rem 1.8rem" }}
             >
-              <div style={{ fontSize: 34 }}>{s.icon}</div>
-              <div style={{ fontWeight: 900, color: "var(--accent-dark)" }}>
-                {s.title}
-              </div>
-              <a
-                href={waLink(s.title)}
-                target="_blank"
-                rel="noreferrer"
-                className="q-btn q-primary"
-                style={{ marginTop: "auto" }}
-              >
-                ابدأ الخدمة
-              </a>
-            </div>
+              <p className="site-card-num">{String(i + 1).padStart(2, "0")}</p>
+              <h3 style={{ fontSize: "1.22rem" }}>{title}</h3>
+              <p style={{ fontSize: ".94rem" }}>{desc}</p>
+              <span className="site-card-cta">اطلب الخدمة <span className="arw">←</span></span>
+            </a>
           ))}
         </div>
-      </main>
+      </section>
 
-      <footer className="q-footer" style={{ marginTop: 40 }}>
-        © 2026 واجهة فارس — جميع الحقوق محفوظة
-      </footer>
+      <section className="site-cta">
+        <span className="site-cta-ring" />
+        <div className="site-cta-inner rv">
+          <div style={{ maxWidth: 640 }}>
+            <h2>لم تجد خدمتك في القائمة؟</h2>
+            <p>اكتب لنا موضوعك وسنوجّهك إلى المسار القانوني المناسب.</p>
+          </div>
+          <a href={waHref("السلام عليكم، لدي استفسار قانوني.")} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary site-btn-lg">
+            تواصل معنا عبر واتساب
+          </a>
+        </div>
+      </section>
+
+      <SiteFooter />
     </div>
   );
 }

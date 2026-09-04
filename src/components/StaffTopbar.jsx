@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getUser, getRole, clearAuth, minutesLeft } from "../utils/auth.js";
 import NotificationsBell from "./NotificationsBell.jsx";
+import logo from "../assets/logo.png";
 
 export default function StaffTopbar() {
   const nav = useNavigate();
@@ -16,69 +17,22 @@ export default function StaffTopbar() {
   }
 
   return (
-    <header
-      className="q-card"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "10px 14px",
-        gap: 12,
-      }}
-      dir="rtl"
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <Link
-          to="/staff"
-          className="brand-mini"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            textDecoration: "none",
-          }}
-          title="العودة للوحة الموظف"
-        >
-          <img
-            src="/logo.png"
-            alt="شعار"
-            style={{ width: 32, height: 32, objectFit: "contain" }}
-          />
-          <b style={{ color: "var(--accent-dark)" }}>واجهة فارس المكتبية</b>
+    <header className="nav" dir="rtl" style={{ borderBottom: "1px solid var(--color-neutral-300)", position: "sticky", top: 0, zIndex: 50, background: "var(--color-bg)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 20px" }}>
+        <Link to="/staff" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }} title="العودة إلى الموظف">
+          <img src={logo} alt="شركة فارس" style={{ height: 32 }} />
+          <span className="nav-brand" style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18 }}>
+            فارس <span style={{ color: "var(--color-accent-700)", fontSize: 13 }}>/ الموظف</span>
+          </span>
         </Link>
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ flex: 1 }} />
         <NotificationsBell />
-
         {user && (
-          <div
-            style={{
-              padding: "6px 10px",
-              border: "1px solid var(--border)",
-              borderRadius: 999,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              background: "#fff",
-            }}
-            title="معلومات الجلسة"
-          >
-            <span style={{ fontWeight: 800 }}>
-              {user.name || user.full_name || user.email}
-            </span>
-            <span style={{ marginInlineStart: 4, color: "var(--muted)" }}>
-              ({role === "admin" ? "مدير" : "موظف"})
-            </span>
-            <span style={{ marginInlineStart: 4, fontSize: 12, color: "var(--muted)" }}>
-              ينتهي خلال ~{mins} دقيقة
-            </span>
-          </div>
+          <span className="tag tag-outline">
+            {user.name || user.full_name || user.email} — {role === "admin" ? "مدير" : "موظف"} — ~{mins} د
+          </span>
         )}
-
-        <button className="q-btn ghost" onClick={onLogout}>
-          تسجيل الخروج
-        </button>
+        <button className="btn btn-ghost" onClick={onLogout}>تسجيل الخروج</button>
       </div>
     </header>
   );

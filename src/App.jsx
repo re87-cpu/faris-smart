@@ -3,6 +3,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./LandingPage.jsx";
 import ClientServices from "./pages/ClientServices.jsx";
 import LawyerProfile from "./pages/LawyerProfile.jsx";
+import Articles from "./pages/Articles.jsx";
+import ArticleView from "./pages/ArticleView.jsx";
+import Packages from "./pages/Packages.jsx";
 import Forbidden403 from "./pages/Forbidden403.jsx";
 import AdminAnalytics from "./pages/admin/AdminAnalytics.jsx";
 
@@ -11,8 +14,7 @@ import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 
 /* تخطيطات الأدمن */
-import AdminLayout from "./pages/admin/AdminLayout.jsx";         // مع سايدبار للوحة الرئيسية فقط
-import AdminHeaderOnly from "./pages/admin/AdminHeaderOnly.jsx"; // بدون سايدبار لباقي صفحات المدير
+import AdminLayout from "./pages/admin/AdminLayout.jsx";         // السايدبار المجمّع لكل صفحات المدير
 
 /* صفحات المدير */
 import DashboardAdmin from "./pages/admin/DashboardAdmin.jsx";
@@ -27,6 +29,7 @@ import Drafts from "./pages/admin/Drafts.jsx";
 import AdminStaffRequests from "./pages/admin/AdminStaffRequests.jsx";
 import AdminTasks from "./pages/admin/AdminTasks.jsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.jsx";
+import AdminArticles from "./pages/admin/AdminArticles.jsx";
 
 /* الحراس */
 import RequireAdmin from "./guards/RequireAdmin.jsx";
@@ -47,6 +50,7 @@ import StaffCalendar from "./pages/staff/StaffCalendar.jsx";
 import StaffTasks from "./pages/staff/StaffTasks.jsx";
 import StaffDocuments from "./pages/staff/StaffDocuments.jsx";
 import StaffNotifications from "./pages/staff/StaffNotifications.jsx";
+import StaffArticles from "./pages/staff/StaffArticles.jsx";
 
 export default function App() {
   return (
@@ -54,7 +58,10 @@ export default function App() {
       {/* الواجهة العامة */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/services" element={<ClientServices />} />
+      <Route path="/packages" element={<Packages />} />
       <Route path="/lawyer" element={<LawyerProfile />} />
+      <Route path="/articles" element={<Articles />} />
+      <Route path="/articles/:id" element={<ArticleView />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forbidden" element={<Forbidden403 />} />
@@ -71,12 +78,12 @@ export default function App() {
         <Route index element={<DashboardAdmin />} />
       </Route>
 
-      {/* باقي صفحات المدير: بدون سايدبار */}
+      {/* باقي صفحات المدير: نفس السايدبار المجمّع */}
       <Route
         path="/admin"
         element={
           <RequireAdmin>
-            <AdminHeaderOnly />
+            <AdminLayout />
           </RequireAdmin>
         }
       >
@@ -95,8 +102,8 @@ export default function App() {
         <Route path="analytics" element={<AdminAnalytics />} />
         <Route path="staff-requests" element={<AdminStaffRequests />} />
         <Route path="tasks" element={<AdminTasks />} />
-<Route path="notifications" element={<AdminNotifications />} />
-
+        <Route path="notifications" element={<AdminNotifications />} />
+        <Route path="articles" element={<AdminArticles />} />
       </Route>
 
       {/* لوحة الموظف */}
@@ -121,6 +128,7 @@ export default function App() {
         <Route path="tasks" element={<StaffTasks />} />
         <Route path="documents" element={<StaffDocuments />} />
         <Route path="notifications" element={<StaffNotifications />} />
+        <Route path="articles" element={<StaffArticles />} />
       </Route>
 
       {/* تخطيط موظف بدون سايدبار (اختياري) */}

@@ -1,0 +1,19 @@
+/* FILE: src/styles/industry-auth.css — layout classes for Login/Register only (component classes come from industry.css) */
+.ind-authwrap { min-height:100vh; display:grid; grid-template-columns: 1.05fr 1fr; direction:rtl; }
+@media (max-width: 860px) { .ind-authwrap { grid-template-columns: 1fr; } .ind-authside { display:none; } }
+
+.ind-authside { background: var(--color-accent-900); color:#fff; position:relative; overflow:hidden; padding:48px; display:flex; flex-direction:column; justify-content:center; }
+.ind-authside::before { content:""; position:absolute; inset:0; background-image: repeating-linear-gradient(0deg, rgba(255,255,255,.06) 0 1px, transparent 1px 48px), repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 48px); }
+.ind-authside-body { position:relative; z-index:1; }
+.ind-authside-kicker { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.ind-authside-rule { width:34px; height:1px; background:rgba(255,255,255,.5); display:block; }
+.ind-authside-kicker span:last-child { color:rgba(255,255,255,.75); font-size:12px; font-weight:600; letter-spacing:.22em; }
+.ind-authside-title { font-family: var(--font-heading); font-size:34px; font-weight:700; line-height:1.25; max-width:420px; }
+.ind-authside-sub { color:rgba(255,255,255,.75); margin-top:14px; max-width:400px; font-size:15px; }
+.ind-authside-news { margin-top:24px; display:flex; flex-direction:column; }
+.ind-authside-newsitem { border-top:1px solid rgba(255,255,255,.14); padding:14px 0; }
+.ind-authside-newsitem b { display:block; margin-bottom:4px; }
+.ind-authside-newsitem p { margin:0; color:rgba(255,255,255,.62); font-size:14px; }
+
+.ind-authform { display:flex; align-items:center; justify-content:flex-start; padding:32px 64px; }
+.ind-auth-h1 { font-family: var(--font-heading); font-weight:700; font-size:26px; margin:0 0 26px; }

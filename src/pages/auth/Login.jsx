@@ -10,10 +10,8 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [show, setShow] = useState(false);
   const [remember, setRemember] = useState(true);
-
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -21,7 +19,6 @@ export default function Login() {
     e.preventDefault();
     setErr("");
     setLoading(true);
-
     try {
       const b1 = await http("POST", "/auth/login", { email, password });
       if (!b1?.token) {
@@ -38,7 +35,6 @@ export default function Login() {
       const token = b1.token;
       localStorage.setItem("faris_token", token);
 
-      // استخدم http مع تمرير الهيدر مباشرة (لأن التوكن توه انحفظ)
       const me = await http("GET", "/me", null, { Authorization: `Bearer ${token}` });
       if (!me?.id) throw new Error(me?.error || "تعذّر جلب بيانات المستخدم بعد الدخول.");
 
@@ -65,25 +61,27 @@ export default function Login() {
   }, []);
 
   return (
-    <div className="auth-page" dir="rtl">
-      <div className="auth-shell">
-        {/* البطاقة */}
-        <section className="auth-card q-card">
-          <div className="auth-brand">
-            <div className="auth-logo" aria-label="شعار">
-              <img src="/logo.png" alt="شعار واجهة الفارس الذكية" />
-            </div>
-            <div className="auth-title">واجهة فارس  </div>
-            <div className="auth-subtitle">تسجيل الدخول</div>
+    <div dir="rtl" className="ind-authwrap">
+      <aside className="ind-authside">
+        <div className="ind-authside-body">
+          <div className="ind-authside-title">إدارة القضايا بدقة، ومتابعتها بلا فوضى.</div>
+          <div className="ind-authside-sub">
+            بوابة موظفي ومدير شركة فارس محمد الغامدي للمحاماة.
           </div>
+        </div>
+      </aside>
 
-          <form onSubmit={onSubmit} className="auth-form" noValidate>
+      <div className="ind-authform">
+        <div style={{ width: "100%", maxWidth: 380 }}>
+          <h1 className="ind-auth-h1">تسجيل الدخول</h1>
+
+          <form onSubmit={onSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div className="field">
-              <label className="label">البريد الإلكتروني</label>
+              <label>البريد الإلكتروني</label>
               <input
                 className="input"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="name@faris-law.sa"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="username"
@@ -92,100 +90,50 @@ export default function Login() {
             </div>
 
             <div className="field">
-              <label className="label">كلمة المرور</label>
-              <div className="input-with-action">
+              <label>كلمة المرور</label>
+              <div style={{ display: "flex", gap: 8 }}>
                 <input
                   className="input"
                   type={show ? "text" : "password"}
-                  placeholder="••••••"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   required
+                  style={{ flex: 1 }}
                 />
-                <button
-                  type="button"
-                  className="q-btn ghost toggle"
-                  onClick={() => setShow((s) => !s)}
-                >
+                <button type="button" className="btn btn-ghost" onClick={() => setShow((s) => !s)}>
                   {show ? "إخفاء" : "إظهار"}
                 </button>
               </div>
             </div>
 
-            {err && <div className="error">{err}</div>}
+            {err && (
+              <div style={{ color: "#b3261e", fontSize: 13, background: "#fdecea", border: "1px solid #f6c6c2", borderRadius: "var(--radius)", padding: "8px 12px" }}>
+                {err}
+              </div>
+            )}
 
-            <div className="auth-row">
-              <label className="remember">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                />
-                <span>تذكّرني</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--color-neutral-700)" }}>
+                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+                تذكّرني
               </label>
-
-              <Link to="/register" className="auth-link">
-                إنشاء حساب
-              </Link>
+              <Link to="/register" style={{ fontSize: 13 }}>إنشاء حساب</Link>
             </div>
 
-            <button className="q-btn primary submit" disabled={loading}>
+            <button className="btn btn-primary btn-block" disabled={loading}>
               {loading ? "جاري الدخول..." : "تسجيل الدخول"}
             </button>
 
-            <div className="auth-foot">
+            <div style={{ textAlign: "center", fontSize: 13, color: "var(--color-neutral-600)" }}>
               لا تملك حساب موظف؟ <Link to="/register">إنشاء حساب</Link>
             </div>
-
-            <div className="footnote">
+            <div style={{ fontSize: 12, color: "var(--color-neutral-500)", textAlign: "center" }}>
               بدخولك، أنت توافق على شروط الاستخدام وسياسة الخصوصية.
             </div>
           </form>
-        </section>
-
-             {/* العمود الجانبي (مستجدات قانونية) */}
-        <aside className="auth-aside">
-          <div className="auth-aside-head">
-            <div className="auth-aside-title">مستجدات قانونية</div>
-            <div className="auth-aside-sub">
-              آخر التحديثات والأنظمة واللوائح ذات الأثر القانوني.
-            </div>
-          </div>
-
-          <div className="auth-news">
-            <div className="auth-news-card">
-              <div className="auth-dot" />
-              <div>
-                <div className="auth-news-title">صدور تعديل على نظام الإجراءات الجزائية</div>
-                <div className="auth-news-desc">
-                  تحديث عدد من المواد بما يؤثر على إجراءات التحقيق وسير الدعوى الجزائية.
-                </div>
-              </div>
-            </div>
-
-            <div className="auth-news-card">
-              <div className="auth-dot" />
-              <div>
-                <div className="auth-news-title">لائحة تنفيذية جديدة لنظام الشركات</div>
-                <div className="auth-news-desc">
-                  تنظيم محدث للتأسيس والحوكمة ومسؤوليات الشركاء وفق الإطار النظامي.
-                </div>
-              </div>
-            </div>
-
-            <div className="auth-news-card">
-              <div className="auth-dot" />
-              <div>
-                <div className="auth-news-title">تحديثات على نظام العمل</div>
-                <div className="auth-news-desc">
-                  إدخال بنود تنظيمية متعلقة بعقود العمل وحقوق أطراف العلاقة التعاقدية.
-                </div>
-              </div>
-            </div>
-          </div>
-        </aside>
-
+        </div>
       </div>
     </div>
   );

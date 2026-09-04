@@ -92,90 +92,51 @@ export default function StaffCalendar() {
 
   if (!me)
     return (
-      <div className="q-card" style={{ padding: 16 }}>
+      <div className="card elev-sm" style={{ padding: 16, border: "1px solid var(--color-neutral-300)" }}>
         الرجاء تسجيل الدخول.
       </div>
     );
 
   return (
-    <div dir="rtl" style={{ display: "grid", gap: 12, padding: "16px 0" }}>
-      <section className="q-card" style={{ padding: 12 }}>
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-          }}
-        >
+    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
+        <div style={{ display: "flex", gap: 8, justifyContent: "space-between", flexWrap: "wrap" }}>
+          <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} style={{ minWidth: 200 }} />
           <div style={{ display: "flex", gap: 8 }}>
-            <input
-              className="input"
-              placeholder="بحث…"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-            />
-            <button
-              className={`q-btn ${view === "week" ? "primary" : "ghost"}`}
-              onClick={() => setView("week")}
-            >
-              أسبوع
-            </button>
-            <button
-              className={`q-btn ${view === "month" ? "primary" : "ghost"}`}
-              onClick={() => setView("month")}
-            >
-              شهر
-            </button>
+            <button className={`btn ${view === "week" ? "btn-primary" : "btn-ghost"}`} onClick={() => setView("week")}>أسبوع</button>
+            <button className={`btn ${view === "month" ? "btn-primary" : "btn-ghost"}`} onClick={() => setView("month")}>شهر</button>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="q-card" style={{ padding: 0 }}>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
         {loading ? (
           <div style={{ padding: 16 }}>جارٍ التحميل…</div>
         ) : err ? (
-          <div className="error" style={{ padding: 16 }}>
-            {err}
-          </div>
+          <div style={{ padding: 16, color: "#b3261e" }}>{err}</div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--ink-600)" }}>
-            لا يوجد مواعيد في هذا النطاق.
-          </div>
+          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا يوجد مواعيد في هذا النطاق.</div>
         ) : (
           <div style={{ overflowX: "auto" }}>
-            <table className="table">
+            <table className="table" style={{ margin: 0 }}>
               <thead>
-                <tr>
-                  <th>التاريخ</th>
-                  <th>الوقت</th>
-                  <th>القضية</th>
-                  <th>العنوان</th>
-                  <th>الحالة</th>
-                </tr>
+                <tr><th>التاريخ</th><th>الوقت</th><th>القضية</th><th>العنوان</th><th>الحالة</th></tr>
               </thead>
               <tbody>
                 {filtered.map((x, i) => (
                   <tr key={i}>
                     <td>{x.at.toLocaleDateString()}</td>
-                    <td>
-                      {x.at.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </td>
-                    <td>#{x.caseId}</td>
+                    <td>{x.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                    <td style={{ fontWeight: 700 }}>#{x.caseId}</td>
                     <td>{x.title}</td>
-                    <td>
-                      <span className="badge">{x.status}</span>
-                    </td>
+                    <td><span className="tag tag-accent">{x.status}</span></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-      </section>
+      </div>
     </div>
   );
 }

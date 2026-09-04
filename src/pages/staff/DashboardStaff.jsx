@@ -17,15 +17,11 @@ export default function DashboardStaff() {
 
   useEffect(() => {
     let alive = true;
-
     async function load() {
-      if (!user) {
-        navigate("/login", { replace: true });
-        return;
-      }
+      if (!user) { navigate("/login", { replace: true }); return; }
       setLoading(true);
       try {
-        const rows = await fetchMyCases(); // ✅ بدون user.id
+        const rows = await fetchMyCases();
         if (!alive) return;
         setMyCases(rows || []);
       } catch (e) {
@@ -36,135 +32,60 @@ export default function DashboardStaff() {
         if (alive) setLoading(false);
       }
     }
-
     load();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, [user?.id, navigate]);
 
   async function openByNumber() {
     const cleaned = String(caseNo || "").trim();
     if (!cleaned) return;
-
-    const found = myCases.find(
-      (c) =>
-        String(c.case_number || "")
-          .toLowerCase()
-          .trim() === cleaned.toLowerCase()
-    );
-
-    if (!found) {
-      toast("لم يتم العثور على قضية بهذا الرقم ضمن قضاياك.");
-      return;
-    }
-
+    const found = myCases.find((c) => String(c.case_number || "").toLowerCase().trim() === cleaned.toLowerCase());
+    if (!found) { toast("لم يتم العثور على قضية بهذا الرقم ضمن قضاياك."); return; }
     navigate(`/staff/cases/${encodeURIComponent(found.id)}`);
   }
 
   return (
-    <div dir="rtl" className="page" style={{ paddingBottom: 24 }}>
-      <div className="q-container">
-        <section className="q-sec">
-          <h2 className="q-sec-title" style={{ marginTop: 0 }}>
-             الموظف{" "}
-            {user?.full_name || user?.name ? `— ${user.full_name || user.name}` : ""}
-          </h2>
+    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 24, margin: 0 }}>
+        الموظف {user?.full_name || user?.name ? `— ${user.full_name || user.name}` : ""}
+      </h1>
 
-          <div className="q-card">
-            <b>بحث مباشر برقم القضية</b>
-            <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <input
-                className="ai-input"
-                value={caseNo}
-                onChange={(e) => setCaseNo(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && openByNumber()}
-                placeholder="اكتب رقم القضية (مثال: C-0001) ثم Enter ..."
-              />
-              <button
-                className="q-btn ghost"
-                onClick={openByNumber}
-                disabled={!String(caseNo).trim()}
-                style={{
-                  opacity: String(caseNo).trim() ? 1 : 0.6,
-                  cursor: String(caseNo).trim() ? "pointer" : "not-allowed",
-                }}
-              >
-                فتح
-              </button>
-            </div>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
+        <b>بحث مباشر برقم القضية</b>
+        <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+          <input className="input" style={{ flex: 1 }} value={caseNo} onChange={(e) => setCaseNo(e.target.value)} onKeyDown={(e) => e.key === "Enter" && openByNumber()} placeholder="اكتب رقم القضية (مثال: C-0001) ثم Enter ..." />
+          <button className="btn btn-ghost" onClick={openByNumber} disabled={!String(caseNo).trim()}>فتح</button>
+        </div>
+        <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginTop: 6 }}>يعمل على القضايا الظاهرة أدناه فقط حسب صلاحياتك من السيرفر.</div>
+      </div>
 
-            <div style={{ fontSize: 12, color: "#777", marginTop: 6 }}>
-              يعمل على القضايا الظاهرة أدناه فقط حسب صلاحياتك من السيرفر.
-            </div>
-          </div>
-        </section>
+      <StaffSecretarySearch myCases={myCases} />
 
-        {/* ✅ سكرتير الموظف (بحث داخل قضايا الموظف فقط) */}
-        <section className="q-sec" style={{ paddingTop: 0 }}>
-          <StaffSecretarySearch myCases={myCases} />
-        </section>
-
-        <section className="q-sec" style={{ paddingTop: 0 }}>
-          <div className="q-feats" style={{ gridTemplateColumns: "1fr" }}>
-            <div className="q-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <b>قضاياي</b>
-                <Link className="q-link" to="/staff/cases">
-                  عرض الكل
-                </Link>
-              </div>
-
-              <div style={{ marginTop: 10 }}>
-                {loading ? (
-                  <div style={{ padding: 12 }}>
-                    <Loader text="يتم تحميل قضاياك..." />
-                  </div>
-                ) : (
-                  <div className="table-min">
-                    <div className="row head">
-                      <div>رقم القضية</div>
-                      <div>العنوان</div>
-                      <div>الوضع</div>
-                      <div>إجراء</div>
-                    </div>
-
-                    {myCases.map((c) => (
-                      <div key={c.id} className="row">
-                        <div>{c.case_number || `#${String(c.id).slice(0, 8)}`}</div>
-                        <div>
-                          <div>{c.title}</div>
-                          <div style={{ fontSize: 12, opacity: 0.75 }}>
-                            تاريخ الإسناد:{" "}
-                            {c.assignedAt
-                              ? new Date(c.assignedAt).toLocaleString()
-                              : c.created_at
-                              ? new Date(c.created_at).toLocaleString()
-                              : "—"}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="badge">{c.status || "—"}</span>
-                        </div>
-                        <div>
-                          <Link className="q-btn ghost" to={`/staff/cases/${c.id}`}>
-                            فتح
-                          </Link>
-                        </div>
-                      </div>
-                    ))}
-
-                    {myCases.length === 0 && !loading && (
-                      <div style={{ padding: "10px 0", color: "#666" }}>
-                        لا توجد قضايا مسندة لك حالياً.
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 16px 0" }}>
+          <b>قضاياي</b>
+          <Link className="btn btn-ghost" to="/staff/cases">عرض الكل</Link>
+        </div>
+        <div style={{ marginTop: 10 }}>
+          {loading ? (
+            <div style={{ padding: 16 }}><Loader text="يتم تحميل قضاياك..." /></div>
+          ) : (
+            <table className="table">
+              <thead><tr><th>رقم القضية</th><th>العنوان</th><th>الوضع</th><th>إجراء</th></tr></thead>
+              <tbody>
+                {myCases.map((c) => (
+                  <tr key={c.id}>
+                    <td>{c.case_number || `#${String(c.id).slice(0, 8)}`}</td>
+                    <td>{c.title}<div style={{ fontSize: 12, color: "var(--color-neutral-600)" }}>تاريخ الإسناد: {c.assignedAt ? new Date(c.assignedAt).toLocaleString() : c.created_at ? new Date(c.created_at).toLocaleString() : "—"}</div></td>
+                    <td><span className="tag tag-accent">{c.status || "—"}</span></td>
+                    <td><Link className="btn btn-ghost" to={`/staff/cases/${c.id}`}>فتح</Link></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {myCases.length === 0 && !loading && <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد قضايا مسندة لك حالياً.</div>}
+        </div>
       </div>
     </div>
   );

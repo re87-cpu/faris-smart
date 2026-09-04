@@ -1,0 +1,181 @@
+/* FILE: src/styles/industry-legacy-bridge.css
+   ────────────────────────────────────────────────────────────────────────────
+   يحمّل آخر شيء في main.jsx. يعيد تلبيس كل الأصناف القديمة (q-* / auth-* / sec-*
+   / navlink …) بنظام تصميم Industry، بدون لمس أي JSX. الصفحات غير المحوّلة
+   (الرئيسية، المحامي، 403، تقويم/مهام/مستندات الموظف، صناديق البحث…) تتبنّى
+   شكل industry.css فورًا: رمادي/أزرق، بلا ظلال، حواف قائمة، خط Barlow + عربي.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* 1) اربط توكنات التصميم القديمة بتوكنات Industry ------------------------------ */
+:root {
+  --accent: var(--color-accent);
+  --accent-dark: var(--color-accent-800);
+  --accent-soft: var(--color-accent-300);
+  --accent-tint: var(--color-accent-100);
+  --auth-accent: var(--color-accent);
+  --auth-ink: var(--color-text);
+  --auth-muted: color-mix(in srgb, var(--color-text) 55%, transparent);
+  --auth-border: var(--color-divider);
+  --auth-card: var(--color-surface);
+  --auth-bg: var(--color-bg);
+
+  --text: var(--color-text);
+  --ink: var(--color-text);
+  --muted: color-mix(in srgb, var(--color-text) 55%, transparent);
+  --border: var(--color-divider);
+
+  --card: transparent;
+  --bg0: var(--color-bg);
+  --bg1: var(--color-bg);
+  --bg2: var(--color-bg);
+
+  --radius: var(--radius-md);
+  --radius-sm: var(--radius-sm);
+
+  --shadow: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-soft: none;
+}
+
+/* 2) الخلفيات المسطحة + الخط ------------------------------------------------- */
+body,
+.page,
+.auth-page {
+  background: var(--color-bg) !important;
+  font-family: var(--font-body);
+  color: var(--color-text);
+}
+.page { line-height: 1.55; }
+
+/* 3) الهيدر العلوي --------------------------------------------------------- */
+.q-nav,
+.navbar {
+  background: var(--color-bg) !important;
+  backdrop-filter: none !important;
+  border-bottom: 1px solid var(--color-divider);
+}
+.q-logo { filter: none !important; }
+
+/* 4) العناوين ------------------------------------------------------------- */
+.q-h1, .q-sec-title, .h1, .h2,
+.auth-title, .auth-aside-title, .sec-title, .auth-subtitle {
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  color: var(--color-text);
+  letter-spacing: normal;
+}
+.q-h1, .h1 { color: var(--color-accent-800); }
+
+/* 5) البطاقات → إطار سلكي شفاف قائم الزوايا -------------------------------- */
+.q-card, .card, .sec-card, .sec-card--compact,
+.auth-card, .auth-aside, .q-loader,
+.q-dd-menu, .sec-item, .auth-news-card, .sec-hint, .sec-empty {
+  background: transparent !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 6) الأزرار ------------------------------------------------------------- */
+.q-btn, .btn, .sec-btn, .ai-send, .q-dd-btn, .sec-chip, .auth-toggle, .toggle {
+  border-radius: var(--radius-md) !important;
+  font-family: var(--font-heading);
+  font-weight: var(--font-heading-weight);
+  box-shadow: none !important;
+  transition: background .15s ease, border-color .15s ease;
+}
+.q-btn:hover, .btn:hover, .sec-btn:hover, .ai-send:hover,
+.q-dd-btn:hover, .sec-chip:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+.q-btn.primary, .q-primary, .btn-primary, .sec-btn, .ai-send, .auth-form .submit {
+  background: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+  border: 1px solid var(--color-accent) !important;
+}
+.q-btn.primary:hover, .q-primary:hover, .btn-primary:hover,
+.sec-btn:hover, .ai-send:hover { background: var(--color-accent-600) !important; }
+
+.q-btn.ghost, .q-outline, .btn-outline, .q-dd-btn {
+  background: transparent !important;
+  color: var(--color-accent) !important;
+  border: 1px solid var(--color-divider) !important;
+}
+.q-btn.ghost:hover, .q-outline:hover, .btn-outline:hover, .q-dd-btn:hover {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent) !important;
+  border-color: var(--color-accent) !important;
+}
+
+/* 7) الحقول ------------------------------------------------------------- */
+.input, .ai-input, .sec-input, input[type="text"], input[type="email"],
+input[type="password"], input[type="search"], input[type="date"], textarea, select {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-divider) !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-text);
+  box-shadow: none !important;
+}
+.input:focus, .ai-input:focus, .sec-input:focus,
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-accent) !important;
+  box-shadow: none !important;
+  outline: none;
+}
+
+/* 8) روابط + عناصر القوائم الجانبية القديمة ------------------------------- */
+.q-link, .auth-link, .sec-link, .auth-foot a { color: var(--color-accent); }
+.q-link:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+
+.sidebar-nav .navlink, .navlink {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--radius-md) !important;
+  color: var(--color-text) !important;
+  box-shadow: none !important;
+  font-family: var(--font-heading);
+}
+.sidebar-nav .navlink:hover, .navlink:hover {
+  background: var(--color-accent-100) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.sidebar-nav .navlink.primary, .navlink.primary, .navlink[aria-current="page"] {
+  background: var(--color-accent-500) !important;
+  border-color: var(--color-accent-500) !important;
+  color: #fff !important;
+}
+
+/* 9) الشرائح والوسوم ---------------------------------------------------- */
+.sec-chip {
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border: 1px solid var(--color-divider) !important;
+}
+.sec-chip.is-active {
+  background: var(--color-accent) !important;
+  color: var(--color-bg) !important;
+  border-color: var(--color-accent) !important;
+}
+.sec-badge {
+  border-radius: calc(var(--radius-md) * 0.75) !important;
+  background: var(--color-neutral-100) !important;
+  border: 1px solid var(--color-divider) !important;
+  color: var(--color-neutral-800) !important;
+}
+.sec-badge.open { background: var(--color-accent-100) !important; color: var(--color-accent-800) !important; }
+.auth-dot, .sec-dot { background: var(--color-accent) !important; }
+
+/* 10) التذييل + الحالات المنقّطة -------------------------------------- */
+.q-footer {
+  background: var(--color-bg) !important;
+  border-top: 1px solid var(--color-divider);
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  font-weight: 400;
+}
+.sec-hint, .sec-empty { border-style: dashed !important; background: transparent !important; }
+
+/* 11) شيلي تدرّجات الخلفية القديمة في الأقسام الداخلية ------------------ */
+.auth-shell, .layout-shell { background: transparent !important; }

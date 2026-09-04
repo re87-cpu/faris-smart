@@ -4,32 +4,13 @@ import { Link } from "react-router-dom";
 
 export default function Forbidden403() {
   return (
-    <div
-      dir="rtl"
-      style={{
-        minHeight: "70vh",
-        display: "grid",
-        placeItems: "center",
-        padding: "24px",
-      }}
-    >
-      <div
-        className="q-card"
-        style={{ padding: "24px 20px", maxWidth: 520, textAlign: "center" }}
-      >
-        <div style={{ fontSize: 28, fontWeight: 900, marginBottom: 8 }}>
-          403 — غير مسموح
-        </div>
-        <div style={{ color: "var(--ink-600)", marginBottom: 14 }}>
-          لا تملك صلاحية الوصول لهذه الصفحة.
-        </div>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-          <Link to="/" className="q-btn ghost">
-            الصفحة الرئيسية
-          </Link>
-          <Link to="/login" className="q-btn primary">
-            تسجيل الدخول
-          </Link>
+    <div className="site" dir="rtl" style={{ minHeight: "100vh", display: "grid", placeItems: "center", padding: 24 }}>
+      <div style={{ maxWidth: 520, textAlign: "center", border: "1px solid var(--s-line)", borderRadius: 4, padding: "2.6rem 2rem", background: "#fff" }}>
+        <div style={{ fontSize: 30, fontWeight: 800, color: "var(--s-navy)", marginBottom: 8 }}>403 — غير مسموح</div>
+        <p style={{ color: "var(--s-muted)", marginBottom: 20, fontWeight: 300 }}>لا تملك صلاحية الوصول لهذه الصفحة.</p>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <Link to="/" className="site-btn site-btn-outline site-btn-sm">الصفحة الرئيسية</Link>
+          <Link to="/login" className="site-btn site-btn-primary site-btn-sm">تسجيل الدخول</Link>
         </div>
       </div>
     </div>

@@ -143,26 +143,17 @@ export default function StaffTasks() {
 
   if (!me) {
     return (
-      <div className="q-card" style={{ padding: 16 }} dir="rtl">
+      <div className="card elev-sm" style={{ padding: 16, border: "1px solid var(--color-neutral-300)" }} dir="rtl">
         الرجاء تسجيل الدخول.
       </div>
     );
   }
 
   return (
-    <div dir="rtl" style={{ display: "grid", gap: 12, padding: "16px 0" }}>
-      <section className="q-card" style={{ padding: 16 }}>
-        <b>مهمة جديدة</b>
-        <form
-          onSubmit={onAdd}
-          className="form"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1.5fr 1fr auto",
-            gap: 8,
-            marginTop: 10,
-          }}
-        >
+    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
+        <div className="card-title">مهمة جديدة</div>
+        <form onSubmit={onAdd} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr auto", gap: 8, marginTop: 10 }}>
           <input
             className="input"
             placeholder="عنوان المهمة…"
@@ -176,99 +167,54 @@ export default function StaffTasks() {
             value={form.due}
             onChange={(e) => setForm((s) => ({ ...s, due: e.target.value }))}
           />
-          <button className="q-btn primary" disabled={busyId === "add"}>
+          <button className="btn btn-primary" disabled={busyId === "add"}>
             {busyId === "add" ? "جارٍ الإضافة…" : "إضافة"}
           </button>
         </form>
-      </section>
+      </div>
 
-      {err && (
-        <div className="error" style={{ marginInlineStart: 2 }}>
-          {err}
-        </div>
-      )}
+      {err && <div style={{ color: "#b3261e", marginInlineStart: 2 }}>{err}</div>}
 
-      <section className="q-card" style={{ padding: 16 }}>
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
+        <div style={{ display: "flex", gap: 8, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", padding: "14px 16px 0" }}>
           <b>مهامي</b>
           <div style={{ display: "flex", gap: 8 }}>
-            <input
-              className="input"
-              placeholder="بحث…"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-            />
-            <button className="q-btn ghost" onClick={load} disabled={loading}>
-              تحديث
-            </button>
+            <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
+            <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
           </div>
         </div>
 
         {loading ? (
-          <div style={{ marginTop: 10 }}>جارٍ التحميل…</div>
+          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
         ) : filtered.length === 0 ? (
-          <div style={{ marginTop: 10, color: "var(--ink-600)" }}>لا توجد مهام.</div>
+          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد مهام.</div>
         ) : (
-          <div style={{ marginTop: 10, overflowX: "auto" }}>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>تم</th>
-                  <th>العنوان</th>
-                  <th>تاريخ مستهدف</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((t) => {
-                  const isBusy = busyId === t.id;
-                  return (
-                    <tr key={t.id}>
-                      <td style={{ textAlign: "center" }}>
-                        <input
-                          type="checkbox"
-                          checked={t.done}
-                          onChange={() => onToggle(t)}
-                          disabled={isBusy}
-                        />
-                      </td>
-                      <td style={{ textDecoration: t.done ? "line-through" : "none" }}>
-                        {t.title}
-                      </td>
-                      <td style={{ minWidth: 160 }}>
-                        <input
-                          className="input"
-                          type="date"
-                          value={t.due || ""}
-                          onChange={(e) => onQuickDate(t, e)}
-                          disabled={isBusy}
-                        />
-                      </td>
-                      <td style={{ textAlign: "left" }}>
-                        <button
-                          className="q-btn ghost"
-                          onClick={() => onDelete(t)}
-                          disabled={isBusy}
-                        >
-                          حذف
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <table className="table">
+            <thead>
+              <tr><th>تم</th><th>العنوان</th><th>تاريخ مستهدف</th><th></th></tr>
+            </thead>
+            <tbody>
+              {filtered.map((t) => {
+                const isBusy = busyId === t.id;
+                return (
+                  <tr key={t.id}>
+                    <td style={{ textAlign: "center" }}>
+                      <input type="checkbox" checked={t.done} onChange={() => onToggle(t)} disabled={isBusy} />
+                    </td>
+                    <td style={{ textDecoration: t.done ? "line-through" : "none" }}>{t.title}</td>
+                    <td style={{ minWidth: 160 }}>
+                      <input className="input" type="date" value={t.due || ""} onChange={(e) => onQuickDate(t, e)} disabled={isBusy} />
+                    </td>
+                    <td style={{ textAlign: "left" }}>
+                      <button className="btn btn-ghost" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         )}
-      </section>
+      </div>
     </div>
   );
 }

@@ -3,12 +3,13 @@ import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getUser, getRole, clearAuth, minutesLeft } from "../utils/auth.js";
 import NotificationsBell from "./NotificationsBell.jsx";
+import logo from "../assets/logo.png";
 
 export default function AdminTopbar() {
   const nav = useNavigate();
   const user = getUser();
   const role = getRole();
-  const mins = minutesLeft(); // كم باقي لانتهاء الجلسة
+  const mins = minutesLeft();
 
   function onLogout() {
     clearAuth();
@@ -16,89 +17,22 @@ export default function AdminTopbar() {
   }
 
   return (
-    <header
-      className="q-card"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "10px 14px",
-        gap: 12,
-      }}
-      dir="rtl"
-    >
-      {/* الجهة اليمنى: الشعار / اسم النظام */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <Link
-          to="/"
-          className="brand-mini"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            textDecoration: "none",
-          }}
-        >
-          <img
-            src="/logo.png"
-            alt="شعار"
-            style={{ width: 32, height: 32, objectFit: "contain" }}
-          />
-          <b style={{ color: "var(--accent-dark)" }}>واجهة فارس المكتبية</b>
+    <header className="nav" dir="rtl" style={{ borderBottom: "1px solid var(--color-neutral-300)", position: "sticky", top: 0, zIndex: 50, background: "var(--color-bg)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 20px" }}>
+        <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+          <img src={logo} alt="شركة فارس" style={{ height: 32 }} />
+          <span className="nav-brand" style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18 }}>
+            فارس <span style={{ color: "var(--color-accent-700)", fontSize: 13 }}>/ المدير</span>
+          </span>
         </Link>
-      </div>
-
-      {/* الجهة اليسرى: الإشعارات + المستخدم + تسجيل الخروج */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        {/* جرس الإشعارات */}
+        <div style={{ flex: 1 }} />
         <NotificationsBell />
-
-        {/* معلومات المستخدم */}
         {user && (
-          <div
-            className="q-chip"
-            style={{
-              padding: "6px 10px",
-              border: "1px solid var(--ink-200)",
-              borderRadius: 999,
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <span style={{ fontWeight: 700 }}>
-              {user.name || user.full_name || user.email}
-            </span>
-            <span
-              style={{
-                marginInlineStart: 4,
-                color: "var(--ink-600)",
-              }}
-            >
-              ({role === "admin" ? "مدير" : "موظف"})
-            </span>
-            <span
-              style={{
-                marginInlineStart: 4,
-                fontSize: 12,
-                color: "var(--ink-500)",
-              }}
-            >
-              ينتهي خلال ~{mins} دقيقة
-            </span>
-          </div>
+          <span className="tag tag-outline">
+            {user.name || user.full_name || user.email} — {role === "admin" ? "مدير" : "موظف"} — ~{mins} د
+          </span>
         )}
-
-        {/* زر تسجيل الخروج */}
-        <button className="q-btn ghost" onClick={onLogout}>
-          تسجيل الخروج
-        </button>
+        <button className="btn btn-ghost" onClick={onLogout}>تسجيل الخروج</button>
       </div>
     </header>
   );

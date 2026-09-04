@@ -90,176 +90,85 @@ export default function StaffNotifications() {
 
   if (!me) {
     return (
-      <div className="q-card" style={{ padding: 16 }} dir="rtl">
+      <div className="card elev-sm" style={{ padding: 16, border: "1px solid var(--color-neutral-300)" }} dir="rtl">
         الرجاء تسجيل الدخول.
       </div>
     );
   }
 
   return (
-    <div dir="rtl" style={{ display: "grid", gap: 12, padding: "16px 0" }}>
+    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {/* شريط التحكم العلوي */}
-      <section className="q-card" style={{ padding: 12 }}>
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
+        <div style={{ display: "flex", gap: 8, justifyContent: "space-between", flexWrap: "wrap", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
             <b>الإشعارات</b>
-            <select
-              className="input"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              style={{ width: 160 }}
-            >
+            <select className="input" value={filter} onChange={(e) => setFilter(e.target.value)} style={{ width: 170 }}>
               <option value="all">كل الإشعارات</option>
               <option value="unread">غير المقروءة فقط</option>
             </select>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              flexWrap: "wrap",
-              justifyContent: "flex-end",
-            }}
-          >
-            <input
-              className="input"
-              placeholder="بحث في العنوان/النص…"
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              style={{ minWidth: 220 }}
-            />
-            <button className="q-btn ghost" onClick={load} disabled={loading}>
-              تحديث
-            </button>
-            <button
-              className="q-btn primary"
-              onClick={onMarkAll}
-              disabled={updating || rows.every((n) => n.read)}
-            >
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <input className="input" placeholder="بحث في العنوان/النص…" value={q} onChange={(e) => setQ(e.target.value)} style={{ minWidth: 220 }} />
+            <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
+            <button className="btn btn-primary" onClick={onMarkAll} disabled={updating || rows.every((n) => n.read)}>
               تحديد الكل كمقروء
             </button>
           </div>
         </div>
-      </section>
+      </div>
 
-      {err && (
-        <div className="error" style={{ marginInlineStart: 2 }}>
-          {err}
-        </div>
-      )}
+      {err && <div style={{ color: "#b3261e", marginInlineStart: 2 }}>{err}</div>}
 
       {/* قائمة الإشعارات */}
-      <section className="q-card" style={{ padding: 0 }}>
-        {loading ? (
-          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--ink-600)" }}>
-            لا توجد إشعارات في هذا النطاق.
-          </div>
-        ) : (
-          <div style={{ padding: 8, display: "grid", gap: 8 }}>
-            {filtered.map((n) => (
-              <article
-                key={n.id}
-                className="q-card"
-                style={{
-                  padding: 10,
-                  border:
-                    n.read === false
-                      ? "1px solid var(--accent-soft, #bfdbfe)"
-                      : "1px solid var(--border)",
-                  backgroundColor:
-                    n.read === false ? "rgba(191, 219, 254, 0.20)" : "white",
-                }}
-              >
-                <header
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 8,
-                    marginBottom: 4,
-                  }}
-                >
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    {!n.read && (
-                      <span className="badge" style={{ fontSize: 11 }}>
-                        جديد
-                      </span>
-                    )}
-                    <b>{n.title || "بدون عنوان"}</b>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: "var(--ink-500)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {n.createdAtMs
-                      ? new Date(n.createdAtMs).toLocaleString()
-                      : "—"}
-                  </div>
-                </header>
+      {loading ? (
+        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>جارٍ التحميل…</div>
+      ) : filtered.length === 0 ? (
+        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", color: "var(--color-neutral-600)" }}>
+          لا توجد إشعارات في هذا النطاق.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {filtered.map((n) => (
+            <div
+              key={n.id}
+              className="card elev-sm"
+              style={{
+                border: !n.read ? "1px solid var(--color-accent-500)" : "1px solid var(--color-neutral-300)",
+                background: !n.read ? "var(--color-accent-100)" : "#fff",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  {!n.read && <span className="tag tag-accent">جديد</span>}
+                  <b>{n.title || "بدون عنوان"}</b>
+                </div>
+                <div style={{ fontSize: 12, color: "var(--color-neutral-600)", whiteSpace: "nowrap" }}>
+                  {n.createdAtMs ? new Date(n.createdAtMs).toLocaleString() : "—"}
+                </div>
+              </div>
 
-                <p
-                  style={{
-                    margin: "4px 0 8px",
-                    fontSize: 14,
-                    color: "var(--ink-700)",
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {n.body}
-                </p>
+              <p style={{ margin: "4px 0 8px", fontSize: 14, color: "var(--color-neutral-700)", whiteSpace: "pre-wrap" }}>
+                {n.body}
+              </p>
 
-                <footer
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 8,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <div>
-                    {n.link && (
-                      <a
-                        href={n.link}
-                        className="q-link"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        فتح التفاصيل
-                      </a>
-                    )}
-                  </div>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    {!n.read && (
-                      <button
-                        className="q-btn ghost"
-                        onClick={() => onMarkOne(n.id)}
-                        disabled={updating}
-                      >
-                        تعليم كمقروء
-                      </button>
-                    )}
-                  </div>
-                </footer>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <div>
+                  {n.link && <a href={n.link}>فتح التفاصيل</a>}
+                </div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {!n.read && (
+                    <button className="btn btn-ghost" onClick={() => onMarkOne(n.id)} disabled={updating}>
+                      تعليم كمقروء
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
