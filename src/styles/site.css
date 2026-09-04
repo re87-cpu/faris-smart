@@ -202,7 +202,7 @@
 
 /* — about — */
 .site-about-img {
-  position: relative; overflow: hidden; min-height: 560px; border-radius: 4px; background: var(--s-bg-soft);
+  position: relative; overflow: hidden; height: 560px; border-radius: 4px; background: var(--s-bg-soft);
 }
 .site-about-badge {
   position: absolute; bottom: -2.2rem; left: -2.2rem; background: var(--s-navy); color: #fff;
@@ -314,7 +314,7 @@
   .site-pad, .site-pad-sm { padding: 4rem 1.25rem; }
   .site-hero-inner { padding: 9rem 1.25rem 5rem; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
-  .site-about-img { min-height: 340px; }
+  .site-about-img { height: 300px; }
   .site-about-badge { position: static; margin-top: 1.4rem; left: auto; }
   .site-article-feat { grid-template-columns: 1fr; }
   .site-price.featured { transform: none; }
@@ -323,4 +323,6 @@
 @media (max-width: 640px) {
   .site-footer-grid { grid-template-columns: 1fr; }
   .site-grid-4 { grid-template-columns: 1fr; }
+  /* صورة المؤسس — أصغر على الجوال حتى لا تأخذ مساحة كبيرة */
+  .site-about-img { height: 200px; }
 }

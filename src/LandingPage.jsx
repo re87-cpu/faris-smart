@@ -82,7 +82,7 @@ export default function LandingPage() {
           <div className="site-grid-2">
             <div className="rv" style={{ position: "relative" }}>
               <div className="site-about-img site-zoom">
-                <img src={lawyerImg} alt="شركة فارس" style={{ width: "100%", height: "100%", objectFit: "cover", minHeight: 560 }} />
+                <img src={lawyerImg} alt="شركة فارس" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               </div>
               <div className="site-about-badge">
                 <p>ترخيص</p>
