@@ -85,7 +85,6 @@ export default function LandingPage() {
                 <img src={logo} alt="فارس للمحاماة" />
               </div>
               <div className="site-about-badge">
-                <p>ترخيص</p>
                 <p>مرخّص من الهيئة السعودية للمحامين ووزارة العدل</p>
               </div>
             </div>
