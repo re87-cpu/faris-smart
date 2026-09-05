@@ -80,7 +80,7 @@ export default function LandingPage() {
       <section id="about" className="site-pad">
         <div className="site-wrap">
           <div className="site-grid-2">
-            <div className="rv" style={{ position: "relative" }}>
+            <div className="rv site-about-media">
               <div className="site-about-logo">
                 <img src={logo} alt="فارس للمحاماة" />
               </div>
