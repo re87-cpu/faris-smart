@@ -2,7 +2,7 @@
 // هيدر + فوتر لصفحات الموقع العام (تصميم Law Firm v2)
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo-mark.png";
 import { waHref } from "../utils/site.js";
 
 const WA_CONSULT = "السلام عليكم، أرغب في طلب استشارة قانونية.";
@@ -85,9 +85,7 @@ export function SiteFooter() {
       <div className="site-wrap">
         <div className="site-footer-grid">
           <div>
-            <div className="site-footer-logo-chip">
-              <img src={logo} alt="فارس للمحاماة" className="site-footer-logo" />
-            </div>
+            <img src={logo} alt="فارس للمحاماة" className="site-footer-logo" />
             <p className="about">
               فارس للمحاماة، متخصصة في الاستشارات القانونية والتوثيق أمام المحاكم والجهات الحكومية
               بأعلى معايير الاحترافية والسرية.

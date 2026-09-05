@@ -296,8 +296,7 @@
 .site-footer { background: var(--s-navy); padding: 4rem 2.5rem 0; border-top: 1px solid rgba(255,255,255,.1); }
 .site-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 3rem; padding-bottom: 3.5rem; }
 /* الشعار متعدد الألوان (كحلي على أبيض) — رقعة بيضاء بدل فلتر invert الذي كان يشوّهه على الخلفية الكحلية */
-.site-footer-logo-chip { display: inline-block; background: #fff; padding: .7rem 1rem; border-radius: 6px; margin-bottom: 1.4rem; line-height: 0; }
-.site-footer-logo { height: 64px; width: auto; display: block; }
+.site-footer-logo { height: 96px; width: auto; display: block; margin-bottom: 1.4rem; filter: brightness(0) invert(1); opacity: .92; }
 .site-footer p.about { color: rgba(255,255,255,.7); font-weight: 300; font-size: .98rem; max-width: 340px; }
 .site-footer-col { display: flex; flex-direction: column; gap: .9rem; }
 .site-footer-col p.h { color: #fff; font-weight: 700; font-size: 1rem; margin-bottom: .4rem; }

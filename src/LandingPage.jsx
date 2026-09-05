@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
-import logo from "./assets/logo.png";
+import logo from "./assets/logo-mark.png";
 
 const SERVICES = [
   { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
