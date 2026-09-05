@@ -118,8 +118,7 @@ export default function LandingPage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", maxWidth: 420 }}>
               <p className="site-lead">
-                هذه أكثر الخدمات طلبًا. النطاق الكامل — مراجعة العقود والتوثيق والخطابات والإنذارات وخدمات الشركات
-                ومتابعة الطلبات والتحكيم — في صفحة الخدمات.
+                هذه أكثر الخدمات طلبًا.
               </p>
               <Link to="/services" className="site-arrowlink" style={{ alignSelf: "flex-start" }}>عرض جميع الخدمات <span>←</span></Link>
             </div>
