@@ -203,21 +203,15 @@
 .site-quote p:last-child { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
 
 /* — about — */
-.site-about-brand {
-  border: 1px solid var(--s-line); border-radius: 4px;
-  background: linear-gradient(180deg, #fff 0%, var(--s-bg-soft) 100%);
-  padding: 4rem 2.5rem; display: flex; flex-direction: column; align-items: center;
-  gap: 2.2rem; text-align: center;
+.site-about-badge {
+  background: var(--s-navy); color: #fff; border-radius: 4px;
+  padding: 2.6rem 2.4rem; max-width: 340px;
+  box-shadow: 0 18px 50px rgba(23,32,45,.18);
 }
-.site-about-brand img { height: 160px; width: auto; }
-.site-about-brand-lic {
-  border-top: 1px solid var(--s-line); padding-top: 1.8rem; width: 100%; max-width: 320px;
-  color: var(--s-body); font-size: .95rem; font-weight: 300; line-height: 1.85;
+.site-about-badge p:first-child {
+  font-size: .72rem; letter-spacing: .24em; color: rgba(255,255,255,.6); margin-bottom: .8rem;
 }
-.site-about-brand-lic span {
-  display: block; color: var(--s-accent); font-size: .72rem; font-weight: 700;
-  letter-spacing: .24em; margin-bottom: .6rem;
-}
+.site-about-badge p:last-child { font-size: 1.06rem; font-weight: 500; line-height: 1.7; }
 .site-about-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 2rem; margin: 2rem 0 2.8rem; }
 .site-about-facts > div { border-top: 1px solid var(--s-line); padding-top: 1rem; }
 .site-about-facts p:first-child { font-weight: 700; color: var(--s-navy); font-size: 1.02rem; }
@@ -321,8 +315,7 @@
   .site-pad, .site-pad-sm { padding: 4rem 1.25rem; }
   .site-hero-inner { padding: 9rem 1.25rem 5rem; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
-  .site-about-brand { padding: 3rem 1.75rem; }
-  .site-about-brand img { height: 120px; }
+  .site-about-badge { max-width: none; }
   .site-article-feat { grid-template-columns: 1fr; }
   .site-price.featured { transform: none; }
   .site-footer-grid { grid-template-columns: 1fr 1fr; }

@@ -2,7 +2,6 @@
 // الصفحة الرئيسية — تصميم "Law Firm Website v2"
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "./assets/logo.png";
 import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
@@ -81,12 +80,9 @@ export default function LandingPage() {
         <div className="site-wrap">
           <div className="site-grid-2">
             <div className="rv">
-              <div className="site-about-brand">
-                <img src={logo} alt="فارس للمحاماة" />
-                <div className="site-about-brand-lic">
-                  <span>ترخيص</span>
-                  مرخّص من الهيئة السعودية للمحامين ووزارة العدل
-                </div>
+              <div className="site-about-badge">
+                <p>ترخيص</p>
+                <p>مرخّص من الهيئة السعودية للمحامين ووزارة العدل</p>
               </div>
             </div>
             <div className="rv d1">
