@@ -44,7 +44,7 @@ export default function Articles() {
             <div className="site-kicker"><span /><span>المعرفة</span></div>
             <h1 className="site-h2" style={{ fontSize: "clamp(2.1rem,4vw,3.4rem)", marginBottom: "1.2rem" }}>المقالات القانونية</h1>
             <p className="site-lead">
-              تحليلات ومقالات يكتبها فريق الشركة في القانون التجاري والشركات والعمل والتنفيذ، بلغة عملية موجّهة لأصحاب القرار.
+              تحليلات ومقالات يكتبها فريق فارس للمحاماة في القانون التجاري والشركات والعمل والتنفيذ، بلغة عملية موجّهة لأصحاب القرار.
             </p>
           </div>
         </div>

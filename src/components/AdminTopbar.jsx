@@ -20,7 +20,7 @@ export default function AdminTopbar() {
     <header className="nav" dir="rtl" style={{ borderBottom: "1px solid var(--color-neutral-300)", position: "sticky", top: 0, zIndex: 50, background: "var(--color-bg)" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "10px 20px" }}>
         <Link to="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-          <img src={logo} alt="شركة فارس" style={{ height: 32 }} />
+          <img src={logo} alt="فارس للمحاماة" style={{ height: 32 }} />
           <span className="nav-brand" style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: 18 }}>
             فارس <span style={{ color: "var(--color-accent-700)", fontSize: 13 }}>/ المدير</span>
           </span>

@@ -139,7 +139,8 @@
 .site-hero-disc { bottom: -220px; left: -120px; width: 460px; height: 460px; background: #F0F3F7; }
 .site-hero-inner {
   position: relative; width: 100%; max-width: 1040px; margin: 0 auto;
-  padding: 11rem 2.5rem 7rem; text-align: center;
+  padding: 11rem 2.5rem 7rem;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
 }
 .site-hero h1 { font-size: clamp(2.6rem, 6vw, 5rem); line-height: 1.25; margin-bottom: 2.4rem; }
 .site-hero-verse { font-size: clamp(1.05rem, 1.7vw, 1.35rem); color: var(--s-accent); font-weight: 500; margin-bottom: 1rem; }
@@ -147,7 +148,8 @@
   font-size: clamp(1rem, 1.5vw, 1.2rem); color: #3D4B5C; font-weight: 300;
   max-width: 720px; margin: 0 auto 3rem;
 }
-.site-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.site-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; width: 100%; max-width: 520px; }
+.site-hero-actions > * { flex: 1 1 190px; max-width: 250px; }
 
 /* — section head — */
 .site-h2 { font-size: clamp(1.9rem, 3.2vw, 2.9rem); }
@@ -201,16 +203,21 @@
 .site-quote p:last-child { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
 
 /* — about — */
-.site-about-img {
-  position: relative; overflow: hidden; height: 560px; border-radius: 4px; background: var(--s-bg-soft);
+.site-about-brand {
+  border: 1px solid var(--s-line); border-radius: 4px;
+  background: linear-gradient(180deg, #fff 0%, var(--s-bg-soft) 100%);
+  padding: 4rem 2.5rem; display: flex; flex-direction: column; align-items: center;
+  gap: 2.2rem; text-align: center;
 }
-.site-about-badge {
-  position: absolute; bottom: -2.2rem; left: -2.2rem; background: var(--s-navy); color: #fff;
-  padding: 2rem 2.2rem; max-width: 280px; border-radius: 4px;
-  box-shadow: 0 18px 50px rgba(23,32,45,.18);
+.site-about-brand img { height: 160px; width: auto; }
+.site-about-brand-lic {
+  border-top: 1px solid var(--s-line); padding-top: 1.8rem; width: 100%; max-width: 320px;
+  color: var(--s-body); font-size: .95rem; font-weight: 300; line-height: 1.85;
 }
-.site-about-badge p:first-child { font-size: .72rem; letter-spacing: .24em; color: rgba(255,255,255,.6); margin-bottom: .7rem; }
-.site-about-badge p:last-child { font-size: 1.02rem; font-weight: 500; line-height: 1.6; }
+.site-about-brand-lic span {
+  display: block; color: var(--s-accent); font-size: .72rem; font-weight: 700;
+  letter-spacing: .24em; margin-bottom: .6rem;
+}
 .site-about-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 2rem; margin: 2rem 0 2.8rem; }
 .site-about-facts > div { border-top: 1px solid var(--s-line); padding-top: 1rem; }
 .site-about-facts p:first-child { font-weight: 700; color: var(--s-navy); font-size: 1.02rem; }
@@ -314,8 +321,8 @@
   .site-pad, .site-pad-sm { padding: 4rem 1.25rem; }
   .site-hero-inner { padding: 9rem 1.25rem 5rem; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
-  .site-about-img { height: 300px; }
-  .site-about-badge { position: static; margin-top: 1.4rem; left: auto; }
+  .site-about-brand { padding: 3rem 1.75rem; }
+  .site-about-brand img { height: 120px; }
   .site-article-feat { grid-template-columns: 1fr; }
   .site-price.featured { transform: none; }
   .site-footer-grid { grid-template-columns: 1fr 1fr; }
@@ -323,6 +330,4 @@
 @media (max-width: 640px) {
   .site-footer-grid { grid-template-columns: 1fr; }
   .site-grid-4 { grid-template-columns: 1fr; }
-  /* صورة المؤسس — أصغر على الجوال حتى لا تأخذ مساحة كبيرة */
-  .site-about-img { height: 200px; }
 }

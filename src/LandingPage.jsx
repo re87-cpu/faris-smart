@@ -2,7 +2,7 @@
 // الصفحة الرئيسية — تصميم "Law Firm Website v2"
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import lawyerImg from "./assets/lawyer.jpeg";
+import logo from "./assets/logo.png";
 import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
@@ -76,24 +76,24 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* عن الشركة */}
+      {/* من نحن */}
       <section id="about" className="site-pad">
         <div className="site-wrap">
           <div className="site-grid-2">
-            <div className="rv" style={{ position: "relative" }}>
-              <div className="site-about-img site-zoom">
-                <img src={lawyerImg} alt="شركة فارس" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              </div>
-              <div className="site-about-badge">
-                <p>ترخيص</p>
-                <p>مرخّص من الهيئة السعودية للمحامين ووزارة العدل</p>
+            <div className="rv">
+              <div className="site-about-brand">
+                <img src={logo} alt="فارس للمحاماة" />
+                <div className="site-about-brand-lic">
+                  <span>ترخيص</span>
+                  مرخّص من الهيئة السعودية للمحامين ووزارة العدل
+                </div>
               </div>
             </div>
             <div className="rv d1">
-              <div className="site-kicker"><span /><span>عن الشركة</span></div>
+              <div className="site-kicker"><span /><span>من نحن</span></div>
               <h2 className="site-h2" style={{ marginBottom: "1.8rem" }}>خبرة قانونية برؤية حديثة</h2>
               <p className="site-lead" style={{ marginBottom: "1.2rem" }}>
-                شركة فارس محمد الغامدي شركة قانونية سعودية تقدّم الاستشارات والتمثيل القانوني للأفراد والمنشآت،
+                فارس للمحاماة ممارسة قانونية سعودية تقدّم الاستشارات والتمثيل القانوني للأفراد والمنشآت،
                 بمنهجية تجمع بين الدقة النظامية وفهم واقع الأعمال اليومي.
               </p>
               <p className="site-lead" style={{ marginBottom: "2.4rem" }}>
@@ -163,7 +163,7 @@ export default function LandingPage() {
             <div className="site-kicker"><span /><span>الاشتراكات</span></div>
             <h2 className="site-h2" style={{ marginBottom: "1.2rem" }}>باقات الاشتراك</h2>
             <p className="site-lead" style={{ marginBottom: "1.6rem" }}>
-              دعم قانوني مستمر باتفاق سنوي، بتكلفة واضحة قابلة للتخطيط، بدل الرجوع للشركة عند كل حادثة.
+              دعم قانوني مستمر باتفاق سنوي، بتكلفة واضحة قابلة للتخطيط، بدل مراجعتنا عند كل حادثة.
             </p>
             <Link to="/packages" className="site-arrowlink">مقارنة الباقات بالتفصيل <span>←</span></Link>
           </div>

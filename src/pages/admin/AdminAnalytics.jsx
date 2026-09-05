@@ -61,7 +61,7 @@ export default function AdminAnalytics() {
       </div>
 
       <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">إحصائيات عامة للشركة</div>
+        <div className="card-title">إحصائيات عامة</div>
         {loading ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : (
           <div className="ind-grid-3" style={{ marginTop: 10 }}>
             <Stat title="إجمالي القضايا" value={topCounts.totalCases} />

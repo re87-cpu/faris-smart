@@ -29,7 +29,7 @@ export function SiteHeader({ active }) {
     <header className={`site-header${scrolled ? " scrolled" : ""}`}>
       <div className="site-header-inner">
         <Link to="/" aria-label="الرئيسية">
-          <img src={logo} alt="شركة فارس" className="site-logo" />
+          <img src={logo} alt="فارس للمحاماة" className="site-logo" />
         </Link>
 
         <nav className="site-nav">
@@ -86,10 +86,10 @@ export function SiteFooter() {
         <div className="site-footer-grid">
           <div>
             <div className="site-footer-logo-chip">
-              <img src={logo} alt="شركة فارس" className="site-footer-logo" />
+              <img src={logo} alt="فارس للمحاماة" className="site-footer-logo" />
             </div>
             <p className="about">
-              شركة فارس محمد الغامدي، متخصصة في الاستشارات القانونية والتوثيق أمام المحاكم والجهات الحكومية
+              فارس للمحاماة، متخصصة في الاستشارات القانونية والتوثيق أمام المحاكم والجهات الحكومية
               بأعلى معايير الاحترافية والسرية.
             </p>
           </div>
@@ -117,7 +117,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="site-footer-bottom">
-          <p>© 2026 شركة فارس محمد الغامدي — جميع الحقوق محفوظة</p>
+          <p>© 2026 فارس للمحاماة — جميع الحقوق محفوظة</p>
         </div>
       </div>
     </footer>

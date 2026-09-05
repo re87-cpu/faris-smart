@@ -56,7 +56,7 @@ export default function CaseNew() {
             <button className="btn btn-primary" disabled={loading}>{loading ? "جاري الحفظ…" : "حفظ القضية"}</button>
           </div>
           <p style={{ marginTop: 12, fontSize: 13, color: "var(--color-neutral-600)" }}>
-            هذا الرقم مخصّص للشركة ويمكن لاحقًا ربطه برقم القضية في نظام آخر إن لزم.
+            هذا الرقم داخلي ويمكن لاحقًا ربطه برقم القضية في نظام آخر إن لزم.
           </p>
         </form>
       </div>

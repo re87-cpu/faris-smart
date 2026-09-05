@@ -66,7 +66,7 @@ export default function Login() {
         <div className="ind-authside-body">
           <div className="ind-authside-title">إدارة القضايا بدقة، ومتابعتها بلا فوضى.</div>
           <div className="ind-authside-sub">
-            بوابة موظفي ومدير شركة فارس محمد الغامدي للمحاماة.
+            بوابة موظفي ومدير فارس للمحاماة.
           </div>
         </div>
       </aside>
