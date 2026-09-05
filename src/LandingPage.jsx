@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
+import logo from "./assets/logo.png";
 
 const SERVICES = [
   { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
@@ -79,7 +80,10 @@ export default function LandingPage() {
       <section id="about" className="site-pad">
         <div className="site-wrap">
           <div className="site-grid-2">
-            <div className="rv">
+            <div className="rv" style={{ position: "relative" }}>
+              <div className="site-about-logo">
+                <img src={logo} alt="فارس للمحاماة" />
+              </div>
               <div className="site-about-badge">
                 <p>ترخيص</p>
                 <p>مرخّص من الهيئة السعودية للمحامين ووزارة العدل</p>
@@ -118,7 +122,7 @@ export default function LandingPage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", maxWidth: 420 }}>
               <p className="site-lead">
-                هذه أكثر الخدمات طلبًا.
+                 أكثر الخدمات طلبًا.
               </p>
               <Link to="/services" className="site-arrowlink" style={{ alignSelf: "flex-start" }}>عرض جميع الخدمات <span>←</span></Link>
             </div>

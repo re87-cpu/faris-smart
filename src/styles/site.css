@@ -203,9 +203,17 @@
 .site-quote p:last-child { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
 
 /* — about — */
+.site-about-logo {
+  position: relative; display: grid; place-items: center;
+  min-height: 460px; padding: 3rem;
+  background: #fff; border: 1px solid var(--s-line); border-radius: 4px;
+  box-shadow: 0 14px 40px rgba(23,32,45,.08);
+}
+.site-about-logo img { width: 100%; max-width: 280px; height: auto; }
 .site-about-badge {
+  position: absolute; bottom: -2rem; left: -2rem;
   background: var(--s-navy); color: #fff; border-radius: 4px;
-  padding: 2.6rem 2.4rem; max-width: 340px;
+  padding: 2rem 2.2rem; max-width: 300px;
   box-shadow: 0 18px 50px rgba(23,32,45,.18);
 }
 .site-about-badge p:first-child {
@@ -315,7 +323,9 @@
   .site-pad, .site-pad-sm { padding: 4rem 1.25rem; }
   .site-hero-inner { padding: 9rem 1.25rem 5rem; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
-  .site-about-badge { max-width: none; }
+  .site-about-logo { min-height: 300px; padding: 2.4rem; }
+  .site-about-logo img { max-width: 220px; }
+  .site-about-badge { position: static; margin-top: 1.4rem; left: auto; bottom: auto; max-width: none; }
   .site-article-feat { grid-template-columns: 1fr; }
   .site-price.featured { transform: none; }
   .site-footer-grid { grid-template-columns: 1fr 1fr; }
