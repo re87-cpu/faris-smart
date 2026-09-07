@@ -1,16 +1,50 @@
-# React + Vite
+# فارس للمحاماة — faris-smart
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Website and internal portals for **Faris Law Firm** (فارس للمحاماة): a public
+Arabic (RTL) marketing site plus role-based staff and admin dashboards for
+managing cases, sessions, documents, tasks, and articles.
 
-Currently, two official plugins are available:
+## Tech stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend:** React 19, Vite 7, React Router, Framer Motion
+- **Backend:** Express, Prisma ORM, PostgreSQL (`server/`)
+- **Deployment:** Docker, Caddy (see `docker-compose.yml` and `server/`)
+- **CI:** GitHub Actions — builds the API Docker image on push / PR to `main`
+  (`.github/workflows/ci.yml`)
 
-## React Compiler
+## Project layout
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Path                 | Purpose                                              |
+| -------------------- | --------------------------------------------------- |
+| `src/pages/`         | Public marketing pages and article views            |
+| `src/pages/staff/`   | Staff portal (cases, calendar, tasks, notifications) |
+| `src/pages/admin/`   | Admin portal (employees, analytics, assignments)    |
+| `src/components/`    | Shared UI components                                 |
+| `src/guards/`        | Route guards (`RequireStaff`, `RequireAdmin`)        |
+| `src/store/`, `src/utils/` | Client-side data, auth, and API helpers        |
+| `server/`            | Express + Prisma API                                 |
 
-## Expanding the ESLint configuration
+## Getting started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+
+```bash
+npm install
+npm run dev      # start the Vite dev server
+npm run build    # production build
+npm run lint     # run ESLint
+npm run preview  # preview the production build
+```
+
+### Backend (`server/`)
+
+```bash
+cd server
+npm install
+npm run prisma:gen   # generate the Prisma client
+npm run dev          # start the API with --watch
+```
+
+Copy `server/.env.production.example` to a local `.env` and fill in the database
+URL and secrets before running the API. The frontend expects its own `.env` at
+the repo root (git-ignored).
