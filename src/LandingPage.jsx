@@ -7,6 +7,8 @@ import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
 import logo from "./assets/logo-mark.png";
 import HorseJourney from "./components/horse/HorseJourney.jsx";
+import heroVideo from "./assets/horse-hero.mp4";
+import heroPoster from "./assets/horse-hero-poster.jpg";
 
 const SERVICES = [
   { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
@@ -70,27 +72,85 @@ export default function LandingPage() {
   const feat = articles[0];
   const rest = articles.slice(1, 4);
 
+  const heroVideoRef = useRef(null);
+  const [heroRevealed, setHeroRevealed] = useState(false);
+  const heroPlayingRef = useRef(false);
+
+  const onHeroTimeUpdate = () => {
+    const v = heroVideoRef.current;
+    if (v && v.duration && v.currentTime >= v.duration - 0.7) setHeroRevealed(true);
+  };
+
+  useEffect(() => {
+    const video = heroVideoRef.current;
+    const hero = document.getElementById("home");
+    if (!video || !hero) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) { setHeroRevealed(true); return; }
+
+    const play = () => {
+      if (heroPlayingRef.current) return;
+      heroPlayingRef.current = true;
+      setHeroRevealed(false);
+      requestAnimationFrame(() => {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      });
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && e.intersectionRatio >= 0.6) {
+            if (!heroPlayingRef.current) play();
+          } else {
+            heroPlayingRef.current = false;
+          }
+        });
+      },
+      { threshold: [0, 0.6] }
+    );
+    io.observe(hero);
+    play();
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div className="site" dir="rtl">
       <SiteHeader active="home" />
 
       {/* الهيرو */}
-      <section className="site-hero site-bg-grad" id="home">
-        <span className="site-hero-ring" />
-        <span className="site-hero-disc" />
-        <div className="site-hero-inner rv">
-          <h1>أهلًا بك</h1>
-          <p className="site-hero-verse">﴿ إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالإِحْسَانِ ﴾</p>
-          <p className="site-hero-sub">
-            ممارسة قانونية تُدار بالأمانة، وتُنفَّذ بوضوح، وتُحتكم فيها الأنظمة قبل كل إجراء.
-          </p>
-          <div className="site-hero-actions">
-            <a href={waHref("السلام عليكم، أرغب في طلب استشارة قانونية.")} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary site-btn-lg">
-              اطلب استشارتي
-            </a>
-            <Link to="/services" className="site-btn site-btn-outline site-btn-lg">استكشف خدماتنا</Link>
+      <section className="site-hero" id="home">
+        <video
+          className="site-hero-video"
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          poster={heroPoster}
+          ref={heroVideoRef}
+          onTimeUpdate={onHeroTimeUpdate}
+          onEnded={() => setHeroRevealed(true)}
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        <div className="site-hero-scrim" aria-hidden="true" />
+        <div className={`site-hero-content${heroRevealed ? " reveal" : ""}`}>
+          <div className="site-hero-welcome">
+            <h1 className="site-hero-welcome-title">أهلًا بك</h1>
+            <p className="site-hero-welcome-sub">حيث تُفهم قضيتك، ويُصان حقك.</p>
+          </div>
+          <div className="site-hero-actions-wrap">
+            <div className="site-hero-actions">
+              <a href={waHref("السلام عليكم، أرغب في طلب استشارة قانونية.")} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary">
+                ابدأ من سؤالك
+              </a>
+              <Link to="/services" className="site-btn site-btn-outline">استكشف خدماتنا</Link>
+            </div>
           </div>
         </div>
+        <a href="#about" className="site-hero-arrow" aria-label="التالي">
+          <svg width="14" height="18" viewBox="0 0 14 18" fill="none"><path d="M7 0v14M1 9l6 6 6-6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        </a>
       </section>
 
       <div className="horse-journey-wrap" ref={journeyWrapRef}>
