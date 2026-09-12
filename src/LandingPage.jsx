@@ -6,9 +6,8 @@ import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
 import logo from "./assets/logo-mark.png";
-import HorseJourney from "./components/horse/HorseJourney.jsx";
-import heroVideo from "./assets/horse-hero.mp4";
-import heroPoster from "./assets/horse-hero-poster.jpg";
+import heroVideo from "./assets/horse-hero-v4.mp4";
+import heroPoster from "./assets/horse-hero-poster-v4.jpg";
 
 const SERVICES = [
   { num: "01", tag: "الأكثر طلبًا", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبني على دراسة دقيقة لمستنداتك، مع بيان الخيارات ومخاطر كل خيار.", wa: "السلام عليكم، أرغب في الاستفسار عن خدمة استشارة قانونية." },
@@ -81,22 +80,6 @@ export default function LandingPage() {
   useReveal();
   const [articles, setArticles] = useState([]);
 
-  const journeyWrapRef = useRef(null);
-  const aboutRef = useRef(null);
-  const servicesRef = useRef(null);
-  const packagesRef = useRef(null);
-  const articlesRef = useRef(null);
-  const faqRef = useRef(null);
-  const contactRef = useRef(null);
-  const journeySectionRefs = {
-    about: aboutRef,
-    services: servicesRef,
-    packages: packagesRef,
-    articles: articlesRef,
-    faq: faqRef,
-    contact: contactRef,
-  };
-
   useEffect(() => {
     let alive = true;
     listArticles({ limit: 4 })
@@ -110,44 +93,20 @@ export default function LandingPage() {
 
   const heroVideoRef = useRef(null);
   const [heroRevealed, setHeroRevealed] = useState(false);
-  const heroPlayingRef = useRef(false);
 
   const onHeroTimeUpdate = () => {
     const v = heroVideoRef.current;
     if (v && v.duration && v.currentTime >= v.duration - 0.7) setHeroRevealed(true);
   };
 
+  // يشتغل مرة واحدة فقط عند تحميل الصفحة — لا يعيد نفسه لو خرج الزائر من
+  // قسم الهيرو بالتمرير ورجع له.
   useEffect(() => {
     const video = heroVideoRef.current;
-    const hero = document.getElementById("home");
-    if (!video || !hero) return;
+    if (!video) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduced) { setHeroRevealed(true); return; }
-
-    const play = () => {
-      if (heroPlayingRef.current) return;
-      heroPlayingRef.current = true;
-      setHeroRevealed(false);
-      requestAnimationFrame(() => {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      });
-    };
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting && e.intersectionRatio >= 0.6) {
-            if (!heroPlayingRef.current) play();
-          } else {
-            heroPlayingRef.current = false;
-          }
-        });
-      },
-      { threshold: [0, 0.6] }
-    );
-    io.observe(hero);
-    play();
-    return () => io.disconnect();
+    video.play().catch(() => {});
   }, []);
 
   return (
@@ -189,13 +148,10 @@ export default function LandingPage() {
         </a>
       </section>
 
-      <div className="horse-journey-wrap" ref={journeyWrapRef}>
-      <HorseJourney wrapRef={journeyWrapRef} sectionRefs={journeySectionRefs} />
-
       <RoadLink />
 
       {/* من نحن */}
-      <section id="about" className="site-pad" ref={aboutRef} style={{ position: "relative", overflow: "hidden" }}>
+      <section id="about" className="site-pad" style={{ position: "relative", overflow: "hidden" }}>
         <div className="site-wrap">
           <div className="rv" style={{ marginBottom: "2.4rem" }}>
             <div className="site-kicker"><span /><span>من نحن</span></div>
@@ -266,7 +222,7 @@ export default function LandingPage() {
       </section>
 
       {/* الخدمات — محطات على الطريق */}
-      <section id="services" className="site-pad site-bg-soft" ref={servicesRef}>
+      <section id="services" className="site-pad site-bg-soft">
         <div className="site-wrap">
           <div className="site-sechead rv">
             <div style={{ maxWidth: 520 }}>
@@ -331,7 +287,7 @@ export default function LandingPage() {
       </section>
 
       {/* باقات الاشتراك */}
-      <section id="packages" className="site-pad" ref={packagesRef}>
+      <section id="packages" className="site-pad">
         <div className="site-wrap">
           <div className="rv" style={{ maxWidth: 620, marginBottom: "3.5rem" }}>
             <div className="site-kicker"><span /><span>الاشتراكات</span></div>
@@ -371,7 +327,7 @@ export default function LandingPage() {
       <RoadLink />
 
       {/* المقالات */}
-      <section id="articles" className="site-pad site-bg-soft" ref={articlesRef}>
+      <section id="articles" className="site-pad site-bg-soft">
         <div className="site-wrap">
           <div className="site-sechead rv">
             <div>
@@ -424,7 +380,7 @@ export default function LandingPage() {
       </section>
 
       {/* الأسئلة الشائعة */}
-      <section id="faq" className="site-pad" ref={faqRef}>
+      <section id="faq" className="site-pad">
         <div className="site-wrap" style={{ maxWidth: 1040 }}>
           <div className="rv" style={{ marginBottom: "3rem" }}>
             <div className="site-kicker"><span /><span>استفسارات</span></div>
@@ -442,7 +398,7 @@ export default function LandingPage() {
       </section>
 
       {/* دعوة للتواصل — مشهد الوصول */}
-      <section id="contact" className="site-cta-arrival" ref={contactRef}>
+      <section id="contact" className="site-cta-arrival">
         <div className="site-wrap" style={{ maxWidth: 720, textAlign: "center" }}>
           <p className="rv" style={{ color: "rgba(255,255,255,.5)", fontSize: "1.02rem", fontWeight: 300, marginBottom: "1.6rem" }}>
             لكل مسألةٍ طريق.
@@ -472,7 +428,6 @@ export default function LandingPage() {
       </section>
 
       <RoadLink dark />
-      </div>
 
       <SiteFooter />
     </div>

@@ -132,7 +132,7 @@
   position: relative; min-height: 100vh; background: #EEF2F6; overflow: hidden;
 }
 .site-hero-video {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%;
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%;
 }
 .site-hero-scrim {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -146,22 +146,21 @@
 }
 .site-hero-content.reveal { opacity: 1; }
 .site-hero-welcome {
-  position: absolute; top: 42%; left: 50%; transform: translateX(-50%);
-  text-align: center; width: 100%; max-width: 560px; padding: 0 1.25rem;
+  position: absolute; top: 30%; left: 16%; text-align: left; max-width: 420px;
 }
 .site-hero .site-hero-welcome-title {
-  font-size: clamp(3rem, 5.4vw, 4.6rem); color: #fff; font-weight: 700; line-height: 1.15;
-  letter-spacing: .03em; margin: 0 0 .7rem; text-shadow: 0 2px 16px rgba(1,1,1,.25); white-space: nowrap;
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(3.2rem, 5.4vw, 4.6rem); color: #fff; font-weight: 700; font-style: italic; line-height: 1.15;
+  letter-spacing: 0; margin: 0 0 .7rem; text-shadow: 0 2px 16px rgba(1,1,1,.25); text-align: left; white-space: nowrap;
 }
 .site-hero-welcome-sub {
   font-family: 'Noto Naskh Arabic', serif; font-size: clamp(.85rem, 1.2vw, 1rem); color: #fff; font-weight: 500;
-  line-height: 1.4; margin: 0; white-space: nowrap; text-shadow: 0 2px 12px rgba(0,0,0,.25);
+  font-style: italic; line-height: 2; margin: 0; text-align: left; white-space: nowrap; text-shadow: 0 2px 12px rgba(0,0,0,.25);
 }
 .site-hero-actions-wrap {
-  position: absolute; top: 64%; left: 50%; transform: translateX(-50%);
-  text-align: center; z-index: 3; width: 100%; max-width: 560px; padding: 0 1.25rem;
+  position: absolute; top: 64%; left: 16%; text-align: left; z-index: 3;
 }
-.site-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.site-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-start; }
 .site-hero-actions .site-btn { white-space: nowrap; padding: 1rem 2.3rem; }
 .site-hero-arrow {
   position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%); z-index: 2;
@@ -370,9 +369,11 @@
   .site-nav { display: none; }
   .site-burger { display: flex; }
   .site-pad, .site-pad-sm { padding: 4rem 1.25rem; }
+  .site-hero-welcome { left: 6%; max-width: 88%; }
   .site-hero-welcome-title { font-size: clamp(2.2rem, 9vw, 3rem); white-space: normal; }
   .site-hero-welcome-sub { white-space: normal; }
-  .site-hero-actions { max-width: 360px; margin: 0 auto; }
+  .site-hero-actions-wrap { left: 6%; right: 6%; }
+  .site-hero-actions { max-width: 360px; }
   .site-hero-actions > * { flex: 1 1 150px; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 160px 1fr; gap: 1.5rem; }

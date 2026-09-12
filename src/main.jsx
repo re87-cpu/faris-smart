@@ -12,7 +12,6 @@ import "./styles/industry-layout.css";
 import "./styles/industry-grids.css";
 import "./styles/industry-legacy-bridge.css";
 import "./styles/site.css";
-import "./styles/horse-journey.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
