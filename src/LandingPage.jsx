@@ -92,13 +92,9 @@ export default function LandingPage() {
   const rest = articles.slice(1, 4);
 
   const heroVideoRef = useRef(null);
-  // على الجوال (شاشة ضيقة، غالبًا شبكة أبطأ وسياسات تشغيل تلقائي أشد) نتجاوز
-  // الفيديو كليًا ونعرض النص فورًا فوق صورة البوستر الثابتة — أخف وأضمن.
-  // القيمة الابتدائية تُحسب قبل أول رسم حتى لا يبدأ المتصفح بتحميل الفيديو
-  // على الجوال أصلًا (لا مجرد تجاهل تشغيله بعد التحميل).
-  const [heroVideoOn] = useState(
-    () => !(window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-  );
+  // يشتغل على كل الأجهزة (بما فيها الجوال) — يُستثنى فقط لمن يفعّل "تقليل
+  // الحركة" (إتاحة/حساسية حركة، لا تخمين حسب حجم الشاشة).
+  const [heroVideoOn] = useState(() => !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   const [heroRevealed, setHeroRevealed] = useState(() => !heroVideoOn);
 
   const onHeroTimeUpdate = () => {
