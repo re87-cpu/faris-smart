@@ -7,6 +7,7 @@ const GROUPS = [
   { label: "نظرة عامة", links: [
     { to: "/dashboard-admin", label: "الرئيسية", end: true },
     { to: "/admin/analytics", label: "التحليلات" },
+    { to: "/admin/financial", label: "المالية" },
   ]},
   { label: "القضايا", links: [
     { to: "/admin/cases", label: "القضايا" },
