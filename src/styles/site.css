@@ -158,7 +158,7 @@
   font-style: italic; line-height: 2; margin: 0; text-align: left; white-space: nowrap; text-shadow: 0 2px 12px rgba(0,0,0,.25);
 }
 .site-hero-actions-wrap {
-  position: absolute; top: 64%; left: 30%; text-align: left; z-index: 3;
+  position: absolute; top: 64%; left: 22%; text-align: left; z-index: 3;
 }
 .site-hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: flex-start; }
 .site-hero-actions .site-btn { white-space: nowrap; padding: 1rem 2.3rem; }
@@ -214,7 +214,7 @@
 /* — quote strip — */
 .site-quote { background: var(--s-accent); padding: 6rem 2.5rem; text-align: center; }
 .site-quote p:first-child {
-  font-size: clamp(1.5rem, 3.1vw, 2.5rem); font-weight: 800; color: #fff; line-height: 1.55;
+  font-size: clamp(1.3rem, 2.5vw, 2.05rem); font-weight: 800; color: #fff; line-height: 1.6;
   text-wrap: balance; margin-bottom: 1.6rem; max-width: 1040px; margin-inline: auto;
 }
 .site-quote p:last-child:not(:first-child) { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
