@@ -151,7 +151,7 @@ export default function LandingPage() {
           <div className="site-hero-actions-wrap">
             <div className="site-hero-actions">
               <a href={waHref("السلام عليكم، أرغب في طلب استشارة قانونية.")} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary">
-                ابدأ من سؤالك
+                سؤالك هو بداية الطريق
               </a>
               <Link to="/services" className="site-btn site-btn-outline">استكشف خدماتنا</Link>
             </div>
@@ -291,8 +291,7 @@ export default function LandingPage() {
 
       {/* اقتباس */}
       <section className="site-quote rv">
-        <p>"إذا أردنا احترام القانون، يجب علينا أولاً أن نجعل القانون جديرًا بالاحترام."</p>
-        <p>— القاضي لويس برانديز</p>
+        <p>«إنَّ اللهَ يأمرُ بالعدلِ والإحسان؛ فبهما تُصانُ الحقوقُ، وتُردُّ المظالمُ، وتستقيمُ الموازينُ.»</p>
       </section>
 
       {/* باقات الاشتراك */}

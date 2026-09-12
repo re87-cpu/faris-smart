@@ -217,7 +217,7 @@
   font-size: clamp(1.5rem, 3.1vw, 2.5rem); font-weight: 800; color: #fff; line-height: 1.55;
   text-wrap: balance; margin-bottom: 1.6rem; max-width: 1040px; margin-inline: auto;
 }
-.site-quote p:last-child { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
+.site-quote p:last-child:not(:first-child) { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
 
 /* — road link (وصلة زخرفية بين الأقسام) — */
 .road-link { position: relative; height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
