@@ -236,6 +236,7 @@
 /* — about / values grids — */
 .about-grid { display: grid; grid-template-columns: 220px 1fr; gap: 2.2rem; align-items: start; }
 .values-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 4rem; }
+.about-license-badge { bottom: -3.2rem; }
 
 /* — values (لماذا فارس) — */
 .route-v { position: relative; }
@@ -386,5 +387,6 @@
   .site-footer-grid { grid-template-columns: 1fr; }
   .site-grid-4 { grid-template-columns: 1fr; }
   .about-grid { grid-template-columns: 1fr; }
-  .about-grid > div:first-child { max-width: 220px; margin: 0 auto 2.5rem; }
+  .about-grid > div:first-child { max-width: 220px; margin: 0 auto 5.2rem; }
+  .about-license-badge { bottom: -3.6rem; }
 }

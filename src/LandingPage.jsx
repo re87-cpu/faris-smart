@@ -177,8 +177,9 @@ export default function LandingPage() {
                 <img src={logo} alt="فارس للمحاماة" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
               <div
+                className="about-license-badge"
                 style={{
-                  position: "absolute", bottom: "-1rem", left: "-1rem", background: "var(--s-navy)", color: "#fff",
+                  position: "absolute", left: "-1rem", background: "var(--s-navy)", color: "#fff",
                   padding: ".8rem .9rem", borderRadius: 4, width: 150, boxShadow: "0 10px 24px rgba(23,32,45,.22)",
                 }}
               >
