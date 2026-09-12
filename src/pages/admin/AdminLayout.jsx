@@ -22,6 +22,7 @@ const GROUPS = [
     { to: "/admin/articles", label: "المقالات" },
     { to: "/admin/archive", label: "الأرشيف" },
     { to: "/admin/notifications", label: "الإشعارات" },
+    { to: "/admin/moj-reports", label: "التقارير الشهرية" },
   ]},
 ];
 

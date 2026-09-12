@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   getDashboardCounters, getWeekSessions, getUpcomingDeadlines,
-  listMyTasks, toggleMyTask, listFinancialTransactions,
+  listMyTasks, toggleMyTask, listFinancialTransactions, listMojReports,
 } from "../../mock/api.js";
 import { getAuth } from "../../utils/auth.js";
 import { fmtMoney, financialTotals } from "../../data/financialSeed.js";
@@ -11,7 +11,6 @@ import { fmtMoney, financialTotals } from "../../data/financialSeed.js";
 const OFFICIAL_LINKS = [
   { label: "الأنظمة واللوائح", href: "https://laws.moj.gov.sa/" },
   { label: "الأحكام القضائية", href: "https://sjp.moj.gov.sa/" },
-  { label: "التقرير الشهري", href: "https://laws.moj.gov.sa/ar/documentation/?type=2" },
   { label: "ناجز", href: "https://www.najiz.sa/" },
   { label: "وزارة العدل", href: "https://www.moj.gov.sa/" },
 ];
@@ -47,6 +46,19 @@ export default function DashboardAdmin() {
 
   const [fin, setFin] = useState({ totalIncome: 0, totalExpense: 0, totalDue: 0, net: 0 });
   const [finLoading, setFinLoading] = useState(true);
+
+  const [latestMojReport, setLatestMojReport] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const rows = await listMojReports();
+        setLatestMojReport(rows?.[0] || null);
+      } catch {
+        setLatestMojReport(null);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -250,6 +262,11 @@ export default function DashboardAdmin() {
               <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
                 <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
               </a>
+              {latestMojReport && (
+                <Link to="/admin/moj-reports" className="mini-banner">
+                  <span>تقرير شهري جديد: {latestMojReport.name} — نزّله من صفحتنا</span>
+                </Link>
+              )}
               <div>
                 <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginBottom: 6 }}>خدمات ومراجع قضائية</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>

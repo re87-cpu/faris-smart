@@ -31,6 +31,7 @@ import AdminTasks from "./pages/admin/AdminTasks.jsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.jsx";
 import AdminArticles from "./pages/admin/AdminArticles.jsx";
 import Financial from "./pages/admin/Financial.jsx";
+import AdminMojReports from "./pages/admin/AdminMojReports.jsx";
 
 /* الحراس */
 import RequireAdmin from "./guards/RequireAdmin.jsx";
@@ -106,6 +107,7 @@ export default function App() {
         <Route path="notifications" element={<AdminNotifications />} />
         <Route path="articles" element={<AdminArticles />} />
         <Route path="financial" element={<Financial />} />
+        <Route path="moj-reports" element={<AdminMojReports />} />
       </Route>
 
       {/* لوحة الموظف */}
