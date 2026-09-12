@@ -5,6 +5,9 @@
 
 .horse-journey-wrap { position: relative; }
 
+/* محتوى كل قسم يطفو فوق الحصان (خلفية القسم نفسها تبقى تحته، فلا يختفي الحصان بالكامل). */
+.horse-journey-wrap .site-wrap { position: relative; z-index: 5; }
+
 .horse-journey-overlay {
   position: absolute;
   inset: 0;
@@ -38,8 +41,15 @@
   overflow: visible;
   transform: translate(-50%, -86%);
   filter: drop-shadow(0 10px 14px rgba(23, 50, 77, 0.16));
+  opacity: .5;
+  transition: opacity .5s ease;
 }
 .horse-token.is-simplified .horse-svg { width: 88px; }
+/* أثناء المشي العابر يكون خفيفًا حتى لا يزاحم العناوين والنصوص؛ يوضح
+   نفسه بالكامل فقط عند التوقف عند محطة (slow/look) أو الوصول. */
+.horse-token.pose-slow .horse-svg,
+.horse-token.pose-look .horse-svg,
+.horse-token.pose-arrive .horse-svg { opacity: 1; }
 
 /* — fills / strokes — */
 .horse-body,

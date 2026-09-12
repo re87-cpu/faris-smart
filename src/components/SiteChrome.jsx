@@ -114,6 +114,12 @@ export function SiteFooter() {
             <span>المملكة العربية السعودية</span>
           </div>
         </div>
+        <svg className="rv" width="2" height="34" style={{ display: "block", margin: "2.6rem auto 0" }} aria-hidden="true">
+          <line x1="1" y1="0" x2="1" y2="34" stroke="rgba(255,255,255,.3)" strokeWidth="1.5" />
+        </svg>
+        <p className="rv" style={{ textAlign: "center", color: "rgba(255,255,255,.4)", fontSize: ".92rem", fontWeight: 300, padding: "1rem 0 0" }}>
+          والطريق مستمر.
+        </p>
         <div className="site-footer-bottom">
           <p>© 2026 فارس للمحاماة — جميع الحقوق محفوظة</p>
         </div>

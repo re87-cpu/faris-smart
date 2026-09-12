@@ -145,10 +145,13 @@ export default function HorseJourney({ wrapRef, sectionRefs }) {
       const el = sectionRefs[s.key]?.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
-      const y = r.top - wrapRect.top + r.height / 2;
+      // 60% down the section rather than dead-center: most sections carry a
+      // heading near the top, so biasing the resting point downward keeps
+      // the horse out of the heading/body text instead of walking across it.
+      const y = r.top - wrapRect.top + r.height * 0.6;
       const x = (wrapRect.width * s.xPct) / 100;
       pts.push({ x, y });
-      waypoints.push({ key: s.key, x, y, docY: r.top + scrollY + r.height / 2 });
+      waypoints.push({ key: s.key, x, y, docY: r.top + scrollY + r.height * 0.6 });
     });
     const last = pts[pts.length - 1];
     pts.push({ x: last.x, y: last.y + 40 });

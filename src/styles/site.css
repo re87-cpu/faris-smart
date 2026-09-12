@@ -220,24 +220,57 @@
 }
 .site-quote p:last-child { font-size: 1rem; font-weight: 500; color: rgba(255,255,255,.78); }
 
-/* — about — */
-.site-about-media {
-  position: relative; display: flex; align-items: center; justify-content: center;
-  min-height: 420px; padding: 1rem 0;
+/* — road link (وصلة زخرفية بين الأقسام) — */
+.road-link { position: relative; height: 110px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.road-link-line { width: 1.5px; height: 0; background: linear-gradient(180deg, #A7C0D8, #2D5986); transition: height 1.3s cubic-bezier(.2,.7,.2,1); }
+.road-link.in .road-link-line { height: 72px; }
+.road-link-dot {
+  position: absolute; top: 50%; left: 50%; width: 7px; height: 7px; border-radius: 50%; background: #2D5986;
+  opacity: 0; transform: translate(-50%,-50%) scale(.4);
+  transition: opacity .6s ease .9s, transform .6s cubic-bezier(.3,.7,.2,1) .9s;
 }
-.site-about-logo { width: 100%; display: grid; place-items: center; }
-.site-about-logo img { width: 100%; max-width: 300px; height: auto; }
-.site-about-badge {
-  position: absolute; bottom: 0; left: 0;
-  background: var(--s-navy); color: #fff; border-radius: 4px;
-  padding: 1.5rem 1.7rem; max-width: 240px;
-  box-shadow: 0 18px 50px rgba(23,32,45,.18);
+.road-link.in .road-link-dot { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.road-link-dark .road-link-line { background: linear-gradient(180deg, rgba(167,192,216,.5), rgba(255,255,255,.55)); }
+.road-link-dark .road-link-dot { background: #fff; }
+@media (prefers-reduced-motion: reduce) { .road-link-line, .road-link-dot { transition: none; } }
+
+/* — about / values grids — */
+.about-grid { display: grid; grid-template-columns: 220px 1fr; gap: 2.2rem; align-items: start; }
+.values-grid { display: grid; grid-template-columns: 5fr 7fr; gap: 4rem; }
+
+/* — values (لماذا فارس) — */
+.route-v { position: relative; }
+.route-v-line {
+  position: absolute; top: 8px; bottom: 8px; right: 44px; width: 1.5px;
+  background: linear-gradient(180deg, transparent, #A7C0D8 6%, #A7C0D8 94%, transparent);
 }
-.site-about-badge p { font-size: .98rem; font-weight: 500; line-height: 1.7; }
-.site-about-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem 2rem; margin: 2rem 0 2.8rem; }
-.site-about-facts > div { border-top: 1px solid var(--s-line); padding-top: 1rem; }
-.site-about-facts p:first-child { font-weight: 700; color: var(--s-navy); font-size: 1.02rem; }
-.site-about-facts p:last-child { font-size: .92rem; color: var(--s-muted); font-weight: 300; }
+.route-v .dest { display: flex; gap: 2rem; align-items: flex-start; padding: 2.6rem 0; border-bottom: 1px solid var(--s-line); }
+.route-v .dest:first-child { padding-top: 0; }
+.route-v .dest:last-child { border-bottom: none; }
+.route-v .marker { flex-shrink: 0; width: 90px; display: flex; flex-direction: column; align-items: center; gap: .9rem; padding-top: .4rem; }
+.route-v .dot { width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 1.5px solid var(--s-accent); transition: background .35s ease; }
+.route-v .dest:hover .dot { background: var(--s-accent); }
+.route-v .num { font-size: .82rem; color: #8C99A7; letter-spacing: .05em; }
+.route-v .dtitle { transition: color .3s ease; }
+.route-v .dest:hover .dtitle { color: var(--s-accent); }
+.route-v .darw { transition: transform .4s ease; }
+.route-v .dest:hover .darw { transform: translateX(-8px); }
+@media (max-width: 900px) { .route-v-line { right: 24px; } .route-v .marker { width: 52px; } }
+
+/* — how we work (منهجيتنا) — */
+.route-h { display: flex; gap: 1.5rem; position: relative; }
+.route-h .stage { flex: 1; position: relative; text-align: center; padding-top: 2.6rem; }
+.route-h .dot {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 1.5px solid var(--s-accent);
+}
+.route-h-line { position: absolute; top: 5px; left: 0; right: 0; height: 1.5px; background: linear-gradient(90deg, transparent, #A7C0D8 6%, #A7C0D8 94%, transparent); }
+@media (max-width: 900px) {
+  .route-h { flex-direction: column; gap: 2.1rem; }
+  .route-h .stage { text-align: right; padding-top: 0; padding-right: 2rem; border-right: 1.5px solid #C8D8E6; }
+  .route-h .dot { top: 2px; left: auto; right: -5.5px; transform: none; }
+  .route-h-line { display: none; }
+}
 
 /* — packages — */
 .site-price {
@@ -306,6 +339,9 @@
 .site-cta p { color: rgba(255,255,255,.8); font-size: 1.08rem; font-weight: 300; }
 .site-cta .site-btn-primary:hover { background: #fff; color: var(--s-navy); }
 
+/* — cta arrival scene (الرئيسية) — */
+.site-cta-arrival { background: var(--s-navy); padding: 8rem 2.5rem; }
+
 /* — footer — */
 .site-footer { background: var(--s-navy); padding: 4rem 2.5rem 0; border-top: 1px solid rgba(255,255,255,.1); }
 .site-footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 3rem; padding-bottom: 3.5rem; }
@@ -339,9 +375,8 @@
   .site-hero-actions { max-width: 360px; margin: 0 auto; }
   .site-hero-actions > * { flex: 1 1 150px; }
   .site-grid-2, .site-grid-3, .site-grid-4 { grid-template-columns: 1fr; }
-  .site-about-media { min-height: 0; flex-direction: column; gap: 1.6rem; padding: 0 0 1rem; }
-  .site-about-logo img { max-width: 220px; }
-  .site-about-badge { position: static; max-width: 280px; }
+  .about-grid { grid-template-columns: 160px 1fr; gap: 1.5rem; }
+  .values-grid { grid-template-columns: 1fr; gap: 2.4rem; }
   .site-article-feat { grid-template-columns: 1fr; }
   .site-price.featured { transform: none; }
   .site-footer-grid { grid-template-columns: 1fr 1fr; }
@@ -349,4 +384,6 @@
 @media (max-width: 640px) {
   .site-footer-grid { grid-template-columns: 1fr; }
   .site-grid-4 { grid-template-columns: 1fr; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-grid > div:first-child { max-width: 220px; margin: 0 auto 2.5rem; }
 }

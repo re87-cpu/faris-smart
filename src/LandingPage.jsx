@@ -11,9 +11,17 @@ import heroVideo from "./assets/horse-hero.mp4";
 import heroPoster from "./assets/horse-hero-poster.jpg";
 
 const SERVICES = [
-  { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
-  { tag: "عقود", n: "02", title: "صياغة العقود", desc: "عقود محكمة الصياغة تحمي مصالحك وتتوقّع النزاع قبل وقوعه." },
-  { tag: "مذكرات", n: "03", title: "إعداد المذكرات واللوائح", desc: "لوائح ومذكرات مبنية على الأنظمة والسوابق، مصاغة بلغة قضائية دقيقة." },
+  { num: "01", tag: "الأكثر طلبًا", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبني على دراسة دقيقة لمستنداتك، مع بيان الخيارات ومخاطر كل خيار.", wa: "السلام عليكم، أرغب في الاستفسار عن خدمة استشارة قانونية." },
+  { num: "02", tag: "عقود", title: "صياغة العقود", desc: "عقود محكمة الصياغة تحمي مصالحك وتمنع النزاع قبل وقوعه.", wa: "السلام عليكم، أرغب في الاستفسار عن خدمة صياغة العقود." },
+  { num: "03", tag: "مذكرات", title: "إعداد المذكرات واللوائح", desc: "لوائح ومذكرات مبنية على الأنظمة والسوابق، مصاغة بلغة قضائية دقيقة.", wa: "السلام عليكم، أرغب في الاستفسار عن خدمة إعداد المذكرات واللوائح." },
+];
+
+const STAGES = [
+  ["فهم المسألة", "نستمع لموضوعك ونجمع كل ما يخصه من مستندات ومعلومات."],
+  ["تحديد الطريق", "نضع المسارات القانونية الممكنة، ونوضح ما يناسب حالتك."],
+  ["التحليل", "دراسة دقيقة للأنظمة والسوابق ذات الصلة بملفك."],
+  ["الإجراء", "تنفيذ الخطوات اللازمة، صياغة أو تمثيلًا أو متابعة."],
+  ["الوصول", "قرار واضح، وملف موثق، ومتابعة حتى إغلاقه."],
 ];
 
 const PACKAGES = [
@@ -39,6 +47,34 @@ function fmtDate(v) {
 function excerpt(s, n = 150) {
   const t = String(s || "").replace(/\s+/g, " ").trim();
   return t.length > n ? t.slice(0, n) + "…" : t;
+}
+
+// وصلة زخرفية بين الأقسام — خط رأسي يمتد ونقطة تظهر عند التمرير إليه.
+function RoadLink({ dark }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            el.classList.add("in");
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className={`road-link${dark ? " road-link-dark" : ""}`} aria-hidden="true">
+      <span className="road-link-line" />
+      <span className="road-link-dot" />
+    </div>
+  );
 }
 
 export default function LandingPage() {
@@ -156,77 +192,137 @@ export default function LandingPage() {
       <div className="horse-journey-wrap" ref={journeyWrapRef}>
       <HorseJourney wrapRef={journeyWrapRef} sectionRefs={journeySectionRefs} />
 
+      <RoadLink />
+
       {/* من نحن */}
-      <section id="about" className="site-pad" ref={aboutRef}>
+      <section id="about" className="site-pad" ref={aboutRef} style={{ position: "relative", overflow: "hidden" }}>
         <div className="site-wrap">
-          <div className="site-grid-2">
-            <div className="rv site-about-media">
-              <div className="site-about-logo">
-                <img src={logo} alt="فارس للمحاماة" />
+          <div className="rv" style={{ marginBottom: "2.4rem" }}>
+            <div className="site-kicker"><span /><span>من نحن</span></div>
+            <h2 className="site-h2">خبرة قانونية برؤية حديثة</h2>
+          </div>
+          <div className="about-grid">
+            <div className="rv" style={{ position: "relative" }}>
+              <div
+                style={{
+                  width: "100%", aspectRatio: "1/1", overflow: "hidden", borderRadius: 4,
+                  background: "var(--s-bg-soft)", display: "grid", placeItems: "center", padding: "1.4rem",
+                }}
+              >
+                <img src={logo} alt="فارس للمحاماة" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
-              <div className="site-about-badge">
-                <p>مرخّص من الهيئة السعودية للمحامين ووزارة العدل</p>
+              <div
+                style={{
+                  position: "absolute", bottom: "-1rem", left: "-1rem", background: "var(--s-navy)", color: "#fff",
+                  padding: ".8rem .9rem", borderRadius: 4, width: 150, boxShadow: "0 10px 24px rgba(23,32,45,.22)",
+                }}
+              >
+                <p style={{ fontSize: ".72rem", fontWeight: 500, lineHeight: 1.5, margin: 0 }}>
+                  مرخّص من الهيئة السعودية للمحامين ووزارة العدل
+                </p>
               </div>
             </div>
             <div className="rv d1">
-              <div className="site-kicker"><span /><span>من نحن</span></div>
-              <h2 className="site-h2" style={{ marginBottom: "1.8rem" }}>خبرة قانونية برؤية حديثة</h2>
               <p className="site-lead" style={{ marginBottom: "1.2rem" }}>
                 فارس للمحاماة ممارسة قانونية سعودية تقدّم الاستشارات والتمثيل القانوني للأفراد والمنشآت،
                 بمنهجية تجمع بين الدقة النظامية وفهم واقع الأعمال اليومي.
               </p>
-              <p className="site-lead" style={{ marginBottom: "2.4rem" }}>
+              <p className="site-lead">
                 نتعامل مع كل ملف بوصفه قرارًا يخصّ صاحبه، ونقدّم رأيًا قانونيًا واضحًا وحلولًا قابلة للتنفيذ،
                 مع التزام كامل بالسرية.
               </p>
-              <div className="site-about-facts">
-                <div><p>موثوقية</p><p>معايير عمل مكتوبة لكل مرحلة من مراحل الملف.</p></div>
-                <div><p>سرية</p><p>حماية كاملة لمعلومات الموكّل ومستنداته.</p></div>
-                <div><p>جودة الخدمة</p><p>متابعة مستمرة وتحديث دوري لحالة القضية.</p></div>
-                <div><p>حلول عملية</p><p>رأي قانوني واضح مبني على احتياج العميل.</p></div>
-              </div>
-              <Link to="/lawyer" className="site-arrowlink">معلومات المحامي <span>←</span></Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* الخدمات */}
+      {/* لماذا فارس */}
+      <section id="values" className="site-pad-sm site-bg-soft">
+        <div className="site-wrap values-grid">
+          <div className="rv" style={{ alignSelf: "start" }}>
+            <div className="site-kicker"><span /><span>لماذا فارس</span></div>
+            <h2 className="site-h2" style={{ fontSize: "clamp(1.8rem,2.8vw,2.5rem)", lineHeight: 1.45 }}>
+              معايير عمل لا تتبدل من ملف لآخر.
+            </h2>
+          </div>
+          <div className="rv d1 route-v">
+            <div className="route-v-line" aria-hidden="true" />
+            {[
+              ["01", "مهنية", "معايير عمل مكتوبة لكل مرحلة من مراحل الملف."],
+              ["02", "سرية", "حماية كاملة لمعلومات الموكّل ومستنداته."],
+              ["03", "جودة الخدمة", "متابعة مستمرة وتحديث دوري لحالة القضية."],
+              ["04", "حلول عملية", "رأي قانوني واضح مبني على احتياج العميل."],
+            ].map(([num, title, desc]) => (
+              <div className="dest" key={num}>
+                <div className="marker"><span className="dot" /><span className="num">{num}</span></div>
+                <div className="content">
+                  <p className="dtitle" style={{ fontWeight: 700, color: "var(--s-navy)", fontSize: "1.2rem", marginBottom: ".5rem" }}>{title}</p>
+                  <p style={{ fontSize: "1rem", color: "var(--s-muted)", fontWeight: 300 }}>{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* الخدمات — محطات على الطريق */}
       <section id="services" className="site-pad site-bg-soft" ref={servicesRef}>
         <div className="site-wrap">
           <div className="site-sechead rv">
-            <div style={{ maxWidth: 620 }}>
+            <div style={{ maxWidth: 520 }}>
               <div className="site-kicker"><span /><span>خدماتنا</span></div>
-              <h2 className="site-h2">خدماتنا القانونية</h2>
+              <h2 className="site-h2">محطات على طريق فارس</h2>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", maxWidth: 420 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", maxWidth: 400 }}>
               <p className="site-lead">
-                 أكثر الخدمات طلبًا.
+                هذه أكثر الخدمات طلبًا. النطاق الكامل — مراجعة العقود والتوثيق والخطابات والإنذارات وخدمات الشركات
+                ومتابعة الطلبات — في صفحة الخدمات.
               </p>
               <Link to="/services" className="site-arrowlink" style={{ alignSelf: "flex-start" }}>عرض جميع الخدمات <span>←</span></Link>
             </div>
           </div>
-          <div className="site-grid-3">
+          <div className="rv d1 route-v">
+            <div className="route-v-line" aria-hidden="true" />
             {SERVICES.map((s) => (
-              <a
-                key={s.n}
-                href={waHref(`السلام عليكم، أرغب في الاستفسار عن خدمة ${s.title}.`)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="site-card hoverable rv"
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: ".9rem", marginBottom: ".9rem" }}>
-                  <span className="site-tag">{s.tag}</span>
-                  <span style={{ color: "#8C99A7", fontSize: ".82rem" }}>{s.n}</span>
+              <a key={s.num} href={waHref(s.wa)} target="_blank" rel="noopener noreferrer" className="dest">
+                <div className="marker"><span className="dot" /><span className="num">{s.num}</span></div>
+                <div className="content">
+                  <span className="site-tag" style={{ marginBottom: ".9rem" }}>{s.tag}</span>
+                  <h3 className="dtitle" style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--s-navy)", lineHeight: 1.4, marginBottom: ".6rem" }}>{s.title}</h3>
+                  <p style={{ color: "#5A6878", fontWeight: 300, fontSize: "1rem", marginBottom: "1rem", maxWidth: 560 }}>{s.desc}</p>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: ".7rem", color: "var(--s-accent)", fontWeight: 700, fontSize: ".92rem" }}>
+                    اطلب الخدمة عبر واتساب <span className="darw">←</span>
+                  </span>
                 </div>
-                <h3>{s.title}</h3>
-                <p>{s.desc}</p>
-                <span className="site-card-cta">اطلب الخدمة عبر واتساب <span className="arw">←</span></span>
               </a>
             ))}
           </div>
         </div>
       </section>
+
+      <RoadLink />
+
+      {/* كيف نعمل */}
+      <section id="how" className="site-pad" style={{ paddingBottom: "8rem" }}>
+        <div className="site-wrap">
+          <div className="rv" style={{ maxWidth: 620, marginBottom: "5rem" }}>
+            <div className="site-kicker"><span /><span>منهجيتنا</span></div>
+            <h2 className="site-h2">من السؤال إلى القرار، خطوة بخطوة</h2>
+          </div>
+          <div className="rv d1 route-h">
+            <div className="route-h-line" aria-hidden="true" />
+            {STAGES.map(([title, desc]) => (
+              <div className="stage" key={title}>
+                <span className="dot" />
+                <p style={{ fontWeight: 700, color: "var(--s-navy)", fontSize: "1.08rem", marginBottom: ".5rem" }}>{title}</p>
+                <p style={{ color: "var(--s-muted)", fontWeight: 300, fontSize: ".92rem" }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <RoadLink dark />
 
       {/* اقتباس */}
       <section className="site-quote rv">
@@ -271,6 +367,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <RoadLink />
 
       {/* المقالات */}
       <section id="articles" className="site-pad site-bg-soft" ref={articlesRef}>
@@ -343,19 +441,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* دعوة للتواصل */}
-      <section id="contact" className="site-cta" ref={contactRef}>
-        <span className="site-cta-ring" />
-        <div className="site-cta-inner rv">
-          <div style={{ maxWidth: 640 }}>
-            <h2>هل تحتاج إلى استشارة قانونية؟</h2>
-            <p>فريقنا جاهز لمساعدتك وتوجيهك إلى الحل القانوني المناسب.</p>
-          </div>
-          <a href={waHref("السلام عليكم، أرغب في طلب استشارة قانونية.")} target="_blank" rel="noopener noreferrer" className="site-btn site-btn-primary site-btn-lg">
+      {/* دعوة للتواصل — مشهد الوصول */}
+      <section id="contact" className="site-cta-arrival" ref={contactRef}>
+        <div className="site-wrap" style={{ maxWidth: 720, textAlign: "center" }}>
+          <p className="rv" style={{ color: "rgba(255,255,255,.5)", fontSize: "1.02rem", fontWeight: 300, marginBottom: "1.6rem" }}>
+            لكل مسألةٍ طريق.
+          </p>
+          <h2 className="rv d1" style={{ color: "#fff", fontSize: "clamp(2rem,3.6vw,3.2rem)", fontWeight: 800, lineHeight: 1.35, marginBottom: "1.4rem" }}>
+            ابدأ طريقك مع فارس.
+          </h2>
+          <p className="rv d2" style={{ color: "rgba(255,255,255,.72)", fontSize: "1.08rem", fontWeight: 300, marginBottom: "3rem" }}>
+            فريقنا جاهز لمساعدتك وتوجيهك إلى الحل القانوني المناسب.
+          </p>
+          <a
+            className="rv d2"
+            href={waHref("السلام عليكم، أرغب في طلب استشارة قانونية.")}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: ".9rem", background: "var(--s-accent)", color: "#fff",
+              padding: "1.15rem 2.6rem", borderRadius: 4, fontSize: "1.02rem", fontWeight: 700,
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+            </svg>
             تواصل معنا عبر واتساب
           </a>
         </div>
       </section>
+
+      <RoadLink dark />
       </div>
 
       <SiteFooter />
