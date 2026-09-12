@@ -1,11 +1,12 @@
 // FILE: src/LandingPage.jsx
 // الصفحة الرئيسية — تصميم "Law Firm Website v2"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteHeader, SiteFooter } from "./components/SiteChrome.jsx";
 import { useReveal, waHref } from "./utils/site.js";
 import { listArticles } from "./mock/api.js";
 import logo from "./assets/logo-mark.png";
+import HorseJourney from "./components/horse/HorseJourney.jsx";
 
 const SERVICES = [
   { tag: "الأكثر طلبًا", n: "01", title: "استشارة قانونية", desc: "رأي قانوني واضح لحالتك مبنيّ على دراسة دقيقة لمستنداتك، مع بيان الخيارات والمخاطر في كل خيار." },
@@ -42,6 +43,22 @@ export default function LandingPage() {
   useReveal();
   const [articles, setArticles] = useState([]);
 
+  const journeyWrapRef = useRef(null);
+  const aboutRef = useRef(null);
+  const servicesRef = useRef(null);
+  const packagesRef = useRef(null);
+  const articlesRef = useRef(null);
+  const faqRef = useRef(null);
+  const contactRef = useRef(null);
+  const journeySectionRefs = {
+    about: aboutRef,
+    services: servicesRef,
+    packages: packagesRef,
+    articles: articlesRef,
+    faq: faqRef,
+    contact: contactRef,
+  };
+
   useEffect(() => {
     let alive = true;
     listArticles({ limit: 4 })
@@ -76,8 +93,11 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <div className="horse-journey-wrap" ref={journeyWrapRef}>
+      <HorseJourney wrapRef={journeyWrapRef} sectionRefs={journeySectionRefs} />
+
       {/* من نحن */}
-      <section id="about" className="site-pad">
+      <section id="about" className="site-pad" ref={aboutRef}>
         <div className="site-wrap">
           <div className="site-grid-2">
             <div className="rv site-about-media">
@@ -112,7 +132,7 @@ export default function LandingPage() {
       </section>
 
       {/* الخدمات */}
-      <section id="services" className="site-pad site-bg-soft">
+      <section id="services" className="site-pad site-bg-soft" ref={servicesRef}>
         <div className="site-wrap">
           <div className="site-sechead rv">
             <div style={{ maxWidth: 620 }}>
@@ -155,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* باقات الاشتراك */}
-      <section id="packages" className="site-pad">
+      <section id="packages" className="site-pad" ref={packagesRef}>
         <div className="site-wrap">
           <div className="rv" style={{ maxWidth: 620, marginBottom: "3.5rem" }}>
             <div className="site-kicker"><span /><span>الاشتراكات</span></div>
@@ -193,7 +213,7 @@ export default function LandingPage() {
       </section>
 
       {/* المقالات */}
-      <section id="articles" className="site-pad site-bg-soft">
+      <section id="articles" className="site-pad site-bg-soft" ref={articlesRef}>
         <div className="site-wrap">
           <div className="site-sechead rv">
             <div>
@@ -246,7 +266,7 @@ export default function LandingPage() {
       </section>
 
       {/* الأسئلة الشائعة */}
-      <section id="faq" className="site-pad">
+      <section id="faq" className="site-pad" ref={faqRef}>
         <div className="site-wrap" style={{ maxWidth: 1040 }}>
           <div className="rv" style={{ marginBottom: "3rem" }}>
             <div className="site-kicker"><span /><span>استفسارات</span></div>
@@ -264,7 +284,7 @@ export default function LandingPage() {
       </section>
 
       {/* دعوة للتواصل */}
-      <section className="site-cta">
+      <section id="contact" className="site-cta" ref={contactRef}>
         <span className="site-cta-ring" />
         <div className="site-cta-inner rv">
           <div style={{ maxWidth: 640 }}>
@@ -276,6 +296,7 @@ export default function LandingPage() {
           </a>
         </div>
       </section>
+      </div>
 
       <SiteFooter />
     </div>
