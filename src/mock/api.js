@@ -935,3 +935,19 @@ export async function deleteArticle(id) {
   if (!aid) throw new Error("معرّف المقال غير صالح.");
   return await http("DELETE", "/articles/" + encodeURIComponent(aid));
 }
+
+/* ===================== Financial (مدير فقط) ===================== */
+export async function listFinancialTransactions() {
+  var res = await http("GET", "/financial/transactions");
+  return Array.isArray(res) ? res : [];
+}
+
+export async function addFinancialTransaction(payload) {
+  return await http("POST", "/financial/transactions", payload || {});
+}
+
+export async function deleteFinancialTransaction(id) {
+  var tid = String(id || "").trim();
+  if (!tid) throw new Error("معرّف المعاملة غير صالح.");
+  return await http("DELETE", "/financial/transactions/" + encodeURIComponent(tid));
+}
