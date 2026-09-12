@@ -92,7 +92,14 @@ export default function LandingPage() {
   const rest = articles.slice(1, 4);
 
   const heroVideoRef = useRef(null);
-  const [heroRevealed, setHeroRevealed] = useState(false);
+  // على الجوال (شاشة ضيقة، غالبًا شبكة أبطأ وسياسات تشغيل تلقائي أشد) نتجاوز
+  // الفيديو كليًا ونعرض النص فورًا فوق صورة البوستر الثابتة — أخف وأضمن.
+  // القيمة الابتدائية تُحسب قبل أول رسم حتى لا يبدأ المتصفح بتحميل الفيديو
+  // على الجوال أصلًا (لا مجرد تجاهل تشغيله بعد التحميل).
+  const [heroVideoOn] = useState(
+    () => !(window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+  );
+  const [heroRevealed, setHeroRevealed] = useState(() => !heroVideoOn);
 
   const onHeroTimeUpdate = () => {
     const v = heroVideoRef.current;
@@ -100,14 +107,16 @@ export default function LandingPage() {
   };
 
   // يشتغل مرة واحدة فقط عند تحميل الصفحة — لا يعيد نفسه لو خرج الزائر من
-  // قسم الهيرو بالتمرير ورجع له.
+  // قسم الهيرو بالتمرير ورجع له. مهلة أمان حتى لا يبقى النص مخفيًا لو
+  // تعطّل التشغيل التلقائي أو تأخر تحميل الفيديو لأي سبب.
   useEffect(() => {
+    if (!heroVideoOn) return;
     const video = heroVideoRef.current;
     if (!video) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) { setHeroRevealed(true); return; }
-    video.play().catch(() => {});
-  }, []);
+    video.play().catch(() => setHeroRevealed(true));
+    const safety = setTimeout(() => setHeroRevealed(true), 8000);
+    return () => clearTimeout(safety);
+  }, [heroVideoOn]);
 
   return (
     <div className="site" dir="rtl">
@@ -115,19 +124,24 @@ export default function LandingPage() {
 
       {/* الهيرو */}
       <section className="site-hero" id="home">
-        <video
-          className="site-hero-video"
-          autoPlay
-          muted
-          playsInline
-          preload="auto"
-          poster={heroPoster}
-          ref={heroVideoRef}
-          onTimeUpdate={onHeroTimeUpdate}
-          onEnded={() => setHeroRevealed(true)}
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
+        {heroVideoOn ? (
+          <video
+            className="site-hero-video"
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            poster={heroPoster}
+            ref={heroVideoRef}
+            onTimeUpdate={onHeroTimeUpdate}
+            onEnded={() => setHeroRevealed(true)}
+            onError={() => setHeroRevealed(true)}
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+        ) : (
+          <img className="site-hero-video" src={heroPoster} alt="" aria-hidden="true" />
+        )}
         <div className="site-hero-scrim" aria-hidden="true" />
         <div className={`site-hero-content${heroRevealed ? " reveal" : ""}`}>
           <div className="site-hero-welcome">
@@ -159,12 +173,7 @@ export default function LandingPage() {
           </div>
           <div className="about-grid">
             <div className="rv" style={{ position: "relative" }}>
-              <div
-                style={{
-                  width: "100%", aspectRatio: "1/1", overflow: "hidden", borderRadius: 4,
-                  background: "var(--s-bg-soft)", display: "grid", placeItems: "center", padding: "1.4rem",
-                }}
-              >
+              <div style={{ width: "100%", aspectRatio: "1/1", display: "grid", placeItems: "center" }}>
                 <img src={logo} alt="فارس للمحاماة" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
               </div>
               <div
@@ -231,8 +240,7 @@ export default function LandingPage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem", maxWidth: 400 }}>
               <p className="site-lead">
-                هذه أكثر الخدمات طلبًا. النطاق الكامل — مراجعة العقود والتوثيق والخطابات والإنذارات وخدمات الشركات
-                ومتابعة الطلبات — في صفحة الخدمات.
+                هذه أكثر الخدمات طلبًا.
               </p>
               <Link to="/services" className="site-arrowlink" style={{ alignSelf: "flex-start" }}>عرض جميع الخدمات <span>←</span></Link>
             </div>
