@@ -19,7 +19,7 @@ function fmtDate(v) {
   return `${dd}-${mm}-${yyyy}`;
 }
 
-export default function AdminSecretarySearch({ title = "سكرتير القضايا (للإدارة)" }) {
+export default function AdminSecretarySearch({ title = "ابحث هنا" }) {
   const [mode, setMode] = useState("all"); // all | number | name
   const [q, setQ] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -80,9 +80,6 @@ export default function AdminSecretarySearch({ title = "سكرتير القضا�
       <div className="sec-head">
         <div>
           <div className="sec-title">{title}</div>
-          <div className="sec-sub">
-            ابحث برقم القضية أو عنوانها/المحكمة، وستظهر النتائج مباشرة من قاعدة البيانات.
-          </div>
         </div>
 
         <div className="sec-modes" role="tablist" aria-label="أنماط البحث">
@@ -129,9 +126,7 @@ export default function AdminSecretarySearch({ title = "سكرتير القضا�
           <div className="sec-empty">{err}</div>
         ) : cases.length === 0 ? (
           <div className="sec-empty">لا توجد قضايا في قاعدة البيانات.</div>
-        ) : !submitted ? (
-          <div className="sec-hint">اكتب كلمة بحث ثم اضغط “بحث”.</div>
-        ) : !q.trim() ? (
+        ) : !submitted ? null : !q.trim() ? (
           <div className="sec-hint">فضلاً اكتب رقم قضية أو عنوان.</div>
         ) : results.length === 0 ? (
           <div className="sec-empty">لا توجد نتائج مطابقة. جرّب كلمات أخرى.</div>

@@ -67,15 +67,23 @@ body,
 }
 .q-h1, .h1 { color: var(--color-accent-800); }
 
-/* 5) البطاقات → إطار سلكي شفاف قائم الزوايا -------------------------------- */
-.q-card, .card, .sec-card, .sec-card--compact,
+/* 5) البطاقات — سطح مرفوع فعليًا (نفس معالجة .card في industry.css)،
+      لا تربيع ولا شفافية تُسطّح الشكل. .card نفسها مستثناة من هذه القائمة
+      لأن قواعدها الأساسية في industry.css أصبحت هي المصدر الصحيح. */
+.q-card, .sec-card, .sec-card--compact,
 .auth-card, .auth-aside, .q-loader,
-.q-dd-menu, .sec-item, .auth-news-card, .sec-hint, .sec-empty {
-  background: transparent !important;
-  border: 1px solid var(--color-divider) !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
+.q-dd-menu, .sec-item, .auth-news-card {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-neutral-200) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
   backdrop-filter: none !important;
+}
+.sec-hint, .sec-empty {
+  background: var(--color-bg) !important;
+  border: 1px dashed var(--color-neutral-300) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: none !important;
 }
 
 /* 6) الأزرار ------------------------------------------------------------- */
@@ -175,7 +183,6 @@ input:focus, textarea:focus, select:focus {
   color: color-mix(in srgb, var(--color-text) 55%, transparent);
   font-weight: 400;
 }
-.sec-hint, .sec-empty { border-style: dashed !important; background: transparent !important; }
 
 /* 11) شيلي تدرّجات الخلفية القديمة في الأقسام الداخلية ------------------ */
 .auth-shell, .layout-shell { background: transparent !important; }
