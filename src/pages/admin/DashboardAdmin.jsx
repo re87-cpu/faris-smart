@@ -247,9 +247,9 @@ export default function DashboardAdmin() {
             </div>
 
             <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--color-neutral-300)", display: "flex", flexDirection: "column", gap: 10 }}>
-              <Link to="/admin/notifications" className="mini-banner">
-                <span>حكم قضائي جديد صدر هذا الأسبوع — اطّلع على التفاصيل</span>
-              </Link>
+              <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
+                <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
+              </a>
               <div>
                 <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginBottom: 6 }}>خدمات ومراجع قضائية</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
