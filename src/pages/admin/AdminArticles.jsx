@@ -200,14 +200,14 @@ export default function AdminArticles() {
                         {a.status === "pending" && (
                           <>
                             <button className="btn btn-primary" onClick={() => onApprove(a.id)}>نشر</button>
-                            <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onReject(a.id)}>رفض</button>
+                            <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onReject(a.id)}>رفض</button>
                           </>
                         )}
                         {a.status === "rejected" && (
-                          <button className="btn btn-ghost" onClick={() => onApprove(a.id)}>نشر</button>
+                          <button className="btn btn-primary" onClick={() => onApprove(a.id)}>نشر</button>
                         )}
                         <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onEdit(a)}>تعديل</button>
-                        <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onDelete(a.id)}>حذف</button>
+                        <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onDelete(a.id)}>حذف</button>
                       </td>
                     </tr>
                   );

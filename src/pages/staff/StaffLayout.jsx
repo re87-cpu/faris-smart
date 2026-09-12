@@ -17,8 +17,13 @@ export default function StaffLayout() {
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
       <StaffTopbar />
-      <div style={{ display: "grid", gridTemplateColumns: "220px 1fr", maxWidth: 1320, margin: "0 auto" }}>
-        <aside style={{ padding: "16px 10px", borderInlineEnd: "1px solid var(--color-neutral-300)", minHeight: "calc(100vh - 53px)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "232px 1fr", maxWidth: 1400, margin: "0 auto" }}>
+        <aside
+          style={{
+            padding: "18px 12px", background: "var(--color-surface)",
+            borderInlineEnd: "1px solid var(--color-neutral-200)", minHeight: "calc(100vh - 57px)",
+          }}
+        >
           <div className="ind-sectag">القائمة</div>
           <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {LINKS.map((link) => (
@@ -28,7 +33,7 @@ export default function StaffLayout() {
             ))}
           </nav>
         </aside>
-        <main style={{ padding: 20 }}>
+        <main style={{ padding: "24px 28px" }}>
           <Outlet />
         </main>
       </div>

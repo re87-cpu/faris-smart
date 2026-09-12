@@ -126,7 +126,7 @@ export default function AdminTasks() {
                       <td style={{ textAlign: "center" }}><input type="checkbox" checked={t.done} onChange={() => onToggle(t)} disabled={isBusy} /></td>
                       <td style={{ textDecoration: t.done ? "line-through" : "none" }}>{t.title}</td>
                       <td style={{ minWidth: 160 }}><input className="input" type="date" value={t.due || ""} onChange={(e) => onQuickDate(t, e)} disabled={isBusy} /></td>
-                      <td style={{ textAlign: "left" }}><button className="btn btn-ghost" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button></td>
+                      <td style={{ textAlign: "left" }}><button className="btn btn-danger" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button></td>
                     </tr>
                   );
                 })}

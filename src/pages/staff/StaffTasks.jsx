@@ -206,7 +206,7 @@ export default function StaffTasks() {
                       <input className="input" type="date" value={t.due || ""} onChange={(e) => onQuickDate(t, e)} disabled={isBusy} />
                     </td>
                     <td style={{ textAlign: "left" }}>
-                      <button className="btn btn-ghost" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button>
+                      <button className="btn btn-danger" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button>
                     </td>
                   </tr>
                 );

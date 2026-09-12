@@ -89,7 +89,7 @@ export default function CaseNotes() {
                       ) : (
                         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
                           <button type="button" className="btn btn-ghost" onClick={() => startEdit(n)}>تعديل</button>
-                          <button type="button" className="btn btn-ghost" onClick={() => onDel(n.id)}>حذف</button>
+                          <button type="button" className="btn btn-danger" onClick={() => onDel(n.id)}>حذف</button>
                         </div>
                       )}
                     </td>

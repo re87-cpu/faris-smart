@@ -112,10 +112,10 @@ export default function Drafts() {
                         {d.status === "pending" && (
                           <>
                             <button className="btn btn-primary" onClick={() => onApprove(d.id)}>اعتماد</button>
-                            <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onReject(d.id)}>رفض</button>
+                            <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onReject(d.id)}>رفض</button>
                           </>
                         )}
-                        <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onDelete(d.id)}>حذف</button>
+                        <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onDelete(d.id)}>حذف</button>
                       </td>
                     </tr>
                   );

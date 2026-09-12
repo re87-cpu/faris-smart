@@ -62,7 +62,7 @@ export default function CaseDocuments() {
                   <td>{d.name}</td>
                   <td>{d.ts ? new Date(d.ts).toLocaleString() : "—"}</td>
                   <td>{d.by || "—"}</td>
-                  <td style={{ textAlign: "left" }}><button type="button" className="btn btn-ghost" onClick={() => onDel(d.id)}>حذف</button></td>
+                  <td style={{ textAlign: "left" }}><button type="button" className="btn btn-danger" onClick={() => onDel(d.id)}>حذف</button></td>
                 </tr>
               ))}
             </tbody>

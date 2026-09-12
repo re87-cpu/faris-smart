@@ -81,7 +81,7 @@ export default function AdminStaffRequests() {
                       <button className="btn btn-primary" onClick={() => onApprove(u.id)} disabled={busyId === u.id}>
                         {busyId === u.id ? "جارٍ الاعتماد…" : "موافقة"}
                       </button>
-                      <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onReject(u.id)} disabled={busyId === u.id}>رفض</button>
+                      <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onReject(u.id)} disabled={busyId === u.id}>رفض</button>
                     </td>
                   </tr>
                 ))}

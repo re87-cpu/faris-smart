@@ -1,5 +1,13 @@
 /* FILE: src/styles/industry-layout.css — sidebar nav classes shared by AdminLayout/StaffLayout */
-.ind-sectag { font-family: var(--font-heading); letter-spacing: .08em; font-size: 11px; color: var(--color-neutral-600); text-transform: uppercase; padding: 0 10px; margin: 14px 0 4px; }
-.ind-navi { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius: var(--radius); color: var(--color-text); text-decoration:none; font-size: 14px; }
-.ind-navi:hover { background: var(--color-accent-100); }
-.ind-navi.on { background: var(--color-accent-500); color: #fff; }
+.ind-sectag {
+  font-family: var(--font-heading); letter-spacing: .08em; font-size: 11px; font-weight: 600;
+  color: var(--color-neutral-500); text-transform: uppercase; padding: 0 12px; margin: 18px 0 6px;
+}
+.ind-sectag:first-child { margin-top: 4px; }
+.ind-navi {
+  display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: var(--radius-sm);
+  color: var(--color-neutral-800); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: background .15s ease, color .15s ease;
+}
+.ind-navi:hover { background: var(--color-accent-100); color: var(--color-accent-800); }
+.ind-navi.on { background: var(--color-accent); color: #fff; font-weight: 600; box-shadow: var(--shadow-sm); }

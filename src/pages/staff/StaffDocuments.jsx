@@ -211,7 +211,7 @@ export default function StaffDocuments() {
                     <td>{d.by || "—"}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <button className="btn btn-ghost" type="button" onClick={() => onEdit(d)} disabled={isBusy}>تعديل</button>
-                      <button className="btn btn-ghost" type="button" onClick={() => onDelete(d)} disabled={isBusy} style={{ marginInlineStart: 8 }}>حذف</button>
+                      <button className="btn btn-danger" type="button" onClick={() => onDelete(d)} disabled={isBusy} style={{ marginInlineStart: 8 }}>حذف</button>
                     </td>
                   </tr>
                 );

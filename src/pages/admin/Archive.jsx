@@ -109,7 +109,7 @@ export default function Archive() {
                       <td>{r.next || "—"}</td>
                       <td style={{ textAlign: "left", whiteSpace: "nowrap" }}>
                         <button className="btn btn-primary" onClick={() => onReopen(r.id)}>إعادة فتح</button>
-                        <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onDelete(r.id, r.title)}>حذف نهائي</button>
+                        <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onDelete(r.id, r.title)}>حذف نهائي</button>
                       </td>
                     </tr>
                   );

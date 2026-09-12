@@ -228,7 +228,7 @@ export default function CaseView() {
               </div>
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                 <Link className="btn btn-ghost" to="/admin/cases">جميع القضايا</Link>
-                <button className="btn btn-ghost" onClick={onDelete} disabled={busyAction}>حذف</button>
+                <button className="btn btn-danger" onClick={onDelete} disabled={busyAction}>حذف</button>
                 {row.status !== "closed" ? (
                   <button className="btn" style={{ background: "#b3261e", color: "#fff", border: "none" }} onClick={onClose} disabled={busyAction}>إغلاق</button>
                 ) : (
@@ -380,7 +380,7 @@ export default function CaseView() {
                         <div style={{ fontWeight: 900 }}>{name}</div>
                         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                           {url && <a className="btn btn-ghost" href={toFileUrl(url)} target="_blank" rel="noreferrer">فتح</a>}
-                          {did && <button className="btn btn-ghost" type="button" onClick={() => onRemoveDoc(did)} disabled={tabLoading}>حذف</button>}
+                          {did && <button className="btn btn-danger" type="button" onClick={() => onRemoveDoc(did)} disabled={tabLoading}>حذف</button>}
                         </div>
                       </div>
                       {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 6 }}>أضيف: {humanDT(createdAt)}</div>}
@@ -416,7 +416,7 @@ export default function CaseView() {
                     <div key={String(nid || body.slice(0, 12))} className="card" style={{ boxShadow: "none", border: "1px solid var(--color-neutral-300)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
                         <div style={{ fontWeight: 700 }}>{body}</div>
-                        {nid && <button className="btn btn-ghost" type="button" onClick={() => onRemoveNote(nid)} disabled={tabLoading}>حذف</button>}
+                        {nid && <button className="btn btn-danger" type="button" onClick={() => onRemoveNote(nid)} disabled={tabLoading}>حذف</button>}
                       </div>
                       {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 6 }}>{humanDT(createdAt)}</div>}
                     </div>

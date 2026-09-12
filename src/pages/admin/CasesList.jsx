@@ -132,7 +132,7 @@ export default function CasesList() {
             </select>
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <Link className="btn btn-ghost" to="/admin/cases/new">إنشاء قضية</Link>
+            <Link className="btn btn-primary" to="/admin/cases/new">إنشاء قضية</Link>
             <Link className="btn btn-ghost" to="/admin/assign">إسناد</Link>
             <button className="btn btn-ghost" onClick={load}>تحديث</button>
           </div>

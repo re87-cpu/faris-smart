@@ -2,12 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;700&family=Barlow+Condensed:wght@400;600&display=swap');
 
 :root {
-  --color-bg: #f2f2f3;
-  --color-surface: #e9e9ea;
+  --color-bg: #f4f5f7;
+  --color-surface: #ffffff;
   --color-text: #1d1f20;
   --color-accent: #5980a6;
   --color-accent-2: #728fab;
-  --color-divider: color-mix(in srgb, #1d1f20 16%, transparent);
+  --color-divider: color-mix(in srgb, #1d1f20 12%, transparent);
 
   /* Tonal ramps — generated in OKLCH on one shared lightness scale, so the
      same step of any role matches the others in visual value. */
@@ -52,15 +52,15 @@
   --space-6: 20.4px;
   --space-8: 27.2px;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 7px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
 
   /* Elevation — derived from the ground: soft ink-tinted shadows on a
      light theme, a hairline edge + ambient darkness on a dark one. */
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2b2b2d 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2b2b2d 22%, transparent);
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2b2b2d 6%, transparent), 0 1px 3px color-mix(in srgb, #2b2b2d 8%, transparent);
+  --shadow-md: 0 4px 12px color-mix(in srgb, #2b2b2d 10%, transparent);
+  --shadow-lg: 0 16px 36px color-mix(in srgb, #2b2b2d 16%, transparent);
 }
 
 body {
@@ -155,9 +155,12 @@ figcaption {
 .btn-secondary { border-color: var(--color-divider); }
 .btn-secondary:hover { background: color-mix(in srgb, var(--color-text) 7%, transparent); }
 .btn-secondary:active { background: color-mix(in srgb, var(--color-text) 14%, transparent); }
-.btn-ghost { color: var(--color-accent); padding-inline: var(--space-1); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
-.btn-ghost:active { background: color-mix(in srgb, var(--color-accent) 18%, transparent); }
+.btn-ghost { color: var(--color-accent-800); font-weight: 500; background: var(--color-accent-100); }
+.btn-ghost:hover { background: var(--color-accent-200); }
+.btn-ghost:active { background: var(--color-accent-300); }
+.btn-danger { color: #a3342a; background: color-mix(in srgb, #a3342a 10%, transparent); }
+.btn-danger:hover { background: color-mix(in srgb, #a3342a 16%, transparent); }
+.btn-danger:active { background: color-mix(in srgb, #a3342a 22%, transparent); }
 .btn-icon { width: 36px; height: 36px; padding: 0; }
 .btn-block { width: 100%; margin-top: var(--space-2); }
 
@@ -276,11 +279,8 @@ textarea.input { min-height: 90px; resize: vertical; }
 .dialog-body { font-size: 14px; opacity: 0.85; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-2); }
 
-/* — blueprint frame: components are wireframe objects (see .blueprint
-     and .corner above) — square, transparent, hairline-bordered — */
-.card, .btn, .input, .tag, .seg, .dialog { border-radius: 0; }
-.card, .dialog { background: transparent; border: 1px solid var(--color-divider); }
-.btn { border: 1px solid var(--color-divider); }
-.btn-primary { border-color: var(--color-accent); }
-.btn-ghost { border-color: transparent; }
+/* — surface definition: cards/dialogs get a crisp hairline edge on top
+     of their filled background + shadow, for a clean, defined panel
+     instead of a flat wireframe box. */
+.card, .dialog { border: 1px solid var(--color-neutral-200); }
 

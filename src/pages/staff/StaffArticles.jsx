@@ -151,7 +151,7 @@ export default function StaffArticles() {
                         {editable && (
                           <button className="btn btn-ghost" onClick={() => onEdit(a)}>تعديل</button>
                         )}
-                        <button className="btn btn-ghost" style={{ marginInlineStart: 8 }} onClick={() => onDelete(a.id)}>حذف</button>
+                        <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onDelete(a.id)}>حذف</button>
                       </td>
                     </tr>
                   );
