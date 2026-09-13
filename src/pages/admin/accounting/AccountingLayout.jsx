@@ -1,5 +1,6 @@
 // FILE: src/pages/admin/accounting/AccountingLayout.jsx
 import { NavLink, Outlet } from "react-router-dom";
+import "./accounting.css";
 
 const TABS = [
   { to: "", label: "نظرة عامة", end: true },
@@ -13,14 +14,14 @@ const TABS = [
   { to: "payroll", label: "الرواتب" },
   { to: "assets", label: "الأصول الثابتة" },
   { to: "accounts", label: "دليل الحسابات" },
-  { to: "ledger", label: "دفتر الأستاذ وميزان المراجعة" },
-  { to: "reports", label: "التقارير المالية" },
+  { to: "ledger", label: "دفتر الأستاذ" },
+  { to: "reports", label: "التقارير" },
   { to: "settings", label: "الإعدادات" },
 ];
 
 export default function AccountingLayout() {
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div dir="rtl" className="acct">
       <div>
         <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 24, margin: 0 }}>المحاسبة</h1>
         <div style={{ color: "var(--color-neutral-600)", fontSize: 13, marginTop: 4 }}>
@@ -28,23 +29,13 @@ export default function AccountingLayout() {
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", borderBottom: "1px solid var(--color-neutral-200)", paddingBottom: 8 }}>
+      <nav className="acct-tabs">
         {TABS.map((t) => (
-          <NavLink
-            key={t.to}
-            to={t.to}
-            end={t.end}
-            style={({ isActive }) => ({
-              padding: "6px 12px", borderRadius: "var(--radius-sm)", fontSize: 13, textDecoration: "none",
-              background: isActive ? "var(--color-accent-700)" : "transparent",
-              color: isActive ? "#fff" : "var(--color-text)",
-              border: isActive ? "none" : "1px solid var(--color-neutral-200)",
-            })}
-          >
+          <NavLink key={t.to} to={t.to} end={t.end} className={({ isActive }) => `acct-tab${isActive ? " is-active" : ""}`}>
             {t.label}
           </NavLink>
         ))}
-      </div>
+      </nav>
 
       <Outlet />
     </div>

@@ -1,9 +1,10 @@
 // FILE: src/pages/admin/accounting/Subscriptions.jsx
 import { useEffect, useState } from "react";
 import { listSubscriptions, addSubscription, updateSubscription, listClients, listServices } from "../../../mock/accountingApi.js";
-import { Card, EmptyState, Field, Money, StatusTag } from "./ui.jsx";
+import { PageHeader, Toolbar, ToolbarSpacer, TableWrap, EmptyState, LoadingState, FormError, Field, FormGrid, Money, StatusTag, Drawer, ConfirmButton } from "./ui.jsx";
 
 const STATUS = { active: { label: "نشط", cls: "tag-accent" }, paused: { label: "متوقف مؤقتًا", cls: "tag-outline" }, ended: { label: "منتهٍ", cls: "tag-neutral" } };
+const emptyForm = { clientId: "", serviceId: "", amount: "", billingCycle: "monthly", startDate: "" };
 
 export default function Subscriptions() {
   const [rows, setRows] = useState([]);
@@ -11,7 +12,7 @@ export default function Subscriptions() {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ clientId: "", serviceId: "", amount: "", billingCycle: "monthly", startDate: "" });
+  const [form, setForm] = useState(emptyForm);
   const [err, setErr] = useState("");
 
   async function load() {
@@ -21,67 +22,76 @@ export default function Subscriptions() {
   }
   useEffect(() => { load(); }, []);
 
+  function clientName(id) { return clients.find((c) => c.id === Number(id))?.name || ""; }
+
   async function save() {
     if (!form.clientId || !form.amount || !form.startDate) { setErr("أكمل البيانات."); return; }
-    try { await addSubscription(form); setOpen(false); setForm({ clientId: "", serviceId: "", amount: "", billingCycle: "monthly", startDate: "" }); await load(); }
+    try { await addSubscription(form); setOpen(false); setForm(emptyForm); await load(); }
     catch (e) { setErr(e.message || "تعذّر الحفظ."); }
   }
 
   async function toggle(id, status) { await updateSubscription(id, { status }); await load(); }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <Card title={`الاشتراكات المتكررة (${rows.length})`} action={<button className="btn btn-primary" onClick={() => setOpen((o) => !o)}>اشتراك جديد</button>}>
-        {open && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, paddingTop: 10, borderTop: "1px solid var(--color-neutral-200)" }}>
-            <Field label="العميل">
-              <select className="input" value={form.clientId} onChange={(e) => setForm({ ...form, clientId: e.target.value })}>
-                <option value="">اختر عميلًا</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-            </Field>
-            <Field label="الخدمة">
-              <select className="input" value={form.serviceId} onChange={(e) => setForm({ ...form, serviceId: e.target.value })}>
-                <option value="">— اختياري —</option>{services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-            </Field>
-            <Field label="القيمة"><input className="input" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field>
-            <Field label="الدورة">
-              <select className="input" value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value })}>
-                <option value="monthly">شهري</option><option value="yearly">سنوي</option>
-              </select>
-            </Field>
-            <Field label="تاريخ البداية"><input className="input" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></Field>
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 10 }}>
-              <button className="btn btn-primary" onClick={save}>حفظ</button>
-              {err && <span style={{ color: "#a3342a", fontSize: 13 }}>{err}</span>}
-            </div>
-          </div>
-        )}
-      </Card>
+    <div className="acct">
+      <PageHeader
+        title="الاشتراكات المتكررة"
+        description="عقود شهرية أو سنوية — يولّد النظام فاتورة تلقائيًا عند حلول موعد كل دورة."
+        actions={<button className="btn btn-primary" onClick={() => { setForm(emptyForm); setErr(""); setOpen(true); }}>اشتراك جديد</button>}
+      />
 
-      <Card style={{ padding: 0, overflow: "hidden" }}>
-        {loading ? <div style={{ padding: 16 }}>جارٍ التحميل…</div> : rows.length === 0 ? <EmptyState text="لا توجد اشتراكات بعد." /> : (
-          <table className="table" style={{ margin: 0 }}>
-            <thead><tr><th>القيمة</th><th>الدورة</th><th>الفاتورة القادمة</th><th>الحالة</th><th></th></tr></thead>
+      <Toolbar><ToolbarSpacer /><span style={{ fontSize: 12.5, color: "var(--color-neutral-600)" }}>{rows.length} اشتراك</span></Toolbar>
+
+      {loading ? <LoadingState /> : rows.length === 0 ? <EmptyState text="لا توجد اشتراكات بعد." /> : (
+        <TableWrap>
+          <table className="table">
+            <thead><tr><th>العميل</th><th>القيمة</th><th>الدورة</th><th>الفاتورة القادمة</th><th>الحالة</th><th></th></tr></thead>
             <tbody>
               {rows.map((s) => (
                 <tr key={s.id}>
-                  <td><Money n={s.amount} /></td><td>{s.billingCycle === "monthly" ? "شهري" : "سنوي"}</td><td>{s.nextInvoiceDate}</td>
+                  <td>{clientName(s.clientId)}</td>
+                  <td><Money n={s.amount} /></td>
+                  <td>{s.billingCycle === "monthly" ? "شهري" : "سنوي"}</td>
+                  <td>{s.nextInvoiceDate}</td>
                   <td><StatusTag status={s.status} map={STATUS} /></td>
-                  <td style={{ textAlign: "left" }}>
-                    {s.status === "active" ? (
-                      <button className="btn btn-ghost" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => toggle(s.id, "paused")}>إيقاف مؤقت</button>
-                    ) : s.status === "paused" ? (
-                      <button className="btn btn-ghost" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => toggle(s.id, "active")}>استئناف</button>
-                    ) : null}
-                    {s.status !== "ended" && <button className="btn btn-danger" style={{ padding: "4px 10px", fontSize: 12, marginRight: 6 }} onClick={() => toggle(s.id, "ended")}>إنهاء</button>}
+                  <td>
+                    <div className="acct-row-actions">
+                      {s.status === "active" && <button className="btn btn-ghost" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => toggle(s.id, "paused")}>إيقاف مؤقت</button>}
+                      {s.status === "paused" && <button className="btn btn-ghost" style={{ padding: "4px 10px", fontSize: 12 }} onClick={() => toggle(s.id, "active")}>استئناف</button>}
+                      {s.status !== "ended" && <ConfirmButton className="btn btn-ghost" style={{ padding: "4px 10px", fontSize: 12 }} confirmLabel="تأكيد الإنهاء" onConfirm={() => toggle(s.id, "ended")}>إنهاء</ConfirmButton>}
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        )}
-      </Card>
+        </TableWrap>
+      )}
+
+      <Drawer
+        open={open} onClose={() => setOpen(false)} title="اشتراك جديد"
+        footer={<><button className="btn btn-primary" onClick={save}>حفظ</button><FormError>{err}</FormError></>}
+      >
+        <Field label="العميل">
+          <select className="input" value={form.clientId} onChange={(e) => setForm({ ...form, clientId: e.target.value })}>
+            <option value="">اختر عميلًا</option>{clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+        </Field>
+        <Field label="الخدمة">
+          <select className="input" value={form.serviceId} onChange={(e) => setForm({ ...form, serviceId: e.target.value })}>
+            <option value="">— اختياري —</option>{services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </Field>
+        <FormGrid>
+          <Field label="القيمة"><input className="input" type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></Field>
+          <Field label="الدورة">
+            <select className="input" value={form.billingCycle} onChange={(e) => setForm({ ...form, billingCycle: e.target.value })}>
+              <option value="monthly">شهري</option><option value="yearly">سنوي</option>
+            </select>
+          </Field>
+        </FormGrid>
+        <Field label="تاريخ البداية"><input className="input" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></Field>
+      </Drawer>
     </div>
   );
 }

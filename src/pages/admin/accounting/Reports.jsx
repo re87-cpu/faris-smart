@@ -1,7 +1,9 @@
 // FILE: src/pages/admin/accounting/Reports.jsx
 import { useEffect, useState } from "react";
 import { getIncomeStatement, getBalanceSheet, getCashFlow } from "../../../mock/accountingApi.js";
-import { Card, EmptyState, Money } from "./ui.jsx";
+import { PageHeader, Section, EmptyState, LoadingState, Money } from "./ui.jsx";
+
+const RANGES = [["today", "اليوم"], ["week", "أسبوع"], ["month", "شهر"], ["quarter", "ربع سنة"], ["year", "سنة"]];
 
 export default function Reports() {
   const [range, setRange] = useState("month");
@@ -20,18 +22,29 @@ export default function Reports() {
   useEffect(() => { load(); }, [range]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div style={{ display: "flex", gap: 8 }}>
-        {[["today", "اليوم"], ["week", "أسبوع"], ["month", "شهر"], ["quarter", "ربع سنة"], ["year", "سنة"]].map(([v, l]) => (
-          <button key={v} className={range === v ? "btn btn-primary" : "btn btn-ghost"} style={{ padding: "4px 12px", fontSize: 13 }} onClick={() => setRange(v)}>{l}</button>
-        ))}
-      </div>
+    <div className="acct">
+      <PageHeader
+        title="التقارير المالية"
+        description="قائمة الدخل، الميزانية العمومية، والتدفقات النقدية."
+        actions={
+          <div style={{ display: "flex", gap: 4 }}>
+            {RANGES.map(([v, l]) => (
+              <button
+                key={v} type="button" onClick={() => setRange(v)}
+                className="btn" style={{ padding: "5px 12px", fontSize: 12.5, border: "1px solid var(--color-divider)", background: range === v ? "var(--color-accent)" : "transparent", color: range === v ? "#fff" : "var(--color-text)" }}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        }
+      />
 
-      {loading ? <Card><div style={{ padding: 16 }}>جارٍ التحميل…</div></Card> : (
+      {loading ? <LoadingState /> : (
         <>
-          <Card title={`قائمة الدخل (${income?.from} — ${income?.to})`} style={{ padding: 0, overflow: "hidden" }}>
+          <Section title="قائمة الدخل" hint={`${income?.from} — ${income?.to}`}>
             {!income || (income.revenue.length === 0 && income.expense.length === 0) ? <EmptyState text="لا توجد حركات في هذه الفترة." /> : (
-              <table className="table" style={{ margin: 0 }}>
+              <table className="table">
                 <tbody>
                   <tr style={{ fontWeight: 700 }}><td colSpan={2}>الإيرادات</td></tr>
                   {income.revenue.map((r) => (<tr key={r.code}><td>{r.name}</td><td><Money n={r.amount} /></td></tr>))}
@@ -43,11 +56,11 @@ export default function Reports() {
                 </tbody>
               </table>
             )}
-          </Card>
+          </Section>
 
-          <Card title={`الميزانية العمومية (حتى ${balance?.asOf})`} style={{ padding: 0, overflow: "hidden" }}>
+          <Section title="الميزانية العمومية" hint={`حتى ${balance?.asOf}`} bordered>
             {!balance ? <EmptyState text="لا بيانات." /> : (
-              <table className="table" style={{ margin: 0 }}>
+              <table className="table">
                 <tbody>
                   <tr style={{ fontWeight: 700 }}><td colSpan={2}>الأصول</td></tr>
                   {balance.assets.map((r) => (<tr key={r.code}><td>{r.name}</td><td><Money n={r.balance} /></td></tr>))}
@@ -62,17 +75,17 @@ export default function Reports() {
                 </tbody>
               </table>
             )}
-          </Card>
+          </Section>
 
-          <Card title={`التدفقات النقدية (${cashFlow?.from} — ${cashFlow?.to})`}>
+          <Section title="التدفقات النقدية" hint={`${cashFlow?.from} — ${cashFlow?.to}`} bordered>
             {!cashFlow ? <EmptyState text="لا بيانات." /> : (
-              <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 14 }}>
                 <div>التشغيلية: <b><Money n={cashFlow.operatingActivities} /></b></div>
                 <div>الاستثمارية: <b><Money n={cashFlow.investingActivities} /></b></div>
                 <div>صافي التغيّر في النقدية: <b><Money n={cashFlow.netChange} /></b></div>
               </div>
             )}
-          </Card>
+          </Section>
         </>
       )}
     </div>
