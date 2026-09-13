@@ -951,9 +951,3 @@ export async function deleteFinancialTransaction(id) {
   if (!tid) throw new Error("معرّف المعاملة غير صالح.");
   return await http("DELETE", "/financial/transactions/" + encodeURIComponent(tid));
 }
-
-/* ===================== تقارير وزارة العدل الشهرية ===================== */
-export async function listMojReports() {
-  var res = await http("GET", "/moj-reports");
-  return Array.isArray(res) ? res : [];
-}

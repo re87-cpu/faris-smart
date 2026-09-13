@@ -113,26 +113,3 @@ export async function http(method, path, body, headers) {
   if (res.status === 204) return null;
   return data;
 }
-
-// لتحميل ملف ثنائي (PDF مثلًا) من مسار محمي بـ auth — لازم يرسل Authorization
-// header، وهذا ما يقدر يسويه رابط <a href> عادي.
-export async function httpBlob(path) {
-  const token = getToken();
-  const normalizedPath = String(path || "").startsWith("/") ? String(path || "") : "/" + String(path || "");
-  const url = API_BASE ? API_BASE + normalizedPath : normalizedPath;
-
-  let res;
-  try {
-    res = await fetch(url, { headers: token ? { Authorization: "Bearer " + token } : {} });
-  } catch {
-    throw new Error("تعذّر الاتصال بالخادم.");
-  }
-
-  if (res.status === 401) {
-    try { clearAuth(); } catch { /* تجاهل */ }
-    throw new Error("غير مصرح. سجلي دخول مرة أخرى.");
-  }
-  if (!res.ok) throw new Error("HTTP " + res.status);
-
-  return await res.blob();
-}

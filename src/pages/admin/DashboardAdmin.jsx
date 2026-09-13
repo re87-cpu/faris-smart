@@ -3,16 +3,19 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   getDashboardCounters, getWeekSessions, getUpcomingDeadlines,
-  listMyTasks, toggleMyTask, listFinancialTransactions, listMojReports,
+  listMyTasks, toggleMyTask, listFinancialTransactions,
 } from "../../mock/api.js";
 import { getAuth } from "../../utils/auth.js";
 import { fmtMoney, financialTotals } from "../../data/financialSeed.js";
 
 const OFFICIAL_LINKS = [
-  { label: "الأنظمة واللوائح", href: "https://laws.moj.gov.sa/" },
-  { label: "الأحكام القضائية", href: "https://sjp.moj.gov.sa/" },
-  { label: "ناجز", href: "https://www.najiz.sa/" },
-  { label: "وزارة العدل", href: "https://www.moj.gov.sa/" },
+  { label: "نظام الإثبات", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/2716057c-c097-4bad-8e1e-ae1400c678d5/1" },
+  { label: "نظام المرافعات الشرعية", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/f0eaae46-9f84-40ee-815e-a9a700f268b3/1" },
+  { label: "نظام المرافعات أمام ديوان المظالم", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/f2f7b465-b576-4f47-8e7e-a9a700f27202/1" },
+  { label: "نظام الإجراءات الجزائية", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/8f1b7079-a5f0-425d-b5e0-a9a700f26b2d/1" },
+  { label: "نظام الشركات", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/a8376aea-1bc3-49d4-9027-aed900b555af/1" },
+  { label: "منصة معين", href: "https://moen.bog.gov.sa/Eservices/Pages/default.aspx" },
+  { label: "منصة ناجز", href: "https://najiz.sa/applications/landing/" },
 ];
 
 function startOfWeek(d) {
@@ -46,19 +49,6 @@ export default function DashboardAdmin() {
 
   const [fin, setFin] = useState({ totalIncome: 0, totalExpense: 0, totalDue: 0, net: 0 });
   const [finLoading, setFinLoading] = useState(true);
-
-  const [latestMojReport, setLatestMojReport] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const rows = await listMojReports();
-        setLatestMojReport(rows?.[0] || null);
-      } catch {
-        setLatestMojReport(null);
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     (async () => {
@@ -262,11 +252,6 @@ export default function DashboardAdmin() {
               <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
                 <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
               </a>
-              {latestMojReport && (
-                <Link to="/admin/moj-reports" className="mini-banner">
-                  <span>تقرير شهري جديد: {latestMojReport.name} — نزّله من صفحتنا</span>
-                </Link>
-              )}
               <div>
                 <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginBottom: 6 }}>خدمات ومراجع قضائية</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
