@@ -49,7 +49,7 @@ function NavDropdown({ group, isChildActive }) {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        {group.label} <span className="acct-navdd-caret">▾</span>
+        {group.label}
       </button>
       {open && (
         <div className="acct-navdd-menu">
