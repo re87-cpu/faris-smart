@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, HashRouter } from "react-router-dom";
+import { Capacitor } from "@capacitor/core";
 import App from "./App.jsx";
 import "./index.css";
 import "./App.css";
@@ -13,10 +14,17 @@ import "./styles/industry-grids.css";
 import "./styles/industry-legacy-bridge.css";
 import "./styles/site.css";
 
+// داخل تطبيق Capacitor: الملفات تُقرأ محليًا من حزمة التطبيق، والخادم المحلي
+// لا يُرجع تلقائيًا لـ index.html عند فتح مسار عميق (مثل /admin/cases/12) —
+// فنستخدم HashRouter (روابط مثل #/admin/cases/12) التي تُحل دائمًا كملف واحد
+// ثابت بدون أي إعداد خادم إضافي. الموقع على المتصفح يبقى BrowserRouter تمامًا
+// كما كان — هذا الفرع لا يغيّر شيئًا في سلوك الموقع.
+const Router = Capacitor.isNativePlatform() ? HashRouter : BrowserRouter;
+
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <Router>
       <App />
-    </BrowserRouter>
+    </Router>
   </React.StrictMode>
 );

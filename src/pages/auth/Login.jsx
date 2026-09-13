@@ -1,7 +1,7 @@
 // FILE: src/pages/auth/Login.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { setAuth } from "../../utils/auth.js";
+import { setAuth, setAuthToken } from "../../utils/auth.js";
 import { http } from "../../utils/http.js";
 
 export default function Login() {
@@ -33,14 +33,13 @@ export default function Login() {
       }
 
       const token = b1.token;
-      localStorage.setItem("faris_token", token);
 
       const me = await http("GET", "/me", null, { Authorization: `Bearer ${token}` });
       if (!me?.id) throw new Error(me?.error || "تعذّر جلب بيانات المستخدم بعد الدخول.");
 
       const role = me.role === "manager" ? "admin" : "staff";
-      setAuth({ role, user: me, token });
-      localStorage.setItem("user", JSON.stringify(me));
+      setAuth({ role, user: me });
+      await setAuthToken(token);
 
       if (remember) localStorage.setItem("auth_email", email);
       else localStorage.removeItem("auth_email");

@@ -1,0 +1,30 @@
+{
+  "appId": "com.farislegal.app",
+  "appName": "فارس",
+  "webDir": "dist",
+  "backgroundColor": "#2D5986",
+  "android": {
+    "backgroundColor": "#2D5986"
+  },
+  "ios": {
+    "backgroundColor": "#2D5986",
+    "contentInset": "always"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "backgroundColor": "#2D5986",
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#2D5986",
+      "overlaysWebView": false
+    },
+    "Keyboard": {
+      "resize": "body",
+      "resizeOnFullScreen": true
+    }
+  }
+}
