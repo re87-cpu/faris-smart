@@ -33,11 +33,13 @@
 .acct-tab.is-active { color: var(--color-accent-800); border-bottom-color: var(--color-accent); font-weight: 600; }
 
 /* — تبويب من نوع قائمة منسدلة: يجمّع عدة صفحات فرعية تحت عنوان واحد — */
-.acct-navdd { position: relative; }
+/* القائمة تُرسم عبر Portal على <body> بـ position: fixed محسوب بجافاسكربت
+   (top/right) — لهذا لا تحتاج position: relative على المُشغّل، ولا تتأثر
+   بأي overflow من شريط التبويبات القابل للتمرير أفقيًا. */
 .acct-navdd-menu {
-  position: absolute; top: calc(100% + 6px); right: 0;
+  position: fixed;
   background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md); padding: 6px; min-width: 190px; z-index: 40;
+  box-shadow: var(--shadow-lg); padding: 6px; min-width: 210px; z-index: 500;
   display: flex; flex-direction: column; gap: 1px;
 }
 .acct-navdd-item {
