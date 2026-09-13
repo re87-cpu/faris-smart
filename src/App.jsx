@@ -1,5 +1,8 @@
 // FILE: src/App.jsx
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { getAuth } from "./utils/auth.js";
+import { initPushNotifications } from "./utils/pushNotifications.js";
 import LandingPage from "./LandingPage.jsx";
 import ClientServices from "./pages/ClientServices.jsx";
 import LawyerProfile from "./pages/LawyerProfile.jsx";
@@ -71,6 +74,12 @@ import StaffNotifications from "./pages/staff/StaffNotifications.jsx";
 import StaffArticles from "./pages/staff/StaffArticles.jsx";
 
 export default function App() {
+  useEffect(() => {
+    // لو المستخدم داخل جلسة فعلًا عند فتح التطبيق (لا يحتاج إعادة تسجيل دخول)،
+    // سجّل الجهاز لاستقبال الإشعارات الفورية. لا شيء يحدث على الويب.
+    if (getAuth()) initPushNotifications();
+  }, []);
+
   return (
     <Routes>
       {/* الواجهة العامة */}

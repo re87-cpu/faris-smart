@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { setAuth, setAuthToken } from "../../utils/auth.js";
 import { http } from "../../utils/http.js";
+import { initPushNotifications } from "../../utils/pushNotifications.js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function Login() {
       const role = me.role === "manager" ? "admin" : "staff";
       setAuth({ role, user: me });
       await setAuthToken(token);
+      initPushNotifications(); // لا تنتظرها — تسجيل الجهاز يحدث بالخلفية
 
       if (remember) localStorage.setItem("auth_email", email);
       else localStorage.removeItem("auth_email");

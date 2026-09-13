@@ -38,3 +38,20 @@ server/logs/
 
 # front-end (لو موجود)
 dist/
+
+# Capacitor — نُحفظ مشروعي android/ و ios/ أنفسهما في Git (هذا موصى به من
+# Capacitor نفسها حتى يقدر أي جهاز/Mac يفتح المشروع مباشرة)، لكن نتجاهل
+# نواتج البناء المؤقتة فقط:
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/captures/
+android/app/src/main/assets/public/
+ios/App/build/
+ios/App/Pods/
+ios/App/App/public/
+ios/DerivedData/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
