@@ -8,6 +8,7 @@ const GROUPS = [
     { to: "/dashboard-admin", label: "الرئيسية", end: true },
     { to: "/admin/analytics", label: "التحليلات" },
     { to: "/admin/financial", label: "المالية" },
+    { to: "/admin/accounting", label: "المحاسبة" },
   ]},
   { label: "القضايا", links: [
     { to: "/admin/cases", label: "القضايا" },

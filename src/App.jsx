@@ -33,6 +33,23 @@ import AdminArticles from "./pages/admin/AdminArticles.jsx";
 import Financial from "./pages/admin/Financial.jsx";
 import AdminMojReports from "./pages/admin/AdminMojReports.jsx";
 
+/* المحاسبة — نظام مستقل تمامًا عن صفحة المالية */
+import AccountingLayout from "./pages/admin/accounting/AccountingLayout.jsx";
+import AccountingOverview from "./pages/admin/accounting/Overview.jsx";
+import AccountingClients from "./pages/admin/accounting/Clients.jsx";
+import AccountingInvoices from "./pages/admin/accounting/Invoices.jsx";
+import AccountingSubscriptions from "./pages/admin/accounting/Subscriptions.jsx";
+import AccountingVendors from "./pages/admin/accounting/Vendors.jsx";
+import AccountingExpenses from "./pages/admin/accounting/Expenses.jsx";
+import AccountingPayments from "./pages/admin/accounting/Payments.jsx";
+import AccountingCashBank from "./pages/admin/accounting/CashBank.jsx";
+import AccountingPayroll from "./pages/admin/accounting/Payroll.jsx";
+import AccountingAssets from "./pages/admin/accounting/Assets.jsx";
+import AccountingChartOfAccounts from "./pages/admin/accounting/ChartOfAccounts.jsx";
+import AccountingLedger from "./pages/admin/accounting/Ledger.jsx";
+import AccountingReports from "./pages/admin/accounting/Reports.jsx";
+import AccountingSettings from "./pages/admin/accounting/Settings.jsx";
+
 /* الحراس */
 import RequireAdmin from "./guards/RequireAdmin.jsx";
 import RequireStaff from "./guards/RequireStaff.jsx";
@@ -108,6 +125,23 @@ export default function App() {
         <Route path="articles" element={<AdminArticles />} />
         <Route path="financial" element={<Financial />} />
         <Route path="moj-reports" element={<AdminMojReports />} />
+
+        <Route path="accounting" element={<AccountingLayout />}>
+          <Route index element={<AccountingOverview />} />
+          <Route path="clients" element={<AccountingClients />} />
+          <Route path="invoices" element={<AccountingInvoices />} />
+          <Route path="subscriptions" element={<AccountingSubscriptions />} />
+          <Route path="vendors" element={<AccountingVendors />} />
+          <Route path="expenses" element={<AccountingExpenses />} />
+          <Route path="payments" element={<AccountingPayments />} />
+          <Route path="cash-bank" element={<AccountingCashBank />} />
+          <Route path="payroll" element={<AccountingPayroll />} />
+          <Route path="assets" element={<AccountingAssets />} />
+          <Route path="accounts" element={<AccountingChartOfAccounts />} />
+          <Route path="ledger" element={<AccountingLedger />} />
+          <Route path="reports" element={<AccountingReports />} />
+          <Route path="settings" element={<AccountingSettings />} />
+        </Route>
       </Route>
 
       {/* لوحة الموظف */}
