@@ -62,28 +62,20 @@ export default function Articles() {
             </div>
           ) : (
             <>
-              <Link to={`/articles/${feat.id}`} className="site-article-card rv site-zoom" style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr", gap: "3rem", alignItems: "center", paddingBottom: "3.5rem", borderBottom: "1px solid var(--s-line)" }}>
-                <div className="site-article-img" style={{ height: 440, display: "grid", placeItems: "center", padding: 24, textAlign: "center" }}>
-                  <span style={{ fontWeight: 800, color: "#9AA7B5", fontSize: "1.1rem" }}>{feat.title}</span>
+              <Link to={`/articles/${feat.id}`} className="site-article-card rv site-zoom" style={{ display: "block", maxWidth: 760, paddingBottom: "3.5rem", borderBottom: "1px solid var(--s-line)" }}>
+                <div className="site-article-meta">
+                  <span className="site-tag">مقال مميّز</span>
+                  <span>{feat.authorName || "فريق فارس"} · {fmtDate(feat.publishedAt || feat.createdAt)}</span>
                 </div>
-                <div>
-                  <div className="site-article-meta">
-                    <span className="site-tag">مقال مميّز</span>
-                    <span>{feat.authorName || "فريق فارس"} · {fmtDate(feat.publishedAt || feat.createdAt)}</span>
-                  </div>
-                  <h2 className="site-h2" style={{ fontSize: "clamp(1.5rem,2.6vw,2.3rem)", lineHeight: 1.35, marginBottom: "1.1rem" }}>{feat.title}</h2>
-                  <p style={{ color: "#5A6878", fontWeight: 300, fontSize: "1.04rem", marginBottom: "1.6rem" }}>{excerpt(feat.content, 220)}</p>
-                  <span className="site-card-cta">اقرأ المقال <span className="arw">←</span></span>
-                </div>
+                <h2 className="site-h2" style={{ fontSize: "clamp(1.5rem,2.6vw,2.3rem)", lineHeight: 1.35, marginBottom: "1.1rem" }}>{feat.title}</h2>
+                <p style={{ color: "#5A6878", fontWeight: 300, fontSize: "1.04rem", marginBottom: "1.6rem" }}>{excerpt(feat.content, 220)}</p>
+                <span className="site-card-cta">اقرأ المقال <span className="arw">←</span></span>
               </Link>
 
               {grid.length > 0 && (
                 <div className="site-grid-3" style={{ paddingTop: "3.5rem" }}>
                   {grid.map((a, i) => (
                     <Link key={a.id} to={`/articles/${a.id}`} className={`site-article-card rv${i % 3 ? " d" + (i % 3) : ""}`} style={{ display: "flex", flexDirection: "column" }}>
-                      <div className="site-article-img" style={{ height: 200, marginBottom: "1.4rem", display: "grid", placeItems: "center", padding: 14, textAlign: "center", fontSize: 13, color: "#9AA7B5" }}>
-                        {a.title.slice(0, 40)}
-                      </div>
                       <div style={{ display: "flex", alignItems: "center", gap: ".8rem", marginBottom: ".6rem", color: "#8C99A7", fontSize: ".8rem" }}>
                         <span style={{ color: "var(--s-accent)", fontWeight: 700 }}>{a.authorName || "فريق فارس"}</span>
                         <span>{fmtDate(a.publishedAt || a.createdAt)}</span>

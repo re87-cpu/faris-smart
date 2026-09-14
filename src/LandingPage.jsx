@@ -349,9 +349,6 @@ export default function LandingPage() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "1.15fr 1fr", gap: "3rem", alignItems: "start" }} className="site-article-feat">
               <Link to={`/articles/${feat.id}`} className="site-article-card rv site-zoom" style={{ display: "block" }}>
-                <div className="site-article-img" style={{ height: 340, marginBottom: "1.6rem", display: "grid", placeItems: "center" }}>
-                  <span style={{ fontFamily: "inherit", fontWeight: 800, color: "#9AA7B5" }}>{feat.title}</span>
-                </div>
                 <div className="site-article-meta">
                   <span className="site-tag">مقال</span>
                   <span>{fmtDate(feat.publishedAt || feat.createdAt)}</span>
@@ -366,16 +363,11 @@ export default function LandingPage() {
                     key={a.id}
                     to={`/articles/${a.id}`}
                     className={`site-article-card rv${i ? " d" + i : ""}`}
-                    style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "1.2rem", alignItems: "start", paddingBottom: "1.6rem", borderBottom: "1px solid var(--s-line)" }}
+                    style={{ display: "block", paddingBottom: "1.6rem", borderBottom: "1px solid var(--s-line)" }}
                   >
-                    <div className="site-article-img" style={{ height: 96, display: "grid", placeItems: "center", fontSize: 11, color: "#9AA7B5", padding: 8, textAlign: "center" }}>
-                      {a.title.slice(0, 24)}
-                    </div>
-                    <div>
-                      <div style={{ color: "#8C99A7", fontSize: ".78rem", marginBottom: ".4rem" }}>{fmtDate(a.publishedAt || a.createdAt)}</div>
-                      <h3 style={{ fontSize: "1.12rem", fontWeight: 700, lineHeight: 1.5, marginBottom: ".4rem" }}>{a.title}</h3>
-                      <span className="site-card-cta" style={{ fontSize: ".85rem" }}>اقرأ المقال <span className="arw">←</span></span>
-                    </div>
+                    <div style={{ color: "#8C99A7", fontSize: ".78rem", marginBottom: ".4rem" }}>{fmtDate(a.publishedAt || a.createdAt)}</div>
+                    <h3 style={{ fontSize: "1.12rem", fontWeight: 700, lineHeight: 1.5, marginBottom: ".4rem" }}>{a.title}</h3>
+                    <span className="site-card-cta" style={{ fontSize: ".85rem" }}>اقرأ المقال <span className="arw">←</span></span>
                   </Link>
                 ))}
               </div>

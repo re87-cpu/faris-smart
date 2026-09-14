@@ -309,7 +309,6 @@
 
 /* — articles — */
 .site-article-feat { display: grid; grid-template-columns: 1.15fr 1fr; gap: 3rem; align-items: center; }
-.site-article-img { position: relative; overflow: hidden; border-radius: 4px; background: var(--s-bg-soft); }
 .site-article-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; color: #8C99A7; font-size: .86rem; }
 .site-article-card h3 { transition: color .3s ease; }
 .site-article-card:hover h3 { color: var(--s-accent); }
