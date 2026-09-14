@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchAllCases, updateCaseMeta, fetchEmployees } from "../../mock/api.js";
 import { toast } from "../../utils/toast.js";
+import { PageHeader, Toolbar, ToolbarSpacer, TableWrap, EmptyState, LoadingSkeleton, FormError } from "../../components/admin/ui.jsx";
 
 const PAGE_SIZE = 10;
 const STATUS_LABELS = { open: "قيد الترافع", closed: "مغلقة", archived: "مؤرشفة" };
@@ -116,39 +117,43 @@ export default function CasesList() {
   );
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <input className="input" placeholder="بحث برقم/عنوان/حالة/مسؤول/محكمة…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ minWidth: 280 }} />
-            <select className="input" value={fStatus} onChange={(e) => { setFStatus(e.target.value); setPage(1); }}>
-              <option value="all">كل الحالات</option>
-              {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-            </select>
-            <select className="input" value={fAssign} onChange={(e) => { setFAssign(e.target.value); setPage(1); }}>
-              <option value="all">الكل</option>
-              <option value="assigned">مُسنّد</option>
-              <option value="unassigned">غير مُسنّد</option>
-            </select>
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
+    <div dir="rtl" className="adm">
+      <PageHeader
+        title="القضايا"
+        description="كل القضايا المسجّلة، بحث وفرز وتعديل سريع للحالة."
+        actions={
+          <>
             <Link className="btn btn-primary" to="/admin/cases/new">إنشاء قضية</Link>
             <Link className="btn btn-ghost" to="/admin/assign">إسناد</Link>
-            <button className="btn btn-ghost" onClick={load}>تحديث</button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
-        {loading ? (
-          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
-        ) : err ? (
-          <div style={{ margin: 12, color: "#b3261e" }}>{err}</div>
-        ) : filteredSorted.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد نتائج.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table" style={{ margin: 0 }}>
+      <Toolbar>
+        <input className="input" placeholder="بحث برقم/عنوان/حالة/مسؤول/محكمة…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ minWidth: 280 }} />
+        <select className="input" value={fStatus} onChange={(e) => { setFStatus(e.target.value); setPage(1); }}>
+          <option value="all">كل الحالات</option>
+          {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+        <select className="input" value={fAssign} onChange={(e) => { setFAssign(e.target.value); setPage(1); }}>
+          <option value="all">الكل</option>
+          <option value="assigned">مُسنّد</option>
+          <option value="unassigned">غير مُسنّد</option>
+        </select>
+        <ToolbarSpacer />
+        <button className="btn btn-ghost" onClick={load}>تحديث</button>
+      </Toolbar>
+
+      <FormError>{err}</FormError>
+
+      {loading ? (
+        <LoadingSkeleton rows={5} />
+      ) : filteredSorted.length === 0 ? (
+        <EmptyState text="لا توجد نتائج." />
+      ) : (
+        <>
+          <TableWrap>
+            <table className="table">
               <thead>
                 <tr>
                   <th><SortBtn id="id">الرقم</SortBtn></th>
@@ -202,19 +207,17 @@ export default function CasesList() {
                 })}
               </tbody>
             </table>
-          </div>
-        )}
-      </div>
+          </TableWrap>
 
-      {!loading && filteredSorted.length > 0 && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ color: "var(--color-neutral-600)" }}>عرض {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredSorted.length)} من {filteredSorted.length}</div>
-          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-            <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>السابق</button>
-            <span className="tag tag-outline">صفحة {page} / {totalPages}</span>
-            <button className="btn btn-ghost" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>التالي</button>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ color: "var(--color-neutral-600)" }}>عرض {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filteredSorted.length)} من {filteredSorted.length}</div>
+            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <button className="btn btn-ghost" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>السابق</button>
+              <span className="tag tag-outline">صفحة {page} / {totalPages}</span>
+              <button className="btn btn-ghost" disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>التالي</button>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

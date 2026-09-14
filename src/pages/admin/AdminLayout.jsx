@@ -1,7 +1,9 @@
 // FILE: src/pages/admin/AdminLayout.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import AdminTopbar from "../../components/AdminTopbar.jsx";
+import { Badge } from "../../components/admin/ui.jsx";
+import { listPendingUsers, fetchNotifications } from "../../mock/api.js";
 
 const GROUPS = [
   { label: "نظرة عامة", links: [
@@ -27,6 +29,22 @@ const GROUPS = [
 ];
 
 export default function AdminLayout() {
+  const [pendingCount, setPendingCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    listPendingUsers().then((rows) => { if (alive) setPendingCount(Array.isArray(rows) ? rows.length : 0); }).catch(() => {});
+    fetchNotifications({ unreadOnly: true }).then((rows) => { if (alive) setUnreadCount(Array.isArray(rows) ? rows.length : 0); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  const badgeFor = (to) => {
+    if (to === "/admin/staff-requests") return pendingCount;
+    if (to === "/admin/notifications") return unreadCount;
+    return 0;
+  };
+
   return (
     <div dir="rtl" style={{ minHeight: "100vh", background: "var(--color-bg)" }}>
       <AdminTopbar />
@@ -42,8 +60,9 @@ export default function AdminLayout() {
               <div className="ind-sectag">{g.label}</div>
               <nav style={{ display: "flex", flexDirection: "column", gap: 2, marginBottom: 14 }}>
                 {g.links.map((link) => (
-                  <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => `ind-navi ${isActive ? "on" : ""}`}>
-                    {link.label}
+                  <NavLink key={link.to} to={link.to} end={link.end} className={({ isActive }) => `ind-navi ${isActive ? "on" : ""}`} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <span>{link.label}</span>
+                    <Badge count={badgeFor(link.to)} />
                   </NavLink>
                 ))}
               </nav>

@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { listMyTasks, addMyTask, toggleMyTask, deleteMyTask, updateMyTask } from "../../mock/api.js";
 import { getAuth } from "../../utils/auth.js";
+import { PageHeader, Section, Toolbar, ToolbarSpacer, FormError, EmptyState, LoadingSkeleton, TableWrap, ConfirmButton } from "../../components/admin/ui.jsx";
 
 function toDateInputValue(v) {
   if (!v) return "";
@@ -73,7 +74,6 @@ export default function AdminTasks() {
 
   async function onDelete(t) {
     setErr("");
-    if (!window.confirm(`حذف المهمة: "${t.title}" ؟`)) return;
     try { setBusyId(t.id); await deleteMyTask(t.id); await load(); }
     catch (e) { setErr(e.message || "تعذّر حذف المهمة."); }
     finally { setBusyId(null); }
@@ -86,36 +86,31 @@ export default function AdminTasks() {
     finally { setBusyId(null); }
   }
 
-  if (!me) return <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }} dir="rtl">الرجاء تسجيل الدخول.</div>;
+  if (!me) return <div dir="rtl" className="adm"><EmptyState text="الرجاء تسجيل الدخول." /></div>;
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">مهمة جديدة</div>
-        <form onSubmit={onAdd} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr auto", gap: 8, marginTop: 10 }}>
+    <div dir="rtl" className="adm">
+      <PageHeader title="المهام" description="مهامك الشخصية كمدير." />
+
+      <Section title="مهمة جديدة" bordered>
+        <form onSubmit={onAdd} style={{ display: "grid", gridTemplateColumns: "1.5fr 1fr auto", gap: 8 }}>
           <input className="input" placeholder="عنوان المهمة…" value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} required />
           <input className="input" type="date" value={form.due} onChange={(e) => setForm((s) => ({ ...s, due: e.target.value }))} />
           <button className="btn btn-primary" disabled={busyId === "add"}>{busyId === "add" ? "جارٍ الإضافة…" : "إضافة"}</button>
         </form>
-      </div>
+      </Section>
 
-      {err && <div style={{ color: "#b3261e" }}>{err}</div>}
+      <FormError>{err}</FormError>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", gap: 8, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
-          <b>مهامي (المدير)</b>
-          <div style={{ display: "flex", gap: 8 }}>
-            <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
-            <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
-          </div>
-        </div>
+      <Section title="مهامي (المدير)" bordered>
+        <Toolbar>
+          <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <ToolbarSpacer />
+          <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
+        </Toolbar>
 
-        {loading ? (
-          <div style={{ marginTop: 10 }}>جارٍ التحميل…</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ marginTop: 10, color: "var(--color-neutral-600)" }}>لا توجد مهام.</div>
-        ) : (
-          <div style={{ marginTop: 10, overflowX: "auto" }}>
+        {loading ? <LoadingSkeleton rows={3} /> : filtered.length === 0 ? <EmptyState text="لا توجد مهام." /> : (
+          <TableWrap>
             <table className="table">
               <thead><tr><th>تم</th><th>العنوان</th><th>تاريخ مستهدف</th><th></th></tr></thead>
               <tbody>
@@ -126,15 +121,15 @@ export default function AdminTasks() {
                       <td style={{ textAlign: "center" }}><input type="checkbox" checked={t.done} onChange={() => onToggle(t)} disabled={isBusy} /></td>
                       <td style={{ textDecoration: t.done ? "line-through" : "none" }}>{t.title}</td>
                       <td style={{ minWidth: 160 }}><input className="input" type="date" value={t.due || ""} onChange={(e) => onQuickDate(t, e)} disabled={isBusy} /></td>
-                      <td style={{ textAlign: "left" }}><button className="btn btn-danger" onClick={() => onDelete(t)} disabled={isBusy}>حذف</button></td>
+                      <td style={{ textAlign: "left" }}><ConfirmButton onConfirm={() => onDelete(t)} disabled={isBusy}>حذف</ConfirmButton></td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-          </div>
+          </TableWrap>
         )}
-      </div>
+      </Section>
     </div>
   );
 }

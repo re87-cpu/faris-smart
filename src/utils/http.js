@@ -1,6 +1,7 @@
 // FILE: src/utils/http.js
 import { Capacitor } from "@capacitor/core";
 import { clearAuth, getAuthToken } from "./auth.js";
+import { isOnline } from "./network.js";
 
 // =====================================================
 // API base resolution
@@ -35,25 +36,59 @@ export const API_BASE = (() => {
   return "";
 })();
 
+const OFFLINE_MESSAGE = "لا يوجد اتصال بالإنترنت. تحقّقي من الشبكة وحاولي مرة أخرى.";
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function doFetch(url, options) {
+  try {
+    return await fetch(url, options);
+  } catch {
+    throw new Error("تعذّر الاتصال بالخادم. تأكدي أن الخادم يعمل وأن VITE_API_BASE صحيح.");
+  }
+}
+
 export async function http(method, path, body, headers) {
+  const verb = String(method || "GET").toUpperCase();
+
+  // فحص سريع قبل المحاولة أصلًا — على تطبيق الجوال فقط (الويب لا يتأثر إطلاقًا).
+  // أفضل من انتظار مهلة اتصال طويلة ثم فشل بلا تفسير.
+  if (Capacitor.isNativePlatform() && !isOnline()) {
+    throw new Error(OFFLINE_MESSAGE);
+  }
+
   const token = await getAuthToken();
 
   const normalizedPath = String(path || "").startsWith("/") ? String(path || "") : "/" + String(path || "");
   const url = API_BASE ? API_BASE + normalizedPath : normalizedPath;
+  const options = {
+    method: verb,
+    headers: {
+      ...(body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: "Bearer " + token } : {}),
+      ...(headers || {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  };
 
   let res;
-  try {
-    res = await fetch(url, {
-      method: String(method || "GET").toUpperCase(),
-      headers: {
-        ...(body ? { "Content-Type": "application/json" } : {}),
-        ...(token ? { Authorization: "Bearer " + token } : {}),
-        ...(headers || {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-  } catch {
-    throw new Error("تعذّر الاتصال بالخادم. تأكدي أن الخادم يعمل وأن VITE_API_BASE صحيح.");
+  if (Capacitor.isNativePlatform() && verb === "GET") {
+    // إعادة محاولة تلقائية على تطبيق الجوال فقط، وفقط لطلبات القراءة (GET) —
+    // آمنة دائمًا (لا تكرار كتابة)، تفيد تحديدًا مع شبكات جوال ضعيفة/متقطّعة.
+    // سلوك الويب لا يتغيّر إطلاقًا (نفس محاولة واحدة كما كان دائمًا).
+    let lastErr;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        res = await doFetch(url, options);
+        lastErr = null;
+        break;
+      } catch (e) {
+        lastErr = e;
+        if (attempt < 2) await sleep(600 * (attempt + 1));
+      }
+    }
+    if (lastErr) throw lastErr;
+  } else {
+    res = await doFetch(url, options);
   }
 
   let data = null;

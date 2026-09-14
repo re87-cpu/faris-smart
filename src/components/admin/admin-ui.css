@@ -1,0 +1,133 @@
+/* FILE: src/components/admin/admin-ui.css
+   نظام تصميم مشترك لكل صفحات لوحة المدير (عدا المحاسبة، التي تحتفظ بملفها
+   المستقل accounting.css دون أي تغيير). يعتمد على متغيرات industry.css نفسها
+   بدون إدخال أي هوية جديدة — نفس فلسفة المحاسبة: مساحات وفواصل خفيفة بدل
+   صناديق متكررة. */
+
+.adm { display: flex; flex-direction: column; gap: 28px; }
+
+/* — تبويبات علوية بخط سفلي، بدل أزرار Pill ملوّنة — */
+.adm-tabs {
+  display: flex; align-items: center; gap: 22px; overflow-x: auto;
+  border-bottom: 1px solid var(--color-divider); position: relative;
+}
+.adm-tab {
+  white-space: nowrap; padding: 10px 0; font-size: 13.5px; color: var(--color-neutral-600);
+  text-decoration: none; border-bottom: 2px solid transparent;
+  background: none; border-top: none; border-inline: none; font-family: inherit; cursor: pointer;
+  transition: color .15s ease, border-color .15s ease;
+}
+.adm-tab:hover { color: var(--color-text); }
+.adm-tab.is-active { color: var(--color-accent-800); border-bottom-color: var(--color-accent); font-weight: 600; }
+
+/* — صف عنصر (جلسة/مستند/ملاحظة) بدون صندوق مستقل — فاصل سفلي فقط — */
+.adm-item-row { padding: 14px 0; border-bottom: 1px solid var(--color-divider); }
+.adm-item-row:last-child { border-bottom: none; }
+
+/* — صف إشعار: خط تمييز جانبي خفيف بدل خلفية كاملة للإشعار غير المقروء — */
+.adm-notif-group-label { font-size: 12px; font-weight: 700; color: var(--color-neutral-600); margin: 6px 0 2px; }
+.adm-notif-row {
+  padding: 12px 14px; border-bottom: 1px solid var(--color-divider);
+  border-inline-start: 2px solid transparent;
+}
+.adm-notif-row:last-child { border-bottom: none; }
+.adm-notif-row.unread { border-inline-start-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 4%, transparent); }
+
+.adm-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 16px; flex-wrap: wrap;
+}
+.adm-header h2 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 20px; margin: 0; }
+.adm-header p { margin: 4px 0 0; font-size: 13px; color: var(--color-neutral-600); max-width: 60ch; }
+.adm-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.adm-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.adm-toolbar .input, .adm-toolbar select.input { max-width: 240px; }
+.adm-toolbar-spacer { flex: 1; }
+
+.adm-section { display: flex; flex-direction: column; gap: 12px; }
+.adm-section.bordered { padding-top: 20px; border-top: 1px solid var(--color-divider); }
+.adm-section-title { font-size: 14px; font-weight: 600; color: var(--color-text); }
+.adm-section-hint { font-size: 12.5px; color: var(--color-neutral-600); margin-top: -6px; }
+
+.adm-statrow {
+  display: flex; flex-wrap: wrap; gap: 0;
+  border: 1px solid var(--color-divider); border-radius: var(--radius-md); overflow: hidden;
+}
+.adm-stat { flex: 1 1 160px; padding: 14px 18px; border-inline-start: 1px solid var(--color-divider); }
+.adm-stat:first-child { border-inline-start: none; }
+.adm-stat b { display: block; font-family: var(--font-heading); font-size: 21px; line-height: 1.2; }
+.adm-stat span { display: block; font-size: 12px; color: var(--color-neutral-600); margin-top: 2px; }
+
+.adm-alerts { display: flex; flex-direction: column; }
+.adm-alert-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 8%, transparent);
+  font-size: 13.5px;
+}
+.adm-alert-row:last-child { border-bottom: none; }
+
+.adm-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.adm-table-wrap .table { min-width: 560px; }
+.adm-table-wrap .table td, .adm-table-wrap .table th { white-space: nowrap; }
+.adm-table-wrap .table td.wrap, .adm-table-wrap .table th.wrap { white-space: normal; }
+
+.adm-row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* — هيكل تحميل صامت بدل نص "جارٍ التحميل…" — */
+.adm-skeleton { display: flex; flex-direction: column; gap: 8px; }
+.adm-skeleton-row {
+  height: 38px; border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-neutral-100) 25%, var(--color-neutral-200) 37%, var(--color-neutral-100) 63%);
+  background-size: 400% 100%; animation: admSkeletonWave 1.4s ease infinite;
+}
+@keyframes admSkeletonWave { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+/* — عدّاد صغير (Badge) — */
+.adm-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; line-height: 1;
+}
+.adm-badge-accent { background: var(--color-accent); color: #fff; }
+.adm-badge-warn { background: #a3342a; color: #fff; }
+
+/* — نافذة جانبية (Drawer) — */
+.adm-drawer-overlay {
+  position: fixed; inset: 0; background: color-mix(in srgb, #000 35%, transparent);
+  z-index: 60; animation: admFadeIn .15s ease;
+}
+.adm-drawer {
+  position: fixed; top: 0; bottom: 0; left: 0; width: min(480px, 100vw);
+  background: var(--color-surface); z-index: 61; box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; animation: admSlideIn .18s ease;
+}
+.adm-drawer-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 18px 20px; border-bottom: 1px solid var(--color-divider); flex-shrink: 0;
+}
+.adm-drawer-head h3 { margin: 0; font-family: var(--font-heading); font-size: 17px; }
+.adm-drawer-close { background: none; border: none; font-size: 18px; line-height: 1; color: var(--color-neutral-600); cursor: pointer; padding: 4px; }
+.adm-drawer-close:hover { color: var(--color-text); }
+.adm-drawer-body { padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+.adm-drawer-foot { padding: 14px 20px; border-top: 1px solid var(--color-divider); display: flex; gap: 10px; align-items: center; flex-shrink: 0; }
+
+@keyframes admFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes admSlideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+.adm-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.adm-form-grid.cols-1 { grid-template-columns: 1fr; }
+
+.adm-error { font-size: 13px; color: #a3342a; }
+.adm-empty, .adm-loading { padding: 28px 4px; color: var(--color-neutral-600); font-size: 13.5px; text-align: center; }
+
+@media (max-width: 720px) {
+  .adm-statrow { flex-direction: column; }
+  .adm-stat { border-inline-start: none; border-top: 1px solid var(--color-divider); }
+  .adm-stat:first-child { border-top: none; }
+  .adm-drawer { width: 100vw; }
+  .adm-header { flex-direction: column; align-items: stretch; }
+  .adm-header-actions { justify-content: flex-start; }
+  .adm-toolbar .input, .adm-toolbar select.input { max-width: none; flex: 1 1 140px; }
+  .adm-form-grid { grid-template-columns: 1fr; }
+}

@@ -13,6 +13,7 @@ import "./styles/industry-layout.css";
 import "./styles/industry-grids.css";
 import "./styles/industry-legacy-bridge.css";
 import "./styles/site.css";
+import "./components/admin/admin-ui.css";
 
 // داخل تطبيق Capacitor: الملفات تُقرأ محليًا من حزمة التطبيق، والخادم المحلي
 // لا يُرجع تلقائيًا لـ index.html عند فتح مسار عميق (مثل /admin/cases/12) —

@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getWeekSessions } from "../../mock/api.js";
+import { PageHeader, Toolbar, ToolbarSpacer, Section, StatRow, EmptyState, LoadingSkeleton, FormError, TableWrap } from "../../components/admin/ui.jsx";
 
 const WEEKDAYS_AR = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
@@ -138,59 +139,49 @@ export default function CalendarAdmin() {
   const daySessions = byDay.get(dayKey) || [];
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "flex-start" }}>
-          <div style={{ display: "grid", gap: 6 }}>
-            <div style={{ fontSize: 20, fontWeight: 900 }}>التقويم الإداري</div>
-            <div style={{ color: "var(--color-neutral-600)", fontSize: 13 }}>اليوم: {todayLabel}</div>
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+    <div dir="rtl" className="adm">
+      <PageHeader
+        title="التقويم الإداري"
+        description={`اليوم: ${todayLabel}`}
+        actions={
+          <>
             <div style={{ display: "flex", gap: 4 }}>
               <button className={`btn ${view === "month" ? "btn-primary" : "btn-ghost"}`} onClick={() => setView("month")}>شهر</button>
               <button className={`btn ${view === "week" ? "btn-primary" : "btn-ghost"}`} onClick={() => setView("week")}>أسبوع</button>
               <button className={`btn ${view === "day" ? "btn-primary" : "btn-ghost"}`} onClick={() => setView("day")}>يوم</button>
             </div>
             <button className="btn btn-ghost" onClick={load} disabled={loading}>{loading ? "..." : "تحديث"}</button>
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "center" }}>
-          <input className="input" placeholder="تصفية حسب المحكمة" value={courtFilter} onChange={(e) => setCourtFilter(e.target.value)} />
-          <input className="input" placeholder="تصفية حسب رقم / عنوان القضية" value={caseFilter} onChange={(e) => setCaseFilter(e.target.value)} />
-          <button className="btn btn-ghost" type="button" onClick={clearFilters} disabled={!courtFilter && !caseFilter}>مسح</button>
-        </div>
+      <Toolbar>
+        <input className="input" placeholder="تصفية حسب المحكمة" value={courtFilter} onChange={(e) => setCourtFilter(e.target.value)} />
+        <input className="input" placeholder="تصفية حسب رقم / عنوان القضية" value={caseFilter} onChange={(e) => setCaseFilter(e.target.value)} />
+        <ToolbarSpacer />
+        <button className="btn btn-ghost" type="button" onClick={clearFilters} disabled={!courtFilter && !caseFilter}>مسح</button>
+      </Toolbar>
 
-        <div className="ind-grid-3" style={{ marginTop: 12 }}>
-          <div className="card" style={{ border: "1px solid var(--color-neutral-300)", boxShadow: "none" }}>
-            <div style={{ color: "var(--color-neutral-600)", fontSize: 12 }}>إجمالي الجلسات (بعد التصفية)</div>
-            <div style={{ fontSize: 22, fontWeight: 900, marginTop: 4 }}>{stats.total}</div>
-          </div>
-          <div className="card" style={{ border: "1px solid var(--color-neutral-300)", boxShadow: "none" }}>
-            <div style={{ color: "var(--color-neutral-600)", fontSize: 12 }}>مذكور فيها المحكمة</div>
-            <div style={{ fontSize: 22, fontWeight: 900, marginTop: 4 }}>{stats.withCourt}</div>
-          </div>
-          <div className="card" style={{ border: "1px solid var(--color-neutral-300)", boxShadow: "none" }}>
-            <div style={{ color: "var(--color-neutral-600)", fontSize: 12 }}>مذكور فيها العنوان</div>
-            <div style={{ fontSize: 22, fontWeight: 900, marginTop: 4 }}>{stats.withTitle}</div>
-          </div>
-        </div>
-      </div>
+      <StatRow items={[
+        { value: stats.total, label: "إجمالي الجلسات (بعد التصفية)" },
+        { value: stats.withCourt, label: "مذكور فيها المحكمة" },
+        { value: stats.withTitle, label: "مذكور فيها العنوان" },
+      ]} />
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
+      <Section bordered>
         {loading ? (
-          <div>جارٍ التحميل…</div>
+          <LoadingSkeleton rows={4} />
         ) : err ? (
-          <div className="card" style={{ boxShadow: "none", borderColor: "#f6c6c2", background: "#fdecea" }}>
-            <b style={{ color: "#9f1239" }}>تعذر التحميل:</b> <span style={{ color: "#9f1239" }}>{err}</span>
-            <div style={{ marginTop: 10 }}><button className="btn btn-primary" onClick={load}>إعادة المحاولة</button></div>
-          </div>
+          <>
+            <FormError>{err}</FormError>
+            <button className="btn btn-primary" onClick={load}>إعادة المحاولة</button>
+          </>
         ) : view === "week" ? (
           filtered.length === 0 ? (
-            <div style={{ color: "var(--color-neutral-600)" }}>لا توجد جلسات.</div>
+            <EmptyState text="لا توجد جلسات." />
           ) : (
-            <div style={{ overflowX: "auto" }}>
-              <table className="table" style={{ margin: 0 }}>
+            <TableWrap>
+              <table className="table">
                 <thead><tr><th>التاريخ</th><th>الوقت</th><th>رقم القضية</th><th>العنوان</th><th>المحكمة</th><th>فتح</th></tr></thead>
                 <tbody>
                   {filtered.map((s, i) => {
@@ -206,7 +197,7 @@ export default function CalendarAdmin() {
                   })}
                 </tbody>
               </table>
-            </div>
+            </TableWrap>
           )
         ) : view === "month" ? (
           <div>
@@ -219,7 +210,7 @@ export default function CalendarAdmin() {
               <button className="btn btn-ghost" type="button" onClick={() => { const t = new Date(); setMonthCursor(new Date(t.getFullYear(), t.getMonth(), 1)); }}>هذا الشهر</button>
             </div>
 
-            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 8 }}>
+            <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 8 }}>
               {WEEKDAYS_AR.map((w) => <div key={w} style={{ fontSize: 12, fontWeight: 900, color: "var(--color-neutral-600)", textAlign: "center" }}>{w}</div>)}
             </div>
 
@@ -264,20 +255,20 @@ export default function CalendarAdmin() {
               <button className="btn btn-ghost" type="button" onClick={() => { const t = new Date(); setDayCursor(new Date(t.getFullYear(), t.getMonth(), t.getDate())); }}>اليوم</button>
             </div>
 
-            <div style={{ marginTop: 12 }}>
+            <div style={{ marginTop: 14 }}>
               {daySessions.length === 0 ? (
-                <div style={{ padding: 14, borderRadius: "var(--radius)", border: "1px dashed var(--color-neutral-300)", color: "var(--color-neutral-600)" }}>لا توجد جلسات في هذا اليوم.</div>
+                <EmptyState text="لا توجد جلسات في هذا اليوم." />
               ) : (
-                <div style={{ display: "grid", gap: 10 }}>
+                <div>
                   {daySessions.map((s, i) => {
                     const cid = getCaseIdFromSession(s);
                     return (
-                      <div key={i} className="card" style={{ boxShadow: "none", border: "1px solid var(--color-neutral-300)" }}>
+                      <div key={i} className="adm-item-row">
                         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
                           <div style={{ fontWeight: 900 }}>{s.time ? `${s.time} — ` : ""}{s.caseNo || cid || "قضية"}</div>
                           <button className="btn btn-ghost" type="button" onClick={() => openCaseFromSession(s)} disabled={!cid}>فتح القضية</button>
                         </div>
-                        <div style={{ marginTop: 8, display: "flex", gap: 12, flexWrap: "wrap", color: "var(--color-neutral-700)" }}>
+                        <div style={{ marginTop: 8, display: "flex", gap: 12, flexWrap: "wrap", color: "var(--color-neutral-700)", fontSize: 13.5 }}>
                           <div>العنوان: <b>{s.title || "—"}</b></div>
                           <div>المحكمة: <b>{s.court || "—"}</b></div>
                         </div>
@@ -289,7 +280,7 @@ export default function CalendarAdmin() {
             </div>
           </div>
         )}
-      </div>
+      </Section>
     </div>
   );
 }

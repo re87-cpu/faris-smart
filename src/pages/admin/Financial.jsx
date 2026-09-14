@@ -4,17 +4,7 @@
 import { useEffect, useState } from "react";
 import { listFinancialTransactions, addFinancialTransaction, deleteFinancialTransaction } from "../../mock/api.js";
 import { fmtMoney as fmt, typeLabels, financialTotals } from "../../data/financialSeed.js";
-
-function Stat({ label, value, color }) {
-  return (
-    <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", minWidth: 160, flex: "1 1 160px" }}>
-      <div style={{ fontFamily: "var(--font-heading)", fontSize: 30, fontWeight: 700, color: color || "var(--color-text)" }}>
-        {value} ر.س
-      </div>
-      <div style={{ color: "var(--color-neutral-600)", fontSize: 13 }}>{label}</div>
-    </div>
-  );
-}
+import { PageHeader, Section, StatRow, FormError, FormGrid, Field, Drawer, ConfirmButton, EmptyState, LoadingSkeleton, TableWrap } from "../../components/admin/ui.jsx";
 
 export default function Financial() {
   const [tx, setTx] = useState([]);
@@ -83,69 +73,27 @@ export default function Financial() {
   }
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-          <div>
-            <div className="card-title">المالية</div>
-            <div style={{ color: "var(--color-neutral-600)", marginTop: 4 }}>
-              {new Date().toLocaleDateString("ar-SA", { year: "numeric", month: "long" })}
-            </div>
-          </div>
-          <button className="btn btn-primary" onClick={() => setOpen((o) => !o)}>إضافة معاملة مالية</button>
-        </div>
+    <div dir="rtl" className="adm">
+      <PageHeader
+        title="المالية"
+        description={new Date().toLocaleDateString("ar-SA", { year: "numeric", month: "long" })}
+        actions={<button className="btn btn-primary" onClick={() => setOpen(true)}>إضافة معاملة مالية</button>}
+      />
+      <FormError>{err}</FormError>
 
-        {open && (
-          <div
-            style={{
-              marginTop: 14, paddingTop: 14, borderTop: "1px solid var(--color-neutral-200)",
-              display: "flex", flexDirection: "column", gap: 10, maxWidth: 640,
-            }}
-          >
-            <div style={{ fontWeight: 700 }}>معاملة مالية جديدة</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
-                <option value="income">إيراد (مدفوع)</option>
-                <option value="due">مستحق (غير محصّل)</option>
-                <option value="expense">مصروف</option>
-              </select>
-              <input className="input" type="number" placeholder="المبلغ (ر.س)" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              <select className="input" value={form.caseId} onChange={(e) => setForm({ ...form, caseId: e.target.value })}>
-                <option value="">— بدون قضية —</option>
-                {caseOptions.map(([id, label]) => <option key={id} value={id}>#{id} — {label}</option>)}
-              </select>
-              <input className="input" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
-            </div>
-            <input className="input" placeholder="وصف المعاملة" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />
-            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-              <button className="btn btn-primary" onClick={saveTx} disabled={saving}>{saving ? "جارٍ الحفظ…" : "حفظ المعاملة"}</button>
-              <button type="button" className="btn btn-ghost" onClick={() => { setOpen(false); setFormErr(""); }}>إلغاء</button>
-              {formErr && <span style={{ color: "#a3342a", fontSize: 13 }}>{formErr}</span>}
-            </div>
-          </div>
-        )}
-      </div>
+      <Section title="الملخّص">
+        <StatRow items={[
+          { value: loading ? "—" : `${fmt(totalIncome)} ر.س`, label: "الإيرادات المحصّلة", color: "#2e7d5b" },
+          { value: loading ? "—" : `${fmt(totalExpense)} ر.س`, label: "المصروفات", color: "#a3342a" },
+          { value: loading ? "—" : `${fmt(net)} ر.س`, label: "صافي الدخل" },
+          { value: loading ? "—" : `${fmt(totalDue)} ر.س`, label: "مستحقات غير محصّلة", color: "var(--color-accent-700)" },
+        ]} />
+      </Section>
 
-      {err && <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", color: "#a3342a" }}>{err}</div>}
-
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-        <Stat label="الإيرادات المحصّلة" value={loading ? "—" : fmt(totalIncome)} color="#2e7d5b" />
-        <Stat label="المصروفات" value={loading ? "—" : fmt(totalExpense)} color="#a3342a" />
-        <Stat label="صافي الدخل" value={loading ? "—" : fmt(net)} />
-        <Stat label="مستحقات غير محصّلة" value={loading ? "—" : fmt(totalDue)} color="var(--color-accent-700)" />
-      </div>
-
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
-        <div style={{ fontWeight: 700, padding: "14px 16px 0" }}>الدخل حسب القضية</div>
-        {loading ? (
-          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
-        ) : caseTotals.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد معاملات مرتبطة بقضايا بعد.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table" style={{ margin: 0 }}>
+      <Section title="الدخل حسب القضية" bordered>
+        {loading ? <LoadingSkeleton rows={3} /> : caseTotals.length === 0 ? <EmptyState text="لا توجد معاملات مرتبطة بقضايا بعد." /> : (
+          <TableWrap>
+            <table className="table">
               <thead><tr><th>الرقم</th><th>العنوان</th><th>المدفوع</th><th>المستحق</th></tr></thead>
               <tbody>
                 {caseTotals.map((c) => (
@@ -158,19 +106,14 @@ export default function Financial() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrap>
         )}
-      </div>
+      </Section>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
-        <div style={{ fontWeight: 700, padding: "14px 16px 0" }}>جميع المعاملات ({tx.length})</div>
-        {loading ? (
-          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
-        ) : tx.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد معاملات مسجّلة بعد.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table" style={{ margin: 0 }}>
+      <Section title={`جميع المعاملات (${tx.length})`} bordered>
+        {loading ? <LoadingSkeleton rows={4} /> : tx.length === 0 ? <EmptyState text="لا توجد معاملات مسجّلة بعد." /> : (
+          <TableWrap>
+            <table className="table">
               <thead><tr><th>التاريخ</th><th>النوع</th><th>الوصف</th><th>القضية</th><th>المبلغ</th><th></th></tr></thead>
               <tbody>
                 {tx.map((t) => (
@@ -181,20 +124,60 @@ export default function Financial() {
                     <td>{t.caseId ? "#" + t.caseId : "—"}</td>
                     <td style={{ fontWeight: 700 }}>{t.type === "expense" ? "-" : ""}{fmt(t.amount)} ر.س</td>
                     <td style={{ textAlign: "left" }}>
-                      <button
-                        type="button" className="btn btn-danger" style={{ padding: "4px 10px", fontSize: 12 }}
-                        disabled={busyId === t.id} onClick={() => removeTx(t.id)}
+                      <ConfirmButton
+                        className="btn btn-danger" style={{ padding: "4px 10px", fontSize: 12 }}
+                        disabled={busyId === t.id} onConfirm={() => removeTx(t.id)}
                       >
                         {busyId === t.id ? "…" : "حذف"}
-                      </button>
+                      </ConfirmButton>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrap>
         )}
-      </div>
+      </Section>
+
+      <Drawer
+        open={open}
+        onClose={() => { setOpen(false); setFormErr(""); }}
+        title="معاملة مالية جديدة"
+        footer={
+          <>
+            <button className="btn btn-primary" onClick={saveTx} disabled={saving}>{saving ? "جارٍ الحفظ…" : "حفظ المعاملة"}</button>
+            <button type="button" className="btn btn-ghost" onClick={() => { setOpen(false); setFormErr(""); }}>إلغاء</button>
+          </>
+        }
+      >
+        <FormError>{formErr}</FormError>
+        <FormGrid>
+          <Field label="النوع">
+            <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+              <option value="income">إيراد (مدفوع)</option>
+              <option value="due">مستحق (غير محصّل)</option>
+              <option value="expense">مصروف</option>
+            </select>
+          </Field>
+          <Field label="المبلغ (ر.س)">
+            <input className="input" type="number" placeholder="المبلغ" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+          </Field>
+        </FormGrid>
+        <FormGrid>
+          <Field label="القضية">
+            <select className="input" value={form.caseId} onChange={(e) => setForm({ ...form, caseId: e.target.value })}>
+              <option value="">— بدون قضية —</option>
+              {caseOptions.map(([id, label]) => <option key={id} value={id}>#{id} — {label}</option>)}
+            </select>
+          </Field>
+          <Field label="التاريخ">
+            <input className="input" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+          </Field>
+        </FormGrid>
+        <Field label="وصف المعاملة">
+          <input className="input" placeholder="وصف المعاملة" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />
+        </Field>
+      </Drawer>
     </div>
   );
 }

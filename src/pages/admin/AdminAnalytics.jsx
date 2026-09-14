@@ -1,6 +1,7 @@
 // FILE: src/pages/admin/AdminAnalytics.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { fetchAllCases, getTeamKPIs, getDashboardCounters, getDashboardTopCounts, getWeekSessions } from "../../mock/api.js";
+import { PageHeader, Section, StatRow, EmptyState, LoadingSkeleton, FormError, TableWrap } from "../../components/admin/ui.jsx";
 
 const STATUS_LABELS = { open: "قيد الترافع", closed: "مغلقة", archived: "مؤرشفة" };
 
@@ -48,63 +49,69 @@ export default function AdminAnalytics() {
   }, [cases]);
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">ملخّص سريع</div>
-        {err && <div style={{ marginTop: 8, color: "#b3261e" }}>{err}</div>}
-        <div className="ind-grid-4" style={{ marginTop: 10 }}>
-          <Stat title="قضايا نشطة" value={counters.active} />
-          <Stat title="قضايا منتهية" value={counters.closed} />
-          <Stat title="جلسات هذا الأسبوع" value={counters.sessionsThisWeek} />
-          <Stat title="مهل قريبة ≤7 أيام" value={counters.nearDeadlines} />
-        </div>
-      </div>
+    <div dir="rtl" className="adm">
+      <PageHeader title="التحليلات" description="نظرة عامة على أداء القضايا والفريق." />
+      <FormError>{err}</FormError>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">إحصائيات عامة</div>
-        {loading ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : (
-          <div className="ind-grid-3" style={{ marginTop: 10 }}>
-            <Stat title="إجمالي القضايا" value={topCounts.totalCases} />
-            <Stat title="قضايا مسندة لموظفين" value={topCounts.assignedCases} />
-            <Stat title="طلبات تسجيل معلّقة" value={topCounts.pendingUsers} />
-          </div>
+      <Section title="ملخّص سريع">
+        <StatRow items={[
+          { value: counters.active, label: "قضايا نشطة" },
+          { value: counters.closed, label: "قضايا منتهية" },
+          { value: counters.sessionsThisWeek, label: "جلسات هذا الأسبوع" },
+          { value: counters.nearDeadlines, label: "مهل قريبة ≤7 أيام" },
+        ]} />
+      </Section>
+
+      <Section title="إحصائيات عامة" bordered>
+        {loading ? <LoadingSkeleton rows={1} /> : (
+          <StatRow items={[
+            { value: topCounts.totalCases, label: "إجمالي القضايا" },
+            { value: topCounts.assignedCases, label: "قضايا مسندة لموظفين" },
+            { value: topCounts.pendingUsers, label: "طلبات تسجيل معلّقة" },
+          ]} />
         )}
+      </Section>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
+        <Section title="توزيع حسب الحالة" bordered>
+          {loading ? <LoadingSkeleton rows={3} /> : byStatus.length === 0 ? <EmptyState text="لا توجد بيانات كافية." /> : (
+            <div className="adm-alerts">
+              {byStatus.map((r, i) => (
+                <div className="adm-alert-row" key={i}><span className="tag tag-accent">{r.status}</span><span style={{ fontWeight: 700 }}>{r.count}</span></div>
+              ))}
+            </div>
+          )}
+        </Section>
+        <Section title="توزيع حسب المحكمة" bordered>
+          {loading ? <LoadingSkeleton rows={3} /> : byCourt.length === 0 ? <EmptyState text="لا توجد بيانات كافية." /> : (
+            <div className="adm-alerts">
+              {byCourt.map((r, i) => (
+                <div className="adm-alert-row" key={i}><span className="tag tag-outline">{r.court}</span><span style={{ fontWeight: 700 }}>{r.count}</span></div>
+              ))}
+            </div>
+          )}
+        </Section>
       </div>
 
-      <div className="ind-grid-3" style={{ gridTemplateColumns: "1fr 1fr" }}>
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div className="card-title">توزيع حسب الحالة</div>
-          {loading ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : byStatus.length === 0 ? <Empty /> : (
-            <ul style={{ marginTop: 10, lineHeight: 1.9, paddingRight: 18, listStyle: "none" }}>
-              {byStatus.map((r, i) => <li key={i}><span className="tag tag-accent">{r.status}</span> — {r.count}</li>)}
-            </ul>
-          )}
-        </div>
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div className="card-title">توزيع حسب المحكمة</div>
-          {loading ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : byCourt.length === 0 ? <Empty /> : (
-            <ul style={{ marginTop: 10, lineHeight: 1.9, paddingRight: 18, listStyle: "none" }}>
-              {byCourt.map((r, i) => <li key={i}><span className="tag tag-outline">{r.court}</span> — {r.count}</li>)}
-            </ul>
-          )}
-        </div>
-      </div>
-
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">أداء الفريق</div>
-        {loading ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : kpis.length === 0 ? <Empty /> : (
-          <div style={{ marginTop: 10 }}>
-            <div style={head}><div>الموظف</div><div>نشطة</div><div>منتهية</div><div>انضباط المهل</div></div>
-            {kpis.map((p, i) => <div key={i} style={row}><div>{p.name}</div><div>{p.active}</div><div>{p.closed}</div><div>{p.onTime}</div></div>)}
-          </div>
+      <Section title="أداء الفريق" bordered>
+        {loading ? <LoadingSkeleton rows={3} /> : kpis.length === 0 ? <EmptyState text="لا توجد بيانات كافية." /> : (
+          <TableWrap>
+            <table className="table">
+              <thead><tr><th>الموظف</th><th>نشطة</th><th>منتهية</th><th>انضباط المهل</th></tr></thead>
+              <tbody>
+                {kpis.map((p, i) => (
+                  <tr key={i}><td>{p.name}</td><td>{p.active}</td><td>{p.closed}</td><td>{p.onTime}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </TableWrap>
         )}
-      </div>
+      </Section>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">جلسات هذا الأسبوع</div>
-        {loading && !weekSessions.length ? <div style={{ marginTop: 10 }}>جارٍ التحميل…</div> : weekSessions.length === 0 ? <Empty /> : (
-          <div style={{ marginTop: 10, overflowX: "auto" }}>
-            <table className="table" style={{ minWidth: 420 }}>
+      <Section title="جلسات هذا الأسبوع" bordered>
+        {loading && !weekSessions.length ? <LoadingSkeleton rows={3} /> : weekSessions.length === 0 ? <EmptyState text="لا توجد بيانات كافية." /> : (
+          <TableWrap>
+            <table className="table">
               <thead><tr><th>اليوم</th><th>الوقت</th><th>رقم / عنوان القضية</th><th>المحكمة</th></tr></thead>
               <tbody>
                 {weekSessions.map((s, idx) => (
@@ -116,17 +123,9 @@ export default function AdminAnalytics() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableWrap>
         )}
-      </div>
+      </Section>
     </div>
   );
 }
-
-function Stat({ title, value }) {
-  return <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 14 }}><div style={{ color: "var(--color-neutral-600)" }}>{title}</div><div style={{ fontSize: 24, fontWeight: 900 }}>{value}</div></div>;
-}
-function Empty() { return <div style={{ marginTop: 10, color: "var(--color-neutral-600)" }}>لا توجد بيانات كافية.</div>; }
-
-const head = { display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--color-neutral-200)", color: "var(--color-neutral-600)", fontWeight: 700 };
-const row = { display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr", gap: 10, padding: "12px 0", borderBottom: "1px solid var(--color-neutral-200)" };

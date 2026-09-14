@@ -126,7 +126,7 @@ export default function LandingPage() {
             autoPlay
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             poster={heroPoster}
             ref={heroVideoRef}
             onTimeUpdate={onHeroTimeUpdate}

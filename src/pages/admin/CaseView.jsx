@@ -7,6 +7,7 @@ import {
   uploadCaseDocFile, listCaseNotes, addCaseNote, removeCaseNote,
 } from "../../mock/api.js";
 import { toFileUrl } from "../../utils/files";
+import { PageHeader, Section, FormGrid, Field, FormError, EmptyState, LoadingState, ConfirmButton } from "../../components/admin/ui.jsx";
 
 const STATUS_LABELS = { open: "قيد الترافع", closed: "مغلقة", archived: "مؤرشفة" };
 const STATUS_OPTIONS = [
@@ -124,7 +125,7 @@ export default function CaseView() {
   }
 
   async function onClose() {
-    if (!row || !window.confirm("تأكيد إغلاق القضية؟")) return;
+    if (!row) return;
     setBusyAction(true); setErr("");
     try { await closeCase(id); await loadMain(); }
     catch (ex) { console.error(ex); setErr(ex?.message || "تعذر الإغلاق"); }
@@ -140,7 +141,7 @@ export default function CaseView() {
   }
 
   async function onDelete() {
-    if (!row || !window.confirm(`سيتم حذف القضية رقم ${caseNo} نهائيًا.\nهل أنتِ متأكدة؟`)) return;
+    if (!row) return;
     setBusyAction(true); setErr("");
     try { await deleteCase(id); window.location.href = "/admin/cases"; }
     catch (ex) { console.error(ex); setErr(ex?.message || "تعذّر حذف القضية."); }
@@ -189,7 +190,6 @@ export default function CaseView() {
   }
 
   async function onRemoveDoc(docId) {
-    if (!window.confirm("حذف المستند؟")) return;
     setTabLoading(true); setErr("");
     try { await removeCaseDoc(id, docId); await loadTabs("documents"); }
     catch (ex) { console.error(ex); setErr(ex?.message || "تعذر حذف المستند"); }
@@ -207,7 +207,6 @@ export default function CaseView() {
   }
 
   async function onRemoveNote(noteId) {
-    if (!window.confirm("حذف الملاحظة؟")) return;
     setTabLoading(true); setErr("");
     try { await removeCaseNote(id, noteId); await loadTabs("notes"); }
     catch (ex) { console.error(ex); setErr(ex?.message || "تعذر حذف الملاحظة"); }
@@ -215,217 +214,197 @@ export default function CaseView() {
   }
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        {loading ? (
-          <b>جارٍ التحميل…</b>
-        ) : row ? (
-          <>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <div>
-                <div style={{ fontSize: 20, fontWeight: 900 }}>قضية #{caseNo}</div>
-                <div style={{ color: "var(--color-neutral-600)" }}>الحالة: <span className="tag tag-accent" style={{ marginInlineStart: 6 }}>{STATUS_LABELS[row.status] || row.status || "—"}</span></div>
-              </div>
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+    <div dir="rtl" className="adm">
+      {loading ? (
+        <LoadingState text="جارٍ التحميل…" />
+      ) : row ? (
+        <>
+          <PageHeader
+            title={`مساحة عمل القضية #${caseNo}`}
+            description={`المسؤول: ${assignedName} · الموعد القادم: ${row.next ? humanDT(row.next) : "—"} · آخر تحديث: ${lastUpdated ? humanDT(lastUpdated) : "—"}`}
+            actions={
+              <>
+                <span className="tag tag-accent">{STATUS_LABELS[row.status] || row.status || "—"}</span>
                 <Link className="btn btn-ghost" to="/admin/cases">جميع القضايا</Link>
-                <button className="btn btn-danger" onClick={onDelete} disabled={busyAction}>حذف</button>
                 {row.status !== "closed" ? (
-                  <button className="btn" style={{ background: "#b3261e", color: "#fff", border: "none" }} onClick={onClose} disabled={busyAction}>إغلاق</button>
+                  <ConfirmButton className="btn" style={{ background: "#b3261e", color: "#fff", border: "none" }} onConfirm={onClose} disabled={busyAction}>إغلاق</ConfirmButton>
                 ) : (
                   <button className="btn btn-primary" onClick={onReopen} disabled={busyAction}>إعادة فتح</button>
                 )}
-              </div>
-            </div>
-            <div style={{ marginTop: 8, color: "var(--color-neutral-600)", display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <div>المسؤول: <b>{assignedName}</b></div>
-              <div>الموعد القادم: <b>{row.next ? humanDT(row.next) : "—"}</b></div>
-              <div>آخر تحديث: <b>{lastUpdated ? humanDT(lastUpdated) : "—"}</b></div>
-            </div>
-          </>
-        ) : <b>القضية غير موجودة.</b>}
-      </div>
+                <ConfirmButton onConfirm={onDelete} disabled={busyAction}>حذف</ConfirmButton>
+              </>
+            }
+          />
 
-      {!loading && row && (
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <div className="adm-tabs">
             {TABS.map((t) => (
-              <button key={t.id} type="button" className={`btn ${activeTab === t.id ? "btn-primary" : "btn-ghost"}`} onClick={() => setActiveTab(t.id)}>{t.label}</button>
+              <button key={t.id} type="button" className={`adm-tab${activeTab === t.id ? " is-active" : ""}`} onClick={() => setActiveTab(t.id)}>{t.label}</button>
             ))}
             <div style={{ flex: 1 }} />
-            <button className="btn btn-ghost" type="button" onClick={() => (activeTab === "overview" ? loadMain() : loadTabs(activeTab))} disabled={tabLoading || loading}>
+            <button className="btn btn-ghost" type="button" style={{ padding: "4px 10px", fontSize: 12.5 }} onClick={() => (activeTab === "overview" ? loadMain() : loadTabs(activeTab))} disabled={tabLoading || loading}>
               {tabLoading ? "جارٍ التحديث..." : "تحديث"}
             </button>
           </div>
-        </div>
-      )}
 
-      {err && <div className="card elev-sm" style={{ borderColor: "#f6c6c2", background: "#fdecea" }}><b style={{ color: "#9f1239" }}>تنبيه:</b> <span style={{ color: "#9f1239" }}>{err}</span></div>}
+          <FormError>{err}</FormError>
 
-      {!loading && row && activeTab === "overview" && (
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div className="card-title">تعديل بيانات القضية</div>
-          <form onSubmit={onSaveMeta} style={{ display: "grid", gap: 10, marginTop: 10 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr 1fr", gap: 8 }}>
-              <input className="input" placeholder="عنوان القضية" value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} />
-              <input className="input" placeholder="المحكمة" value={form.court} onChange={(e) => setForm((s) => ({ ...s, court: e.target.value }))} />
-              <select className="input" value={form.status} onChange={(e) => setForm((s) => ({ ...s, status: e.target.value }))}>
-                {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
-              </select>
-              <input className="input" type="datetime-local" value={form.next} onChange={(e) => setForm((s) => ({ ...s, next: e.target.value }))} />
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-              <div>
-                <label style={{ display: "block", marginBottom: 6, color: "var(--color-neutral-700)" }}>إسناد إلى</label>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8 }}>
-                  <select className="input" value={form.assignedTo} onChange={(e) => setForm((s) => ({ ...s, assignedTo: e.target.value }))}>
-                    <option value="">— بدون —</option>
-                    {staffEmps.map((u) => <option key={u.id} value={u.id}>{u.full_name || u.email}</option>)}
-                  </select>
-                  <button type="button" className="btn btn-ghost" onClick={onAssign} disabled={savingAssign || !form.assignedTo}>{savingAssign ? "يحفظ..." : "حفظ الإسناد"}</button>
-                </div>
-              </div>
-              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
-                <button className="btn btn-primary" disabled={savingMeta}>{savingMeta ? "يحفظ…" : "حفظ التعديلات"}</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      )}
+          {activeTab === "overview" && (
+            <Section title="تعديل بيانات القضية" bordered>
+              <form onSubmit={onSaveMeta} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <FormGrid cols={2}>
+                  <Field label="عنوان القضية">
+                    <input className="input" value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} />
+                  </Field>
+                  <Field label="المحكمة">
+                    <input className="input" value={form.court} onChange={(e) => setForm((s) => ({ ...s, court: e.target.value }))} />
+                  </Field>
+                  <Field label="الحالة">
+                    <select className="input" value={form.status} onChange={(e) => setForm((s) => ({ ...s, status: e.target.value }))}>
+                      {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                    </select>
+                  </Field>
+                  <Field label="الموعد القادم">
+                    <input className="input" type="datetime-local" value={form.next} onChange={(e) => setForm((s) => ({ ...s, next: e.target.value }))} />
+                  </Field>
+                </FormGrid>
+                <FormGrid cols={2}>
+                  <Field label="إسناد إلى">
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8 }}>
+                      <select className="input" value={form.assignedTo} onChange={(e) => setForm((s) => ({ ...s, assignedTo: e.target.value }))}>
+                        <option value="">— بدون —</option>
+                        {staffEmps.map((u) => <option key={u.id} value={u.id}>{u.full_name || u.email}</option>)}
+                      </select>
+                      <button type="button" className="btn btn-ghost" onClick={onAssign} disabled={savingAssign || !form.assignedTo}>{savingAssign ? "يحفظ..." : "حفظ الإسناد"}</button>
+                    </div>
+                  </Field>
+                  <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                    <button className="btn btn-primary" disabled={savingMeta}>{savingMeta ? "يحفظ…" : "حفظ التعديلات"}</button>
+                  </div>
+                </FormGrid>
+              </form>
+            </Section>
+          )}
 
-      {!loading && row && activeTab === "sessions" && (
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div className="card-title">الجلسات</div>
-          <form onSubmit={onCreateSession} style={{ marginTop: 12, display: "grid", gap: 10 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 2fr auto", gap: 8 }}>
-              <input className="input" type="datetime-local" value={newSession.session_at} onChange={(e) => setNewSession((s) => ({ ...s, session_at: e.target.value }))} />
-              <input className="input" placeholder="المحكمة" value={newSession.court} onChange={(e) => setNewSession((s) => ({ ...s, court: e.target.value }))} />
-              <input className="input" placeholder="القاعة/الغرفة" value={newSession.room} onChange={(e) => setNewSession((s) => ({ ...s, room: e.target.value }))} />
-              <input className="input" placeholder="ملاحظات للجلسة (اختياري)" value={newSession.notes} onChange={(e) => setNewSession((s) => ({ ...s, notes: e.target.value }))} />
-              <button className="btn btn-primary" type="submit" disabled={tabLoading}>{tabLoading ? "..." : "إضافة"}</button>
-            </div>
-          </form>
+          {activeTab === "sessions" && (
+            <Section title="الجلسات" bordered>
+              <form onSubmit={onCreateSession} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 2fr auto", gap: 8 }}>
+                <input className="input" type="datetime-local" value={newSession.session_at} onChange={(e) => setNewSession((s) => ({ ...s, session_at: e.target.value }))} />
+                <input className="input" placeholder="المحكمة" value={newSession.court} onChange={(e) => setNewSession((s) => ({ ...s, court: e.target.value }))} />
+                <input className="input" placeholder="القاعة/الغرفة" value={newSession.room} onChange={(e) => setNewSession((s) => ({ ...s, room: e.target.value }))} />
+                <input className="input" placeholder="ملاحظات للجلسة (اختياري)" value={newSession.notes} onChange={(e) => setNewSession((s) => ({ ...s, notes: e.target.value }))} />
+                <button className="btn btn-primary" type="submit" disabled={tabLoading}>{tabLoading ? "..." : "إضافة"}</button>
+              </form>
 
-          <div style={{ marginTop: 14 }}>
-            {tabLoading ? <div style={{ color: "var(--color-neutral-600)" }}>جارٍ التحميل…</div> : sessions.length === 0 ? (
-              <div style={{ color: "var(--color-neutral-600)" }}>لا توجد جلسات مسجلة.</div>
-            ) : (
-              <div style={{ display: "grid", gap: 12 }}>
-                {sessions.map((s) => {
-                  const sid = s.id;
-                  const when = s.at || s.sessionAt || s.session_at || "";
-                  return (
-                    <div key={sid} className="card" style={{ boxShadow: "none", border: "1px solid var(--color-neutral-300)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                        <div style={{ fontWeight: 900 }}>جلسة #{sid}</div>
-                        <div style={{ color: "var(--color-neutral-600)" }}>{when ? humanDT(when) : "—"}</div>
-                      </div>
-                      <div style={{ marginTop: 8, color: "var(--color-neutral-700)", display: "flex", gap: 14, flexWrap: "wrap" }}>
-                        <div>المحكمة: <b>{s.court || "—"}</b></div>
-                        <div>القاعة: <b>{s.room || "—"}</b></div>
-                      </div>
-                      {s.notes && <div style={{ marginTop: 8, color: "var(--color-neutral-700)" }}><b>ملاحظات:</b> {s.notes}</div>}
-                      <div style={{ marginTop: 10, borderTop: "1px solid var(--color-neutral-200)", paddingTop: 10 }}>
-                        <div style={{ fontWeight: 900, marginBottom: 6 }}>ملخص الجلسة</div>
-                        {s.summary ? (
-                          <div className="card" style={{ boxShadow: "none", background: "var(--color-neutral-100)" }}>
-                            <div style={{ fontWeight: 700 }}>{s.summary}</div>
-                            <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 6 }}>{(s.summaryAt || s.summary_at) ? `آخر تحديث: ${humanDT(s.summaryAt || s.summary_at)}` : ""}</div>
+              {tabLoading ? <LoadingState /> : sessions.length === 0 ? <EmptyState text="لا توجد جلسات مسجلة." /> : (
+                <div>
+                  {sessions.map((s) => {
+                    const sid = s.id;
+                    const when = s.at || s.sessionAt || s.session_at || "";
+                    return (
+                      <div key={sid} className="adm-item-row">
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                          <div style={{ fontWeight: 700 }}>جلسة #{sid}</div>
+                          <div style={{ color: "var(--color-neutral-600)" }}>{when ? humanDT(when) : "—"}</div>
+                        </div>
+                        <div style={{ marginTop: 6, color: "var(--color-neutral-700)", display: "flex", gap: 14, flexWrap: "wrap", fontSize: 13.5 }}>
+                          <div>المحكمة: <b>{s.court || "—"}</b></div>
+                          <div>القاعة: <b>{s.room || "—"}</b></div>
+                        </div>
+                        {s.notes && <div style={{ marginTop: 6, color: "var(--color-neutral-700)", fontSize: 13.5 }}><b>ملاحظات:</b> {s.notes}</div>}
+                        <div style={{ marginTop: 10 }}>
+                          <div style={{ fontWeight: 600, marginBottom: 6, fontSize: 13 }}>ملخص الجلسة</div>
+                          {s.summary ? (
+                            <div style={{ fontSize: 13.5 }}>
+                              <div>{s.summary}</div>
+                              <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 4 }}>{(s.summaryAt || s.summary_at) ? `آخر تحديث: ${humanDT(s.summaryAt || s.summary_at)}` : ""}</div>
+                            </div>
+                          ) : <div style={{ color: "var(--color-neutral-600)", fontSize: 13 }}>لا يوجد ملخص بعد.</div>}
+                          <textarea className="input" style={{ marginTop: 8, minHeight: 80 }} placeholder="اكتب/حدّث ملخص الجلسة هنا..." value={summaryDraft[sid] ?? ""} onChange={(e) => setSummaryDraft((st) => ({ ...st, [sid]: e.target.value }))} />
+                          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
+                            <button type="button" className="btn btn-primary" onClick={() => onSaveSummary(sid)} disabled={savingSummaryId === sid}>{savingSummaryId === sid ? "يحفظ..." : "حفظ الملخص"}</button>
                           </div>
-                        ) : <div style={{ color: "var(--color-neutral-600)" }}>لا يوجد ملخص بعد.</div>}
-                        <textarea className="input" style={{ marginTop: 10, minHeight: 90 }} placeholder="اكتب/حدّث ملخص الجلسة هنا..." value={summaryDraft[sid] ?? ""} onChange={(e) => setSummaryDraft((st) => ({ ...st, [sid]: e.target.value }))} />
-                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
-                          <button type="button" className="btn btn-primary" onClick={() => onSaveSummary(sid)} disabled={savingSummaryId === sid}>{savingSummaryId === sid ? "يحفظ..." : "حفظ الملخص"}</button>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                    );
+                  })}
+                </div>
+              )}
+            </Section>
+          )}
 
-      {!loading && row && activeTab === "documents" && (
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <div className="card-title" style={{ marginBottom: 0 }}>المستندات</div>
-            <label className="btn btn-ghost" style={{ cursor: uploadingDoc ? "not-allowed" : "pointer", opacity: uploadingDoc ? 0.7 : 1 }}>
-              {uploadingDoc ? "جاري الرفع..." : "رفع ملف"}
-              <input type="file" style={{ display: "none" }} disabled={uploadingDoc} onChange={(e) => onUploadDocFile(e.target.files?.[0])} />
-            </label>
-          </div>
+          {activeTab === "documents" && (
+            <Section
+              title="المستندات" bordered
+              actions={
+                <label className="btn btn-ghost" style={{ cursor: uploadingDoc ? "not-allowed" : "pointer", opacity: uploadingDoc ? 0.7 : 1 }}>
+                  {uploadingDoc ? "جاري الرفع..." : "رفع ملف"}
+                  <input type="file" style={{ display: "none" }} disabled={uploadingDoc} onChange={(e) => onUploadDocFile(e.target.files?.[0])} />
+                </label>
+              }
+            >
+              <form onSubmit={onAddDocLink} style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: 8 }}>
+                <input className="input" placeholder="اسم المستند" value={newDoc.name} onChange={(e) => setNewDoc((s) => ({ ...s, name: e.target.value }))} />
+                <input className="input" placeholder="رابط الملف (اختياري)" value={newDoc.fileUrl} onChange={(e) => setNewDoc((s) => ({ ...s, fileUrl: e.target.value }))} />
+                <button className="btn btn-primary" type="submit" disabled={tabLoading}>إضافة</button>
+              </form>
 
-          <form onSubmit={onAddDocLink} style={{ marginTop: 12, display: "grid", gap: 10 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: 8 }}>
-              <input className="input" placeholder="اسم المستند" value={newDoc.name} onChange={(e) => setNewDoc((s) => ({ ...s, name: e.target.value }))} />
-              <input className="input" placeholder="رابط الملف (اختياري)" value={newDoc.fileUrl} onChange={(e) => setNewDoc((s) => ({ ...s, fileUrl: e.target.value }))} />
-              <button className="btn btn-primary" type="submit" disabled={tabLoading}>إضافة</button>
-            </div>
-          </form>
-
-          <div style={{ marginTop: 14 }}>
-            {tabLoading ? <div style={{ color: "var(--color-neutral-600)" }}>جارٍ التحميل…</div> : docs.length === 0 ? (
-              <div style={{ color: "var(--color-neutral-600)" }}>لا توجد مستندات.</div>
-            ) : (
-              <div style={{ display: "grid", gap: 10 }}>
-                {docs.map((d) => {
-                  const did = d.id ?? d.docId ?? d.doc_id ?? d._id;
-                  const name = d.name || d.title || d.fileName || "مستند";
-                  const url = d.fileUrl || d.file_url || d.url || "";
-                  const createdAt = d.createdAt || d.created_at || d.at || d.uploadedAt || null;
-                  return (
-                    <div key={String(did || name)} className="card" style={{ boxShadow: "none", border: "1px solid var(--color-neutral-300)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                        <div style={{ fontWeight: 900 }}>{name}</div>
-                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                          {url && <a className="btn btn-ghost" href={toFileUrl(url)} target="_blank" rel="noreferrer">فتح</a>}
-                          {did && <button className="btn btn-danger" type="button" onClick={() => onRemoveDoc(did)} disabled={tabLoading}>حذف</button>}
+              {tabLoading ? <LoadingState /> : docs.length === 0 ? <EmptyState text="لا توجد مستندات." /> : (
+                <div>
+                  {docs.map((d) => {
+                    const did = d.id ?? d.docId ?? d.doc_id ?? d._id;
+                    const name = d.name || d.title || d.fileName || "مستند";
+                    const url = d.fileUrl || d.file_url || d.url || "";
+                    const createdAt = d.createdAt || d.created_at || d.at || d.uploadedAt || null;
+                    return (
+                      <div key={String(did || name)} className="adm-item-row">
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                          <div style={{ fontWeight: 700 }}>{name}</div>
+                          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                            {url && <a className="btn btn-ghost" href={toFileUrl(url)} target="_blank" rel="noreferrer">فتح</a>}
+                            {did && <ConfirmButton onConfirm={() => onRemoveDoc(did)} disabled={tabLoading}>حذف</ConfirmButton>}
+                          </div>
                         </div>
+                        {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 4 }}>أضيف: {humanDT(createdAt)}</div>}
                       </div>
-                      {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 6 }}>أضيف: {humanDT(createdAt)}</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                    );
+                  })}
+                </div>
+              )}
+            </Section>
+          )}
 
-      {!loading && row && activeTab === "notes" && (
-        <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-          <div className="card-title">الملاحظات</div>
-          <form onSubmit={onAddNote} style={{ marginTop: 12, display: "grid", gap: 10 }}>
-            <textarea className="input" style={{ minHeight: 110 }} placeholder="اكتب الملاحظة..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button className="btn btn-primary" type="submit" disabled={savingNote}>{savingNote ? "يحفظ..." : "حفظ الملاحظة"}</button>
-            </div>
-          </form>
+          {activeTab === "notes" && (
+            <Section title="الملاحظات" bordered>
+              <form onSubmit={onAddNote} style={{ display: "grid", gap: 10 }}>
+                <textarea className="input" style={{ minHeight: 100 }} placeholder="اكتب الملاحظة..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <button className="btn btn-primary" type="submit" disabled={savingNote}>{savingNote ? "يحفظ..." : "حفظ الملاحظة"}</button>
+                </div>
+              </form>
 
-          <div style={{ marginTop: 14 }}>
-            {tabLoading ? <div style={{ color: "var(--color-neutral-600)" }}>جارٍ التحميل…</div> : notes.length === 0 ? (
-              <div style={{ color: "var(--color-neutral-600)" }}>لا توجد ملاحظات بعد.</div>
-            ) : (
-              <div style={{ display: "grid", gap: 10 }}>
-                {notes.map((n) => {
-                  const nid = n.id ?? n.noteId ?? n.note_id ?? n._id;
-                  const body = n.body ?? n.text ?? n.note ?? "";
-                  const createdAt = n.createdAt || n.created_at || n.at || null;
-                  return (
-                    <div key={String(nid || body.slice(0, 12))} className="card" style={{ boxShadow: "none", border: "1px solid var(--color-neutral-300)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
-                        <div style={{ fontWeight: 700 }}>{body}</div>
-                        {nid && <button className="btn btn-danger" type="button" onClick={() => onRemoveNote(nid)} disabled={tabLoading}>حذف</button>}
+              {tabLoading ? <LoadingState /> : notes.length === 0 ? <EmptyState text="لا توجد ملاحظات بعد." /> : (
+                <div>
+                  {notes.map((n) => {
+                    const nid = n.id ?? n.noteId ?? n.note_id ?? n._id;
+                    const body = n.body ?? n.text ?? n.note ?? "";
+                    const createdAt = n.createdAt || n.created_at || n.at || null;
+                    return (
+                      <div key={String(nid || body.slice(0, 12))} className="adm-item-row">
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                          <div style={{ fontWeight: 600, fontSize: 13.5 }}>{body}</div>
+                          {nid && <ConfirmButton onConfirm={() => onRemoveNote(nid)} disabled={tabLoading}>حذف</ConfirmButton>}
+                        </div>
+                        {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 4 }}>{humanDT(createdAt)}</div>}
                       </div>
-                      {createdAt && <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 6 }}>{humanDT(createdAt)}</div>}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
+                    );
+                  })}
+                </div>
+              )}
+            </Section>
+          )}
+        </>
+      ) : (
+        <PageHeader title="القضية غير موجودة" />
       )}
     </div>
   );

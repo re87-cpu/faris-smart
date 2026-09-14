@@ -1,6 +1,7 @@
 // FILE: src/pages/admin/Archive.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { fetchAllCases, reopenCase, deleteCase } from "../../mock/api.js";
+import { PageHeader, Toolbar, ToolbarSpacer, TableWrap, EmptyState, LoadingSkeleton, FormError, ConfirmButton } from "../../components/admin/ui.jsx";
 
 export default function Archive() {
   const [rows, setRows] = useState([]);
@@ -49,14 +50,12 @@ export default function Archive() {
 
   async function onReopen(id) {
     try { await reopenCase(id); await load(); }
-    catch (ex) { console.error(ex); alert(ex.message || "تعذر إعادة فتح القضية."); }
+    catch (ex) { console.error(ex); setErr(ex.message || "تعذر إعادة فتح القضية."); }
   }
 
-  async function onDelete(id, title) {
-    const ok = window.confirm(`سيتم حذف القضية نهائياً من النظام.\nرقم/معرّف: ${id}\nالعنوان: ${title || ""}\nهل أنتِ متأكدة؟`);
-    if (!ok) return;
+  async function onDelete(id) {
     try { await deleteCase(id); await load(); }
-    catch (ex) { console.error(ex); alert(ex.message || "تعذر حذف القضية."); }
+    catch (ex) { console.error(ex); setErr(ex.message || "تعذر حذف القضية."); }
   }
 
   const SortBtn = ({ id, children }) => (
@@ -66,59 +65,57 @@ export default function Archive() {
   );
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">الأرشيف (قضايا مغلقة / مؤرشفة)</div>
-        <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-          <input className="input" placeholder="بحث برقم/عنوان/محكمة/مسؤول…" value={q} onChange={(e) => setQ(e.target.value)} style={{ flex: 1 }} />
-          <button className="btn btn-ghost" onClick={load}>تحديث</button>
-        </div>
-      </div>
+    <div dir="rtl" className="adm">
+      <PageHeader title="الأرشيف" description="قضايا مغلقة أو مؤرشفة." />
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", padding: 0, overflow: "hidden" }}>
-        {loading ? (
-          <div style={{ padding: 16 }}>جارٍ التحميل…</div>
-        ) : err ? (
-          <div style={{ margin: 12, color: "#b3261e" }}>{err}</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ padding: 16, color: "var(--color-neutral-600)" }}>لا توجد قضايا مغلقة أو مؤرشفة.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table" style={{ margin: 0 }}>
-              <thead>
-                <tr>
-                  <th><SortBtn id="id">الرقم</SortBtn></th>
-                  <th><SortBtn id="title">العنوان</SortBtn></th>
-                  <th>المحكمة</th>
-                  <th>المسؤول</th>
-                  <th><SortBtn id="closedAt">تاريخ الإغلاق/الأرشفة</SortBtn></th>
-                  <th>التالي</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r) => {
-                  const closedAt = r.updatedAt || r.created_at || null;
-                  return (
-                    <tr key={r.id}>
-                      <td>#{r.id}</td>
-                      <td>{r.title}</td>
-                      <td>{r.court || "—"}</td>
-                      <td>{r.assignedName || r.assignedTo || "—"}</td>
-                      <td>{closedAt ? new Date(closedAt).toLocaleString() : "—"}</td>
-                      <td>{r.next || "—"}</td>
-                      <td style={{ textAlign: "left", whiteSpace: "nowrap" }}>
-                        <button className="btn btn-primary" onClick={() => onReopen(r.id)}>إعادة فتح</button>
-                        <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onDelete(r.id, r.title)}>حذف نهائي</button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <Toolbar>
+        <input className="input" placeholder="بحث برقم/عنوان/محكمة/مسؤول…" value={q} onChange={(e) => setQ(e.target.value)} style={{ flex: 1, minWidth: 240 }} />
+        <ToolbarSpacer />
+        <button className="btn btn-ghost" onClick={load}>تحديث</button>
+      </Toolbar>
+
+      <FormError>{err}</FormError>
+
+      {loading ? (
+        <LoadingSkeleton rows={4} />
+      ) : filtered.length === 0 ? (
+        <EmptyState text="لا توجد قضايا مغلقة أو مؤرشفة." />
+      ) : (
+        <TableWrap>
+          <table className="table">
+            <thead>
+              <tr>
+                <th><SortBtn id="id">الرقم</SortBtn></th>
+                <th><SortBtn id="title">العنوان</SortBtn></th>
+                <th>المحكمة</th>
+                <th>المسؤول</th>
+                <th><SortBtn id="closedAt">تاريخ الإغلاق/الأرشفة</SortBtn></th>
+                <th>التالي</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((r) => {
+                const closedAt = r.updatedAt || r.created_at || null;
+                return (
+                  <tr key={r.id}>
+                    <td>#{r.id}</td>
+                    <td>{r.title}</td>
+                    <td>{r.court || "—"}</td>
+                    <td>{r.assignedName || r.assignedTo || "—"}</td>
+                    <td>{closedAt ? new Date(closedAt).toLocaleString() : "—"}</td>
+                    <td>{r.next || "—"}</td>
+                    <td style={{ textAlign: "left", whiteSpace: "nowrap" }}>
+                      <button className="btn btn-primary" onClick={() => onReopen(r.id)}>إعادة فتح</button>
+                      <ConfirmButton style={{ marginInlineStart: 8 }} onConfirm={() => onDelete(r.id)}>حذف نهائي</ConfirmButton>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </TableWrap>
+      )}
     </div>
   );
 }

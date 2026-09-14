@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createCase } from "../../mock/api.js";
 import { toast } from "../../utils/toast.js";
+import { PageHeader, Section, FormGrid, Field } from "../../components/admin/ui.jsx";
 
 export default function CaseNew() {
   const navigate = useNavigate();
@@ -38,28 +39,26 @@ export default function CaseNew() {
   }
 
   return (
-    <div dir="rtl">
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)", maxWidth: 720 }}>
-        <div className="card-title" style={{ fontSize: 20 }}>إضافة قضية جديدة</div>
-        <form onSubmit={onSubmit} noValidate>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12, marginTop: 12 }}>
-            <div className="field">
-              <label>رقم القضية الداخلي</label>
+    <div dir="rtl" className="adm">
+      <PageHeader title="إضافة قضية جديدة" description="سجّلي رقمًا داخليًا وعنوانًا؛ يمكن استكمال بقية التفاصيل لاحقًا من صفحة القضية." />
+      <Section bordered>
+        <form onSubmit={onSubmit} noValidate style={{ maxWidth: 720, display: "flex", flexDirection: "column", gap: 16 }}>
+          <FormGrid>
+            <Field label="رقم القضية الداخلي">
               <input className="input" value={caseNo} onChange={(e) => setCaseNo(e.target.value)} placeholder="مثال: TST-001 أو 2025/ق/15" required />
-            </div>
-            <div className="field">
-              <label>عنوان القضية</label>
+            </Field>
+            <Field label="عنوان القضية">
               <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: مطالبة مالية ضد شركة ..." required />
-            </div>
-          </div>
-          <div style={{ marginTop: 16 }}>
+            </Field>
+          </FormGrid>
+          <div>
             <button className="btn btn-primary" disabled={loading}>{loading ? "جاري الحفظ…" : "حفظ القضية"}</button>
           </div>
-          <p style={{ marginTop: 12, fontSize: 13, color: "var(--color-neutral-600)" }}>
+          <p style={{ fontSize: 13, color: "var(--color-neutral-600)" }}>
             هذا الرقم داخلي ويمكن لاحقًا ربطه برقم القضية في نظام آخر إن لزم.
           </p>
         </form>
-      </div>
+      </Section>
     </div>
   );
 }

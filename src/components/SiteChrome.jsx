@@ -85,7 +85,7 @@ export function SiteFooter() {
       <div className="site-wrap">
         <div className="site-footer-grid">
           <div>
-            <img src={logo} alt="فارس للمحاماة" className="site-footer-logo" />
+            <img src={logo} alt="فارس للمحاماة" className="site-footer-logo" loading="lazy" decoding="async" />
             <p className="about">
               فارس للمحاماة، متخصصة في الاستشارات القانونية والتوثيق أمام المحاكم والجهات الحكومية
               بأعلى معايير الاحترافية والسرية.

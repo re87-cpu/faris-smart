@@ -1,6 +1,7 @@
 // FILE: src/pages/admin/AdminStaffRequests.jsx
 import React, { useEffect, useState } from "react";
 import { listPendingUsers, approveUser, rejectUser } from "../../mock/api.js";
+import { PageHeader, TableWrap, EmptyState, LoadingSkeleton, FormError, ConfirmButton } from "../../components/admin/ui.jsx";
 
 export default function AdminStaffRequests() {
   const [rows, setRows] = useState([]);
@@ -25,7 +26,6 @@ export default function AdminStaffRequests() {
   useEffect(() => { load(); }, []);
 
   async function onApprove(id) {
-    if (!window.confirm("تأكيد اعتماد هذا الموظف ومنحه صلاحية الدخول؟")) return;
     setErr(""); setBusyId(id);
     try { await approveUser(id); await load(); }
     catch (ex) { console.error(ex); setErr(ex.message || "تعذّر اعتماد الموظف."); }
@@ -33,7 +33,6 @@ export default function AdminStaffRequests() {
   }
 
   async function onReject(id) {
-    if (!window.confirm("تأكيد رفض/حذف هذا الطلب؟")) return;
     setErr(""); setBusyId(id);
     try { await rejectUser(id); await load(); }
     catch (ex) { console.error(ex); setErr(ex.message || "تعذّر حذف الطلب."); }
@@ -48,48 +47,42 @@ export default function AdminStaffRequests() {
   }
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-          <div>
-            <div className="card-title">طلبات إنشاء حساب موظف</div>
-            <div style={{ color: "var(--color-neutral-600)", marginTop: 4 }}>تظهر هنا الحسابات الجديدة التي تنتظر اعتماد المدير قبل السماح لها بالدخول للنظام.</div>
-          </div>
-          <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
-        </div>
-      </div>
+    <div dir="rtl" className="adm">
+      <PageHeader
+        title={`طلبات تحتاج مراجعتك${rows.length ? ` (${rows.length})` : ""}`}
+        description="تظهر هنا الحسابات الجديدة التي تنتظر اعتماد المدير قبل السماح لها بالدخول للنظام."
+        actions={<button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>}
+      />
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        {loading ? (
-          <div>جارٍ التحميل…</div>
-        ) : err ? (
-          <div style={{ color: "#b3261e" }}>{err}</div>
-        ) : rows.length === 0 ? (
-          <div style={{ color: "var(--color-neutral-600)" }}>لا توجد طلبات معلّقة.</div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table className="table">
-              <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>تاريخ الطلب</th><th style={{ textAlign: "left" }}>إجراءات</th></tr></thead>
-              <tbody>
-                {rows.map((u) => (
-                  <tr key={u.id}>
-                    <td>{u.full_name || u.name || "—"}</td>
-                    <td>{u.email}</td>
-                    <td>{u.role === "manager" ? "مدير" : "موظف"}</td>
-                    <td>{fmtDate(u.created_at)}</td>
-                    <td style={{ textAlign: "left", whiteSpace: "nowrap" }}>
-                      <button className="btn btn-primary" onClick={() => onApprove(u.id)} disabled={busyId === u.id}>
-                        {busyId === u.id ? "جارٍ الاعتماد…" : "موافقة"}
-                      </button>
-                      <button className="btn btn-danger" style={{ marginInlineStart: 8 }} onClick={() => onReject(u.id)} disabled={busyId === u.id}>رفض</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      <FormError>{err}</FormError>
+
+      {loading ? (
+        <LoadingSkeleton rows={3} />
+      ) : rows.length === 0 ? (
+        <EmptyState text="لا توجد طلبات معلّقة." />
+      ) : (
+        <TableWrap>
+          <table className="table">
+            <thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>تاريخ الطلب</th><th style={{ textAlign: "left" }}>إجراءات</th></tr></thead>
+            <tbody>
+              {rows.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.full_name || u.name || "—"}</td>
+                  <td>{u.email}</td>
+                  <td>{u.role === "manager" ? "مدير" : "موظف"}</td>
+                  <td>{fmtDate(u.created_at)}</td>
+                  <td style={{ textAlign: "left", whiteSpace: "nowrap" }}>
+                    <button className="btn btn-primary" onClick={() => onApprove(u.id)} disabled={busyId === u.id}>
+                      {busyId === u.id ? "جارٍ الاعتماد…" : "موافقة"}
+                    </button>
+                    <ConfirmButton className="btn btn-danger" style={{ marginInlineStart: 8 }} onConfirm={() => onReject(u.id)} disabled={busyId === u.id}>رفض</ConfirmButton>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableWrap>
+      )}
     </div>
   );
 }

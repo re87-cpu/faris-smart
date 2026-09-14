@@ -2,6 +2,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { fetchNotifications, markNotificationRead, markAllNotificationsRead } from "../../mock/api.js";
 import { getAuth } from "../../utils/auth.js";
+import { PageHeader, Toolbar, ToolbarSpacer, EmptyState, LoadingSkeleton, FormError } from "../../components/admin/ui.jsx";
+
+function groupLabel(d) {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  if (day.getTime() === today.getTime()) return "اليوم";
+  if (day.getTime() === yesterday.getTime()) return "أمس";
+  return "أقدم";
+}
 
 export default function AdminNotifications() {
   const me = getAuth()?.user || null;
@@ -39,6 +50,18 @@ export default function AdminNotifications() {
     return arr;
   }, [rows, q]);
 
+  const grouped = useMemo(() => {
+    const groups = new Map();
+    for (const n of filtered) {
+      const d = n.createdAt ? new Date(n.createdAt) : null;
+      const label = d && !isNaN(d.getTime()) ? groupLabel(d) : "أقدم";
+      if (!groups.has(label)) groups.set(label, []);
+      groups.get(label).push(n);
+    }
+    const order = ["اليوم", "أمس", "أقدم"];
+    return order.filter((k) => groups.has(k)).map((k) => [k, groups.get(k)]);
+  }, [filtered]);
+
   const unreadCount = useMemo(() => rows.filter((x) => !x.read).length, [rows]);
 
   async function onReadOne(n) {
@@ -55,63 +78,64 @@ export default function AdminNotifications() {
     finally { setBusy(null); }
   }
 
-  if (!me) return <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }} dir="rtl">الرجاء تسجيل الدخول.</div>;
+  if (!me) return <div dir="rtl" className="adm"><EmptyState text="الرجاء تسجيل الدخول." /></div>;
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div style={{ display: "flex", gap: 8, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-            <b>إشعارات المدير</b>
-            <span style={{ color: "var(--color-neutral-600)", fontSize: 13 }}>غير مقروء: {unreadCount}</span>
-          </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-            <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
-            <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 13 }}>
-              <input type="checkbox" checked={unreadOnly} onChange={(e) => setUnreadOnly(e.target.checked)} />
-              غير المقروء فقط
-            </label>
-            <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
-            <button className="btn btn-primary" onClick={onReadAll} disabled={busy === "all" || unreadCount === 0}>
-              {busy === "all" ? "جارٍ التنفيذ…" : "تعليم الكل كمقروء"}
-            </button>
-          </div>
-        </div>
-      </div>
+    <div dir="rtl" className="adm">
+      <PageHeader
+        title="مركز الإشعارات"
+        description={`غير مقروء: ${unreadCount}`}
+        actions={<button className="btn btn-primary" onClick={onReadAll} disabled={busy === "all" || unreadCount === 0}>
+          {busy === "all" ? "جارٍ التنفيذ…" : "تعليم الكل كمقروء"}
+        </button>}
+      />
 
-      {err && <div style={{ color: "#b3261e" }}>{err}</div>}
+      <Toolbar>
+        <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 13 }}>
+          <input type="checkbox" checked={unreadOnly} onChange={(e) => setUnreadOnly(e.target.checked)} />
+          غير المقروء فقط
+        </label>
+        <ToolbarSpacer />
+        <button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>
+      </Toolbar>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        {loading ? (
-          <div>جارٍ التحميل…</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ color: "var(--color-neutral-600)" }}>لا توجد إشعارات.</div>
-        ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {filtered.map((n) => {
-              const isBusy = busy === n.id;
-              return (
-                <div key={n.id} className="card elev-sm" style={{ border: !n.read ? "1px solid var(--color-accent-500)" : "1px solid var(--color-neutral-300)", background: !n.read ? "var(--color-accent-100)" : "#fff" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
-                    <div style={{ display: "grid", gap: 6 }}>
-                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                        <b>{n.title}</b>
-                        {!n.read && <span className="tag tag-accent">جديد</span>}
+      <FormError>{err}</FormError>
+
+      {loading ? (
+        <LoadingSkeleton rows={4} />
+      ) : filtered.length === 0 ? (
+        <EmptyState text="لا توجد إشعارات." />
+      ) : (
+        <div>
+          {grouped.map(([label, items]) => (
+            <div key={label}>
+              <div className="adm-notif-group-label">{label}</div>
+              {items.map((n) => {
+                const isBusy = busy === n.id;
+                return (
+                  <div key={n.id} className={`adm-notif-row${!n.read ? " unread" : ""}`}>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
+                      <div style={{ display: "grid", gap: 6 }}>
+                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                          <b>{n.title}</b>
+                          {!n.read && <span className="tag tag-accent">جديد</span>}
+                        </div>
+                        {n.body && <div style={{ color: "var(--color-neutral-700)", lineHeight: 1.7, fontSize: 13.5 }}>{n.body}</div>}
+                        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                          <span style={{ fontSize: 12, color: "var(--color-neutral-600)" }}>{n.createdAt ? new Date(n.createdAt).toLocaleString("ar-SA") : "—"}</span>
+                          {n.link && <a className="btn btn-ghost" href={n.link}>فتح الرابط</a>}
+                        </div>
                       </div>
-                      {n.body && <div style={{ color: "var(--color-neutral-700)", lineHeight: 1.7 }}>{n.body}</div>}
-                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 12, color: "var(--color-neutral-600)" }}>{n.createdAt ? new Date(n.createdAt).toLocaleString("ar-SA") : "—"}</span>
-                        {n.link && <a className="btn btn-ghost" href={n.link}>فتح الرابط</a>}
-                      </div>
+                      {!n.read && <button className="btn btn-ghost" onClick={() => onReadOne(n)} disabled={isBusy}>{isBusy ? "…" : "تعليم كمقروء"}</button>}
                     </div>
-                    {!n.read && <button className="btn btn-ghost" onClick={() => onReadOne(n)} disabled={isBusy}>{isBusy ? "…" : "تعليم كمقروء"}</button>}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
