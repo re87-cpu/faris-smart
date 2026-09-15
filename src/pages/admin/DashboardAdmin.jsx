@@ -4,9 +4,12 @@ import { Link } from "react-router-dom";
 import {
   getDashboardCounters, getWeekSessions, getUpcomingDeadlines,
   listMyTasks, toggleMyTask, listFinancialTransactions,
+  listPendingUsers, listDrafts,
 } from "../../mock/api.js";
 import { getAuth } from "../../utils/auth.js";
 import { fmtMoney, financialTotals } from "../../data/financialSeed.js";
+import { pickBaytAlYawm } from "../../utils/baytAlYawm.js";
+import { Section } from "../../components/admin/ui.jsx";
 
 const OFFICIAL_LINKS = [
   { label: "نظام الإثبات", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/2716057c-c097-4bad-8e1e-ae1400c678d5/1" },
@@ -16,6 +19,24 @@ const OFFICIAL_LINKS = [
   { label: "نظام الشركات", href: "https://laws.boe.gov.sa/BoeLaws/Laws/LawDetails/a8376aea-1bc3-49d4-9027-aed900b555af/1" },
   { label: "منصة معين", href: "https://moen.bog.gov.sa/Eservices/Pages/default.aspx" },
   { label: "منصة ناجز", href: "https://najiz.sa/applications/landing/" },
+];
+
+const ICON = {
+  cases: <path d="M3 7h5l2 2h11v10H3z" />,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="1" /><path d="M3 10h18M8 3v4M16 3v4" /></>,
+  tasks: <><rect x="3" y="3" width="18" height="18" rx="1" /><path d="M7 12l3 3 7-7" /></>,
+  employees: <><circle cx="12" cy="8" r="3.2" /><path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5" /></>,
+  drafts: <><path d="M6 3h9l3 3v15H6z" /><path d="M9 10h6M9 14h6" /></>,
+  notifications: <><path d="M12 3a5 5 0 0 0-5 5v3c0 2-1 3-1 3h12s-1-1-1-3V8a5 5 0 0 0-5-5z" /><path d="M10 19a2 2 0 0 0 4 0" /></>,
+};
+
+const QUICK_LINKS = [
+  { label: "القضايا", to: "/admin/cases", icon: "cases" },
+  { label: "التقويم", to: "/admin/calendar", icon: "calendar" },
+  { label: "المهام", to: "/admin/tasks", icon: "tasks" },
+  { label: "الموظفون", to: "/admin/employees", icon: "employees" },
+  { label: "المسودات", to: "/admin/drafts", icon: "drafts" },
+  { label: "الإشعارات", to: "/admin/notifications", icon: "notifications" },
 ];
 
 function startOfWeek(d) {
@@ -32,10 +53,21 @@ function endOfWeek(d) {
   e.setHours(23, 59, 59, 999);
   return e;
 }
+function isSameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+function parseLooseDate(v) {
+  if (!v) return null;
+  const s = String(v);
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(s.trim()) ? s + "T00:00:00" : s);
+  return isNaN(d.getTime()) ? null : d;
+}
 
 export default function DashboardAdmin() {
   const me = getAuth()?.user || null;
   const greetName = me?.name || me?.full_name || "المدير";
+
+  const [bayt] = useState(() => pickBaytAlYawm());
 
   const [loading, setLoading] = useState(true);
   const [counters, setCounters] = useState({ active: 0, closed: 0, sessionsThisWeek: 0, nearDeadlines: 0 });
@@ -48,7 +80,8 @@ export default function DashboardAdmin() {
   const [reminderText, setReminderText] = useState("");
 
   const [fin, setFin] = useState({ totalIncome: 0, totalExpense: 0, totalDue: 0, net: 0 });
-  const [finLoading, setFinLoading] = useState(true);
+  const [pendingUsersCount, setPendingUsersCount] = useState(0);
+  const [pendingDraftsCount, setPendingDraftsCount] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -68,16 +101,15 @@ export default function DashboardAdmin() {
 
   useEffect(() => {
     (async () => {
-      setFinLoading(true);
       try {
         const rows = await listFinancialTransactions();
         setFin(financialTotals(Array.isArray(rows) ? rows : []));
       } catch {
         setFin({ totalIncome: 0, totalExpense: 0, totalDue: 0, net: 0 });
-      } finally {
-        setFinLoading(false);
       }
     })();
+    listPendingUsers().then((rows) => setPendingUsersCount(Array.isArray(rows) ? rows.length : 0)).catch(() => {});
+    listDrafts({ status: "pending" }).then((rows) => setPendingDraftsCount(Array.isArray(rows) ? rows.length : 0)).catch(() => {});
   }, []);
 
   async function loadMyTasks() {
@@ -130,6 +162,50 @@ export default function DashboardAdmin() {
     return { done, total: inWeek.length };
   }, [myTasks]);
 
+  const todaysSessions = useMemo(() => {
+    const today = new Date();
+    return sessionsWeek.filter((s) => { const d = parseLooseDate(s.date); return d && isSameDay(d, today); });
+  }, [sessionsWeek]);
+
+  const overdueOrTodayTasks = useMemo(() => {
+    const today = new Date();
+    return myTasks.filter((t) => {
+      if (t.done || !t.due) return false;
+      const d = parseLooseDate(t.due);
+      if (!d) return false;
+      return d <= new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    });
+  }, [myTasks]);
+
+  const attentionItems = useMemo(() => {
+    const items = [];
+    deadlines.forEach((d, i) => items.push({
+      key: `dl-${i}`, type: "مهلة", title: `قضية #${d.caseNo} — ${d.title}`, meta: d.due, to: "/admin/calendar",
+    }));
+    overdueOrTodayTasks.forEach((t) => items.push({
+      key: `task-${t.id}`, type: "مهمة", title: t.title, meta: t.due ? new Date(t.due).toLocaleDateString("ar-SA") : "", to: "/admin/tasks",
+    }));
+    if (pendingUsersCount > 0) items.push({
+      key: "staff", type: "طلب", title: `${pendingUsersCount} ${pendingUsersCount === 1 ? "طلب موظف يحتاج مراجعة" : "طلبات موظفين تحتاج مراجعة"}`, meta: "", to: "/admin/staff-requests",
+    });
+    if (pendingDraftsCount > 0) items.push({
+      key: "drafts", type: "مسودة", title: `${pendingDraftsCount} ${pendingDraftsCount === 1 ? "مسودة تنتظر الاعتماد" : "مسودات تنتظر الاعتماد"}`, meta: "", to: "/admin/drafts",
+    });
+    if (fin.totalDue > 0) items.push({
+      key: "fin", type: "مالية", title: `مستحقات غير محصّلة: ${fmtMoney(fin.totalDue)} ر.س`, meta: "", to: "/admin/financial",
+    });
+    return items;
+  }, [deadlines, overdueOrTodayTasks, pendingUsersCount, pendingDraftsCount, fin.totalDue]);
+
+  const todaysPath = useMemo(() => {
+    const items = [];
+    todaysSessions.forEach((s, i) => items.push({
+      key: `s-${i}`, time: s.time || "—", title: `جلسة — #${s.caseNo}${s.title ? " — " + s.title : ""}`,
+    }));
+    overdueOrTodayTasks.forEach((t) => items.push({ key: `t-${t.id}`, time: "—", title: t.title }));
+    return items.sort((a, b) => (a.time === "—" ? 1 : 0) - (b.time === "—" ? 1 : 0) || String(a.time).localeCompare(String(b.time)));
+  }, [todaysSessions, overdueOrTodayTasks]);
+
   const greeting = useMemo(() => {
     const h = new Date().getHours();
     return h < 12 ? "صباح الخير" : "مساء الخير";
@@ -140,20 +216,32 @@ export default function DashboardAdmin() {
   );
 
   return (
-    <div dir="rtl" style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-      <div>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 26, margin: 0 }}>{greeting}، {greetName}</h1>
-        <div style={{ color: "var(--color-neutral-600)", fontSize: 13, marginTop: 4 }}>
-          {todayLabel}
-          {deadlines.length > 0 && ` — لديك ${deadlines.length} ${deadlines.length === 1 ? "مهلة تحتاج" : "مهل تحتاج"} انتباهك هذا الأسبوع`}
-        </div>
-      </div>
+    <div dir="rtl" className="adm">
+      <div className="adm-hero">
+        <div>
+          <div style={{ color: "var(--color-neutral-600)", fontSize: 13, marginBottom: 12 }}>{todayLabel}</div>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 40, fontWeight: 700, margin: 0, lineHeight: 1.15 }}>{greeting}، {greetName}</h1>
+          <div style={{ fontFamily: "var(--font-heading)", fontSize: 21, fontWeight: 500, color: "var(--color-neutral-700)", marginTop: 8 }}>لنبدأ من حيث يحتاجك العمل.</div>
 
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-        <StatCorner value={loading ? "—" : counters.active} label="قضايا نشطة" to="/admin/cases" />
-        <StatCorner value={loading ? "—" : counters.closed} label="قضايا منتهية" to="/admin/archive" />
-        <StatCorner value={loading ? "—" : counters.sessionsThisWeek} label="جلسات هذا الأسبوع" to="/admin/calendar" />
-        <StatCorner value={loading ? "—" : deadlines.length} label="مهل قريبة (≤7 أيام)" color="var(--color-accent-700)" />
+          <div className="adm-hero-stats">
+            <div className="adm-hero-stat"><b>{loading ? "—" : counters.active}</b><span>قضايا نشطة</span></div>
+            <div className="adm-hero-divider" />
+            <div className="adm-hero-stat"><b>{loading ? "—" : todaysSessions.length}</b><span>جلسات اليوم</span></div>
+            <div className="adm-hero-divider" />
+            <div className="adm-hero-stat"><b style={{ color: "var(--color-accent-700)" }}>{loading ? "—" : attentionItems.length}</b><span>يحتاج انتباهك</span></div>
+          </div>
+        </div>
+
+        {bayt && (
+          <div className="adm-hero-poem adm-fade-in">
+            <span className="adm-bayt-label">بيت اليوم</span>
+            <div className="adm-bayt-verse">
+              <div className="adm-bayt-line">{bayt.first}</div>
+              <div className="adm-bayt-line">{bayt.second}</div>
+            </div>
+            <div className="adm-bayt-poet">— {bayt.poet}</div>
+          </div>
+        )}
       </div>
 
       {weekTaskProgress.total > 0 && (
@@ -168,134 +256,106 @@ export default function DashboardAdmin() {
         </div>
       )}
 
-      <div>
-        <div style={{ fontWeight: 700, marginBottom: 10 }}>الملخص المالي — {new Date().toLocaleDateString("ar-SA", { year: "numeric", month: "long" })}</div>
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-          <StatCorner value={finLoading ? "—" : `${fmtMoney(fin.totalIncome)} ر.س`} label="الإيرادات المحصّلة" color="#1E7A45" to="/admin/financial" />
-          <StatCorner value={finLoading ? "—" : `${fmtMoney(fin.totalExpense)} ر.س`} label="المصروفات" color="#C0392B" to="/admin/financial" />
-          <StatCorner value={finLoading ? "—" : `${fmtMoney(fin.totalDue)} ر.س`} label="مستحقات غير محصّلة" color="var(--color-accent-700)" to="/admin/financial" />
-        </div>
+      <div style={{ paddingTop: 6 }}>
+        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: 19, margin: "0 0 6px" }}>يحتاج انتباهك</h2>
+        {loading ? (
+          <div style={{ color: "var(--color-neutral-600)", fontSize: 14, padding: "18px 0" }}>جارٍ التحميل…</div>
+        ) : attentionItems.length === 0 ? (
+          <div style={{ color: "var(--color-neutral-600)", fontSize: 14, padding: "18px 0" }}>لا توجد عناصر تتطلب انتباهك الآن.</div>
+        ) : (
+          <div>
+            {attentionItems.map((it, i) => (
+              <Link key={it.key} to={it.to} className="adm-attn-row" style={{ animationDelay: `${i * 70}ms` }}>
+                <span className="adm-attn-index">{String(i + 1).padStart(2, "0")}</span>
+                <div className="adm-attn-body">
+                  <div className="adm-attn-title">{it.title}</div>
+                  {it.meta && <div className="adm-attn-meta">{it.meta}</div>}
+                </div>
+                <span className="adm-attn-go">فتح ←</span>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 28, alignItems: "start" }}>
+      <div className="adm-qp-grid">
         <div>
-          <div style={{ fontWeight: 700, marginBottom: 10 }}>جلسات هذا الأسبوع</div>
-          {sessionsWeek.length === 0 ? (
-            <div style={{ color: "var(--color-neutral-600)", fontSize: 14 }}>لا يوجد جلسات هذا الأسبوع.</div>
-          ) : (
-            <table className="plain-table">
-              <thead><tr><th>اليوم</th><th>الوقت</th><th>القضية</th><th>المحكمة</th></tr></thead>
-              <tbody>
-                {sessionsWeek.map((s, i) => (
-                  <tr key={i}>
-                    <td>{s.date}</td>
-                    <td>{s.time}</td>
-                    <td><b>#{s.caseNo}</b> — {s.title}</td>
-                    <td>{s.court || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-          <Link className="btn btn-ghost" style={{ marginTop: 12 }} to="/admin/calendar">عرض التقويم ←</Link>
-
-          {deadlines.length > 0 && (
-            <div style={{ marginTop: 24 }}>
-              <div style={{ fontWeight: 700, marginBottom: 10 }}>مهل قريبة</div>
-              <ul style={{ lineHeight: 1.9, paddingRight: 18, listStyle: "none", margin: 0 }}>
-                {deadlines.map((d, i) => (
-                  <li key={i}><span className="tag tag-accent">{d.due}</span> قضية #{d.caseNo} — {d.title}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <h2 className="adm-quick-title">وصول سريع</h2>
+          <div className="adm-quick-col">
+            {QUICK_LINKS.map((l) => (
+              <Link key={l.to} className="adm-quick-link" to={l.to}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">{ICON[l.icon]}</svg>
+                <span className="lbl">{l.label}</span>
+                <span className="arw">←</span>
+              </Link>
+            ))}
+          </div>
         </div>
-
         <div>
-          <div style={{ fontWeight: 700, marginBottom: 10 }}>أولوياتي اليوم</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {priorities.length === 0 ? (
-              <div style={{ color: "var(--color-neutral-600)", fontSize: 14 }}>لا مهام مسجّلة بعد.</div>
-            ) : (
-              priorities.map((t) => (
-                <label key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, cursor: "pointer" }}>
-                  <input type="checkbox" checked={t.done} disabled={tasksBusyId === t.id} onChange={() => onToggleTask(t)} />
-                  <span style={t.done ? { textDecoration: "line-through", color: "var(--color-neutral-500)" } : undefined}>{t.title}</span>
-                </label>
-              ))
-            )}
-            <Link to="/admin/tasks" className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: 13, marginTop: 4 }}>عرض كل المهام ←</Link>
-
-            <form onSubmit={addReminder} style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--color-neutral-300)", display: "flex", gap: 8 }}>
-              <input
-                className="input" placeholder="ذكّرني بـ…" style={{ flex: 1, fontSize: 13 }}
-                value={reminderText} onChange={(e) => setReminderText(e.target.value)}
-              />
-              <button type="submit" className="btn btn-secondary">إضافة</button>
-            </form>
-            {reminders.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
-                {reminders.map((text, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
-                    <span>{text}</span>
-                    <a onClick={() => removeReminder(i)} style={{ color: "var(--color-neutral-500)", fontSize: 12, cursor: "pointer" }}>حذف</a>
+          <h2 className="adm-path-title-h">مسار اليوم</h2>
+          {todaysPath.length === 0 ? (
+            <div style={{ color: "var(--color-neutral-600)", fontSize: 13.5, paddingTop: 8 }}>لا عناصر مجدولة اليوم.</div>
+          ) : (
+            <div className="adm-path-h">
+              <div className="adm-path-h-line" />
+              <div className="adm-path-h-row">
+                {todaysPath.map((it) => (
+                  <div key={it.key} className="adm-path-h-item">
+                    <span className="adm-path-h-dot" />
+                    <span className="adm-path-h-label">{it.title}</span>
+                    <span className="adm-path-h-time">{it.time}</span>
                   </div>
                 ))}
               </div>
-            )}
-
-            <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px dashed var(--color-neutral-300)", fontSize: 13, color: "var(--color-neutral-600)" }}>
-              من أنصف الناس من نفسه، أمِن غضبهم.
             </div>
-
-            <div style={{ marginTop: 12, paddingTop: 12, borderTop: "1px dashed var(--color-neutral-300)", display: "flex", flexDirection: "column", gap: 10 }}>
-              <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
-                <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
-              </a>
-              <div>
-                <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginBottom: 6 }}>خدمات ومراجع قضائية</div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {OFFICIAL_LINKS.map((l) => (
-                    <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="tag tag-outline">{l.label}</a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      <div className="card elev-sm" style={{ border: "1px solid var(--color-neutral-300)" }}>
-        <div className="card-title">عمليات سريعة</div>
-        <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-          {[
-            { label: "إضافة قضية", to: "/admin/cases/new" },
-            { label: "إسناد قضية", to: "/admin/assign" },
-            { label: "اعتماد مسودة", to: "/admin/drafts" },
-            { label: "التقويم", to: "/admin/calendar" },
-            { label: "الأرشيف", to: "/admin/archive" },
-            { label: "جميع القضايا", to: "/admin/cases" },
-            { label: "ابحث عن قضية", to: "/admin/cases" },
-          ].map((a, i) => (
-            <Link key={i} className="btn btn-ghost" to={a.to}>{a.label}</Link>
+      <Section title="أولوياتي اليوم" bordered>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {priorities.length === 0 ? (
+            <div style={{ color: "var(--color-neutral-600)", fontSize: 13.5 }}>لا مهام مسجّلة بعد.</div>
+          ) : (
+            priorities.map((t) => (
+              <label key={t.id} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, cursor: "pointer" }}>
+                <input type="checkbox" checked={t.done} disabled={tasksBusyId === t.id} onChange={() => onToggleTask(t)} />
+                <span style={t.done ? { textDecoration: "line-through", color: "var(--color-neutral-500)" } : undefined}>{t.title}</span>
+              </label>
+            ))
+          )}
+          <Link to="/admin/tasks" className="btn btn-ghost" style={{ alignSelf: "flex-start", fontSize: 13, marginTop: 4 }}>عرض كل المهام ←</Link>
+
+          <form onSubmit={addReminder} style={{ marginTop: 8, paddingTop: 12, borderTop: "1px dashed var(--color-neutral-300)", display: "flex", gap: 8 }}>
+            <input
+              className="input" placeholder="ذكّرني بـ…" style={{ flex: 1, fontSize: 13, maxWidth: 320 }}
+              value={reminderText} onChange={(e) => setReminderText(e.target.value)}
+            />
+            <button type="submit" className="btn btn-secondary">إضافة</button>
+          </form>
+          {reminders.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 420 }}>
+              {reminders.map((text, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
+                  <span>{text}</span>
+                  <a onClick={() => removeReminder(i)} style={{ color: "var(--color-neutral-500)", fontSize: 12, cursor: "pointer" }}>حذف</a>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </Section>
+
+      <Section title="مراجع قضائية" bordered>
+        <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
+          <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
+        </a>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+          {OFFICIAL_LINKS.map((l) => (
+            <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="tag tag-outline">{l.label}</a>
           ))}
         </div>
-      </div>
+      </Section>
     </div>
-  );
-}
-
-function StatCorner({ value, label, color, to }) {
-  const body = (
-    <>
-      <i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" />
-      <b style={color ? { color } : undefined}>{value}</b>
-      <span>{label}</span>
-    </>
-  );
-  return to ? (
-    <Link to={to} className="stat-corner" style={{ textDecoration: "none", color: "inherit" }}>{body}</Link>
-  ) : (
-    <div className="stat-corner">{body}</div>
   );
 }

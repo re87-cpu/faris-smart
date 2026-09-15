@@ -131,3 +131,94 @@
   .adm-toolbar .input, .adm-toolbar select.input { max-width: none; flex: 1 1 140px; }
   .adm-form-grid { grid-template-columns: 1fr; }
 }
+
+/* ===================== FARIS COMMAND — /dashboard-admin فقط ===================== */
+
+/* — بيت اليوم: لوحة جانبية هادئة ضمن الـHero، بلا صندوق ولا ظل — */
+.adm-bayt-label {
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--color-neutral-500); font-weight: 600;
+}
+.adm-bayt-verse { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; }
+.adm-bayt-line {
+  font-family: "Amiri", var(--font-heading), serif;
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--color-text);
+}
+.adm-bayt-poet {
+  font-size: 13px; color: var(--color-neutral-600); margin-top: 12px;
+}
+
+/* — Hero: ترحيب + مؤشرات (يسار) وبيت اليوم (يمين) — */
+.adm-hero {
+  display: grid; grid-template-columns: 1fr 300px; gap: 36px; align-items: center;
+  padding: 26px 0 32px; border-bottom: 1px solid var(--color-divider);
+}
+.adm-hero-poem {
+  align-self: stretch; display: flex; flex-direction: column; justify-content: center;
+  border-inline-start: 1px solid var(--color-divider); padding-inline-start: 28px;
+}
+.adm-greeting-sub { color: var(--color-neutral-600); font-size: 13.5px; margin-top: 4px; }
+.adm-hero-stats { display: flex; align-items: baseline; margin-top: 36px; }
+.adm-hero-stat { display: flex; flex-direction: column; }
+.adm-hero-stat b { font-family: var(--font-heading); font-size: 46px; font-weight: 700; line-height: 1; }
+.adm-hero-stat span { color: var(--color-neutral-600); font-size: 13px; margin-top: 8px; }
+.adm-hero-divider { width: 1px; height: 46px; background: var(--color-divider); margin: 0 30px; }
+
+/* — يحتاج انتباهك: صفوف محررة برقم متسلسل وسهم فتح — */
+.adm-attn-row {
+  cursor: pointer; display: flex; align-items: center; gap: 18px; padding: 16px 0;
+  border-bottom: 1px solid var(--color-divider); text-decoration: none; color: inherit;
+}
+.adm-attn-row:last-child { border-bottom: none; }
+.adm-attn-index { font-family: var(--font-heading); font-size: 13px; color: var(--color-neutral-500); width: 22px; flex-shrink: 0; }
+.adm-attn-body { flex: 1; min-width: 0; }
+.adm-attn-title { font-weight: 700; font-size: 15px; }
+.adm-attn-meta { color: var(--color-neutral-600); font-size: 13px; margin-top: 3px; }
+.adm-attn-go { color: var(--color-accent-700); font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+
+/* — وصول سريع: صف روابط بأيقونة خطية — */
+.adm-quick-col { display: flex; flex-direction: column; }
+.adm-quick-link {
+  cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 11px 0;
+  border-bottom: 1px solid var(--color-divider); color: var(--color-text); text-decoration: none;
+}
+.adm-quick-link:last-child { border-bottom: none; }
+.adm-quick-link span.lbl { flex: 1; font-size: 14px; }
+.adm-quick-link span.arw { color: var(--color-neutral-400); }
+.adm-quick-title, .adm-path-title-h {
+  font-family: var(--font-heading); font-size: 14px; letter-spacing: .06em;
+  color: var(--color-neutral-600); text-transform: uppercase; margin: 0 0 12px;
+}
+
+/* — مسار اليوم: خط أفقي رفيع + نقاط (FARIS PATH) — */
+.adm-path-h { position: relative; padding-top: 16px; }
+.adm-path-h-line { position: absolute; top: 25px; inset-inline: 6%; height: 1px; background: var(--color-divider); }
+.adm-path-h-row { display: flex; justify-content: space-between; position: relative; }
+.adm-path-h-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.adm-path-h-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--color-accent); background: var(--color-surface); z-index: 1; }
+.adm-path-h-label { margin-top: 12px; font-size: 12.5px; text-align: center; color: var(--color-neutral-700); font-weight: 600; }
+.adm-path-h-time { font-size: 11px; color: var(--color-neutral-500); margin-top: 2px; text-align: center; }
+
+/* — شبكة "وصول سريع" + "مسار اليوم" — */
+.adm-qp-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 44px; padding-top: 36px; margin-top: 8px; border-top: 1px solid var(--color-divider); }
+
+/* — حركة دخول خفيفة جدًا، تُحترَم prefers-reduced-motion — */
+@media (prefers-reduced-motion: no-preference) {
+  .adm-fade-in { animation: admFadeUp .4s ease both; }
+  .adm-attn-row { animation: admFadeUp .45s ease both; }
+}
+@keyframes admFadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 860px) {
+  .adm-qp-grid { grid-template-columns: 1fr; gap: 28px; }
+  .adm-hero { grid-template-columns: 1fr; }
+  .adm-hero-poem {
+    order: -1; border-inline-start: none; padding-inline-start: 0;
+    border-top: 1px solid var(--color-divider); padding-top: 20px; margin-top: 20px;
+  }
+}
