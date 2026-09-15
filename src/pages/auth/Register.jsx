@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../utils/api.js";
+import AuthSide from "./AuthSide.jsx";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -43,19 +44,11 @@ export default function Register() {
 
   return (
     <div dir="rtl" className="ind-authwrap">
-      <aside className="ind-authside">
-        <div className="ind-authside-body">
-          <div className="ind-authside-kicker">
-            <span className="ind-authside-rule" />
-            <span>حساب موظف جديد</span>
-          </div>
-          <div className="ind-authside-title">طلبك يحتاج موافقة المدير قبل التفعيل.</div>
-          <div className="ind-authside-sub">بعد إرسال الطلب سيتم إشعارك عند التفعيل.</div>
-        </div>
-      </aside>
+      <AuthSide quote="مرحبًا بك في بداية طريقك مع فارس." />
 
       <div className="ind-authform">
         <div style={{ width: "100%", maxWidth: 400 }}>
+          <div style={{ color: "var(--color-neutral-600)", fontSize: 14, marginBottom: 8 }}>طلبك يحتاج موافقة المدير قبل التفعيل</div>
           <h1 className="ind-auth-h1">إنشاء حساب موظف</h1>
 
           <form onSubmit={onSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -71,18 +64,14 @@ export default function Register() {
 
             <div className="field">
               <label>كلمة المرور</label>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input className="input" type={showPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="new-password" required style={{ flex: 1 }} />
-                <button type="button" className="btn btn-ghost" onClick={() => setShowPass((v) => !v)}>{showPass ? "إخفاء" : "إظهار"}</button>
-              </div>
+              <input className="input" type={showPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="new-password" required />
+              <button type="button" className="ind-auth-toggle" style={{ marginTop: 6 }} onClick={() => setShowPass((v) => !v)}>{showPass ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}</button>
             </div>
 
             <div className="field">
               <label>تأكيد كلمة المرور</label>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input className="input" type={showConfirm ? "text" : "password"} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" autoComplete="new-password" required style={{ flex: 1 }} />
-                <button type="button" className="btn btn-ghost" onClick={() => setShowConfirm((v) => !v)}>{showConfirm ? "إخفاء" : "إظهار"}</button>
-              </div>
+              <input className="input" type={showConfirm ? "text" : "password"} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" autoComplete="new-password" required />
+              <button type="button" className="ind-auth-toggle" style={{ marginTop: 6 }} onClick={() => setShowConfirm((v) => !v)}>{showConfirm ? "إخفاء" : "إظهار"}</button>
             </div>
 
             <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 13, color: "var(--color-neutral-700)" }}>

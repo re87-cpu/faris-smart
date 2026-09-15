@@ -4,6 +4,7 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { setAuth, setAuthToken } from "../../utils/auth.js";
 import { http } from "../../utils/http.js";
 import { initPushNotifications } from "../../utils/pushNotifications.js";
+import AuthSide from "./AuthSide.jsx";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,7 +13,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
-  const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -43,8 +43,7 @@ export default function Login() {
       await setAuthToken(token);
       initPushNotifications(); // لا تنتظرها — تسجيل الجهاز يحدث بالخلفية
 
-      if (remember) localStorage.setItem("auth_email", email);
-      else localStorage.removeItem("auth_email");
+      localStorage.setItem("auth_email", email);
 
       const from = location.state?.from;
       if (from) navigate(from, { replace: true });
@@ -63,14 +62,7 @@ export default function Login() {
 
   return (
     <div dir="rtl" className="ind-authwrap">
-      <aside className="ind-authside">
-        <div className="ind-authside-body">
-          <div className="ind-authside-title">إدارة القضايا بدقة، ومتابعتها بلا فوضى.</div>
-          <div className="ind-authside-sub">
-            بوابة موظفي ومدير فارس للمحاماة.
-          </div>
-        </div>
-      </aside>
+      <AuthSide quote="أهلًا بك في فارس، لنبدأ اليوم بخطى واثقة." />
 
       <div className="ind-authform">
         <div style={{ width: "100%", maxWidth: 380 }}>
@@ -92,21 +84,18 @@ export default function Login() {
 
             <div className="field">
               <label>كلمة المرور</label>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  className="input"
-                  type={show ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  required
-                  style={{ flex: 1 }}
-                />
-                <button type="button" className="btn btn-ghost" onClick={() => setShow((s) => !s)}>
-                  {show ? "إخفاء" : "إظهار"}
-                </button>
-              </div>
+              <input
+                className="input"
+                type={show ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              <button type="button" className="ind-auth-toggle" style={{ marginTop: 6 }} onClick={() => setShow((s) => !s)}>
+                {show ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
+              </button>
             </div>
 
             {err && (
@@ -115,23 +104,12 @@ export default function Login() {
               </div>
             )}
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--color-neutral-700)" }}>
-                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
-                تذكّرني
-              </label>
-              <Link to="/register" style={{ fontSize: 13 }}>إنشاء حساب</Link>
-            </div>
-
             <button className="btn btn-primary btn-block" disabled={loading}>
               {loading ? "جاري الدخول..." : "تسجيل الدخول"}
             </button>
 
             <div style={{ textAlign: "center", fontSize: 13, color: "var(--color-neutral-600)" }}>
-              لا تملك حساب موظف؟ <Link to="/register">إنشاء حساب</Link>
-            </div>
-            <div style={{ fontSize: 12, color: "var(--color-neutral-500)", textAlign: "center" }}>
-              بدخولك، أنت توافق على شروط الاستخدام وسياسة الخصوصية.
+              لا تملك حسابًا؟ <Link to="/register">إنشاء حساب موظف</Link>
             </div>
           </form>
         </div>
