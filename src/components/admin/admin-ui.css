@@ -180,6 +180,10 @@
 
 /* — وصول سريع: صف روابط بأيقونة خطية — */
 .adm-quick-col { display: flex; flex-direction: column; }
+.adm-quick-col-2 { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; }
+@media (max-width: 560px) {
+  .adm-quick-col-2 { grid-template-columns: 1fr; }
+}
 .adm-quick-link {
   cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 11px 0;
   border-bottom: 1px solid var(--color-divider); color: var(--color-text); text-decoration: none;

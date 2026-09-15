@@ -347,11 +347,11 @@ export default function DashboardAdmin() {
       </Section>
 
       <Section title="مراجع قضائية" bordered>
-        <div className="adm-quick-col">
-          <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="adm-quick-link">
-            <span className="lbl">أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
-            <span className="arw">←</span>
-          </a>
+        <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="adm-quick-link">
+          <span className="lbl">أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
+          <span className="arw">←</span>
+        </a>
+        <div className="adm-quick-col-2">
           {OFFICIAL_LINKS.map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="adm-quick-link">
               <span className="lbl">{l.label}</span>
