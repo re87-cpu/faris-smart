@@ -347,7 +347,7 @@ export default function DashboardAdmin() {
       </Section>
 
       <Section title="مراجع قضائية" bordered>
-        <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="adm-quick-link">
+        <a href="https://laws.moj.gov.sa/ar/JudicialDecisionsList/1" target="_blank" rel="noopener noreferrer" className="adm-quick-link">
           <span className="lbl">أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
           <span className="arw">←</span>
         </a>
