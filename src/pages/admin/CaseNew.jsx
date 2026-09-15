@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createCase } from "../../mock/api.js";
 import { toast } from "../../utils/toast.js";
-import { PageHeader, Section, FormGrid, Field } from "../../components/admin/ui.jsx";
 
 export default function CaseNew() {
   const navigate = useNavigate();
@@ -39,26 +38,30 @@ export default function CaseNew() {
   }
 
   return (
-    <div dir="rtl" className="adm">
-      <PageHeader title="إضافة قضية جديدة" description="سجّلي رقمًا داخليًا وعنوانًا؛ يمكن استكمال بقية التفاصيل لاحقًا من صفحة القضية." />
-      <Section bordered>
-        <form onSubmit={onSubmit} noValidate style={{ maxWidth: 720, display: "flex", flexDirection: "column", gap: 16 }}>
-          <FormGrid>
-            <Field label="رقم القضية الداخلي">
-              <input className="input" value={caseNo} onChange={(e) => setCaseNo(e.target.value)} placeholder="مثال: TST-001 أو 2025/ق/15" required />
-            </Field>
-            <Field label="عنوان القضية">
-              <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: مطالبة مالية ضد شركة ..." required />
-            </Field>
-          </FormGrid>
-          <div>
-            <button className="btn btn-primary" disabled={loading}>{loading ? "جاري الحفظ…" : "حفظ القضية"}</button>
-          </div>
-          <p style={{ fontSize: 13, color: "var(--color-neutral-600)" }}>
-            هذا الرقم داخلي ويمكن لاحقًا ربطه برقم القضية في نظام آخر إن لزم.
-          </p>
-        </form>
-      </Section>
+    <div dir="rtl" className="adm" style={{ maxWidth: 640 }}>
+      <div style={{ paddingBottom: 28, borderBottom: "1px solid var(--color-divider)" }}>
+        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 30, fontWeight: 700, margin: 0 }}>قضية جديدة</h1>
+      </div>
+
+      <form onSubmit={onSubmit} noValidate style={{ display: "flex", flexDirection: "column" }}>
+        <div className="adm-num-field">
+          <span className="num">01</span>
+          <label htmlFor="case-no">رقم القضية الداخلي</label>
+          <input id="case-no" className="assign-select" value={caseNo} onChange={(e) => setCaseNo(e.target.value)} placeholder="مثال: TST-001 أو 2025/ق/15" required />
+        </div>
+        <div className="adm-num-field">
+          <span className="num">02</span>
+          <label htmlFor="case-title">عنوان القضية</label>
+          <input id="case-title" className="assign-select" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="مثال: مطالبة مالية ضد شركة ..." required />
+        </div>
+
+        <div style={{ paddingTop: 30 }}>
+          <button className="btn btn-primary" style={{ padding: "13px 30px", fontSize: 15 }} disabled={loading}>{loading ? "جاري الحفظ…" : "حفظ القضية"}</button>
+        </div>
+        <p style={{ marginTop: 16, fontSize: 13, color: "var(--color-neutral-600)" }}>
+          هذا الرقم داخلي ويمكن لاحقًا ربطه برقم القضية في نظام آخر إن لزم.
+        </p>
+      </form>
     </div>
   );
 }

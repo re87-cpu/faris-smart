@@ -130,12 +130,12 @@ export default function CasesList() {
       />
 
       <Toolbar>
-        <input className="input" placeholder="بحث برقم/عنوان/حالة/مسؤول/محكمة…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ minWidth: 280 }} />
-        <select className="input" value={fStatus} onChange={(e) => { setFStatus(e.target.value); setPage(1); }}>
+        <input className="assign-select" placeholder="بحث برقم/عنوان/حالة/مسؤول/محكمة…" value={q} onChange={(e) => { setQ(e.target.value); setPage(1); }} style={{ minWidth: 280 }} />
+        <select className="assign-select" value={fStatus} onChange={(e) => { setFStatus(e.target.value); setPage(1); }}>
           <option value="all">كل الحالات</option>
           {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
-        <select className="input" value={fAssign} onChange={(e) => { setFAssign(e.target.value); setPage(1); }}>
+        <select className="assign-select" value={fAssign} onChange={(e) => { setFAssign(e.target.value); setPage(1); }}>
           <option value="all">الكل</option>
           <option value="assigned">مُسنّد</option>
           <option value="unassigned">غير مُسنّد</option>
@@ -177,7 +177,7 @@ export default function CasesList() {
                       <td>{r.court || ""}</td>
                       <td>
                         {!isEdit ? <span className="tag tag-accent">{STATUS_LABELS[r.status] || r.status || ""}</span> : (
-                          <select className="input" value={ed.status} onChange={(e) => changeEdit(r.id, { status: e.target.value })}>
+                          <select className="assign-select" value={ed.status} onChange={(e) => changeEdit(r.id, { status: e.target.value })}>
                             {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                           </select>
                         )}
@@ -185,7 +185,7 @@ export default function CasesList() {
                       <td>{displayAssigned(r)}</td>
                       <td style={{ minWidth: 200 }}>
                         {!isEdit ? (r.next ? new Date(r.next).toLocaleString() : "") : (
-                          <input className="input" type="datetime-local" value={ed.next || ""} onChange={(e) => changeEdit(r.id, { next: e.target.value })} />
+                          <input className="assign-select" type="datetime-local" value={ed.next || ""} onChange={(e) => changeEdit(r.id, { next: e.target.value })} />
                         )}
                       </td>
                       <td>{r.updatedAt ? new Date(r.updatedAt).toLocaleString() : r.next ? new Date(r.next).toLocaleString() : ""}</td>

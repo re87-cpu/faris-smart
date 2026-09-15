@@ -69,7 +69,7 @@ export default function Archive() {
       <PageHeader title="الأرشيف" description="قضايا مغلقة أو مؤرشفة." />
 
       <Toolbar>
-        <input className="input" placeholder="بحث برقم/عنوان/محكمة/مسؤول…" value={q} onChange={(e) => setQ(e.target.value)} style={{ flex: 1, minWidth: 240 }} />
+        <input className="assign-select" placeholder="بحث برقم/عنوان/محكمة/مسؤول…" value={q} onChange={(e) => setQ(e.target.value)} style={{ flex: 1, minWidth: 240 }} />
         <ToolbarSpacer />
         <button className="btn btn-ghost" onClick={load}>تحديث</button>
       </Toolbar>

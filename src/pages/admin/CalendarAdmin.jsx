@@ -156,8 +156,8 @@ export default function CalendarAdmin() {
       />
 
       <Toolbar>
-        <input className="input" placeholder="تصفية حسب المحكمة" value={courtFilter} onChange={(e) => setCourtFilter(e.target.value)} />
-        <input className="input" placeholder="تصفية حسب رقم / عنوان القضية" value={caseFilter} onChange={(e) => setCaseFilter(e.target.value)} />
+        <input className="assign-select" placeholder="تصفية حسب المحكمة" value={courtFilter} onChange={(e) => setCourtFilter(e.target.value)} />
+        <input className="assign-select" placeholder="تصفية حسب رقم / عنوان القضية" value={caseFilter} onChange={(e) => setCaseFilter(e.target.value)} />
         <ToolbarSpacer />
         <button className="btn btn-ghost" type="button" onClick={clearFilters} disabled={!courtFilter && !caseFilter}>مسح</button>
       </Toolbar>

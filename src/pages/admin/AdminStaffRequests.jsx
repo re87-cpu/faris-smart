@@ -49,8 +49,7 @@ export default function AdminStaffRequests() {
   return (
     <div dir="rtl" className="adm">
       <PageHeader
-        title={`طلبات تحتاج مراجعتك${rows.length ? ` (${rows.length})` : ""}`}
-        description="تظهر هنا الحسابات الجديدة التي تنتظر اعتماد المدير قبل السماح لها بالدخول للنظام."
+        title={`طلبات إنشاء حساب موظف${rows.length ? ` (${rows.length})` : ""}`}
         actions={<button className="btn btn-ghost" onClick={load} disabled={loading}>تحديث</button>}
       />
 

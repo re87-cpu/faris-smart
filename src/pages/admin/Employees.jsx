@@ -60,8 +60,8 @@ export default function Employees() {
       ]} />
 
       <Toolbar>
-        <input className="input" placeholder="بحث باسم/بريد الموظف…" style={{ minWidth: 260 }} value={q} onChange={(e) => setQ(e.target.value)} />
-        <select className="input" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+        <input className="assign-select" placeholder="بحث باسم/بريد الموظف…" style={{ minWidth: 260 }} value={q} onChange={(e) => setQ(e.target.value)} />
+        <select className="assign-select" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
           <option value="all">كل الأدوار</option>
           <option value="manager">المديرون فقط</option>
           <option value="staff">الموظفون فقط</option>

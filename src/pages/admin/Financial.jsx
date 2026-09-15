@@ -153,29 +153,29 @@ export default function Financial() {
         <FormError>{formErr}</FormError>
         <FormGrid>
           <Field label="النوع">
-            <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
+            <select className="assign-select" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
               <option value="income">إيراد (مدفوع)</option>
               <option value="due">مستحق (غير محصّل)</option>
               <option value="expense">مصروف</option>
             </select>
           </Field>
           <Field label="المبلغ (ر.س)">
-            <input className="input" type="number" placeholder="المبلغ" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+            <input className="assign-select" type="number" placeholder="المبلغ" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
           </Field>
         </FormGrid>
         <FormGrid>
           <Field label="القضية">
-            <select className="input" value={form.caseId} onChange={(e) => setForm({ ...form, caseId: e.target.value })}>
+            <select className="assign-select" value={form.caseId} onChange={(e) => setForm({ ...form, caseId: e.target.value })}>
               <option value="">— بدون قضية —</option>
               {caseOptions.map(([id, label]) => <option key={id} value={id}>#{id} — {label}</option>)}
             </select>
           </Field>
           <Field label="التاريخ">
-            <input className="input" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
+            <input className="assign-select" type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
           </Field>
         </FormGrid>
         <Field label="وصف المعاملة">
-          <input className="input" placeholder="وصف المعاملة" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />
+          <input className="assign-select" placeholder="وصف المعاملة" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />
         </Field>
       </Drawer>
     </div>

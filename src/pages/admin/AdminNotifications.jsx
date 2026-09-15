@@ -91,7 +91,7 @@ export default function AdminNotifications() {
       />
 
       <Toolbar>
-        <input className="input" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="assign-select" placeholder="بحث…" value={q} onChange={(e) => setQ(e.target.value)} />
         <label style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 13 }}>
           <input type="checkbox" checked={unreadOnly} onChange={(e) => setUnreadOnly(e.target.checked)} />
           غير المقروء فقط

@@ -328,7 +328,7 @@ export default function DashboardAdmin() {
 
           <form onSubmit={addReminder} style={{ marginTop: 8, paddingTop: 12, borderTop: "1px dashed var(--color-neutral-300)", display: "flex", gap: 8 }}>
             <input
-              className="input" placeholder="ذكّرني بـ…" style={{ flex: 1, fontSize: 13, maxWidth: 320 }}
+              className="assign-select" placeholder="ذكّرني بـ…" style={{ flex: 1, fontSize: 13, maxWidth: 320 }}
               value={reminderText} onChange={(e) => setReminderText(e.target.value)}
             />
             <button type="submit" className="btn btn-secondary">إضافة</button>
@@ -347,12 +347,16 @@ export default function DashboardAdmin() {
       </Section>
 
       <Section title="مراجع قضائية" bordered>
-        <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="mini-banner">
-          <span>أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
-        </a>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
+        <div className="adm-quick-col">
+          <a href="https://sjp.moj.gov.sa/" target="_blank" rel="noopener noreferrer" className="adm-quick-link">
+            <span className="lbl">أحكام قضائية جديدة على موقع وزارة العدل — اطّلع عليها</span>
+            <span className="arw">←</span>
+          </a>
           {OFFICIAL_LINKS.map((l) => (
-            <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="tag tag-outline">{l.label}</a>
+            <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="adm-quick-link">
+              <span className="lbl">{l.label}</span>
+              <span className="arw">←</span>
+            </a>
           ))}
         </div>
       </Section>

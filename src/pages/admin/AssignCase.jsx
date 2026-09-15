@@ -2,7 +2,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { assignCaseTo, fetchAllCases, fetchEmployees } from "../../mock/api.js";
 import { toast } from "../../utils/toast.js";
-import { PageHeader, Section, Field, FormError, LoadingSkeleton } from "../../components/admin/ui.jsx";
+import { LoadingSkeleton, FormError } from "../../components/admin/ui.jsx";
+
+const STEPS = ["القضية", "الموظف", "ملاحظة", "إسناد"];
 
 export default function AssignCase() {
   const [cases, setCases] = useState([]);
@@ -32,8 +34,6 @@ export default function AssignCase() {
   useEffect(() => { load(); }, []);
 
   const openCases = useMemo(() => cases.filter((c) => c.status === "open"), [cases]);
-  const selectedCase = useMemo(() => openCases.find((c) => String(c.id) === String(caseId)), [openCases, caseId]);
-  const selectedUser = useMemo(() => employees.find((u) => String(u.id) === String(userId)), [employees, userId]);
 
   async function onAssign(e) {
     e.preventDefault();
@@ -43,7 +43,7 @@ export default function AssignCase() {
       setErr("");
       await assignCaseTo(caseId, userId, note || null);
       toast("تم إسناد القضية بنجاح.");
-      setNote("");
+      setCaseId(""); setUserId(""); setNote("");
       await load();
     } catch (ex) {
       console.error(ex);
@@ -53,71 +53,67 @@ export default function AssignCase() {
     }
   }
 
-  const STATUS_LABELS = { open: "قيد الترافع", closed: "مغلقة", archived: "مؤرشفة" };
+  const activeStep = !caseId ? 0 : !userId ? 1 : 2;
 
   return (
-    <div dir="rtl" className="adm">
-      <PageHeader
-        title="إسناد قضية لموظف"
-        actions={<button className="btn btn-ghost" onClick={load} disabled={loadingLists}>تحديث البيانات</button>}
-      />
+    <div dir="rtl" className="adm" style={{ maxWidth: 640 }}>
+      <div style={{ paddingBottom: 28, borderBottom: "1px solid var(--color-divider)" }}>
+        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: 30, fontWeight: 700, margin: 0 }}>إسناد قضية</h1>
+        <div style={{ color: "var(--color-neutral-600)", fontSize: 14, marginTop: 8 }}>اختر القضية والموظف المسؤول لإكمال الإسناد.</div>
+      </div>
+
+      <div className="adm-steps">
+        <div className="adm-steps-line" />
+        <div className="adm-steps-row">
+          {STEPS.map((label, i) => (
+            <div className="adm-steps-item" key={label}>
+              <span className={`adm-steps-dot${i <= activeStep ? " done" : ""}`} />
+              <span className={`adm-steps-label${i === activeStep ? " on" : ""}`}>{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {loadingLists ? (
-        <LoadingSkeleton rows={4} />
+        <LoadingSkeleton rows={3} />
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1.6fr", gap: 28, alignItems: "flex-start" }}>
-          <form onSubmit={onAssign} style={{ display: "grid", gap: 14 }}>
-            <Field label="القضية">
-              <select className="input" value={caseId} onChange={(e) => setCaseId(e.target.value)} required>
-                <option value="">{openCases.length === 0 ? "لا توجد قضايا مفتوحة حالياً" : "اختاري قضية…"}</option>
-                {openCases.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    قضية #{c.case_number || c.id} — {c.title} {c.assignedName ? `(المسؤول الحالي: ${c.assignedName})` : "(غير مُسنّدة)"}
-                  </option>
-                ))}
-              </select>
-            </Field>
+        <form onSubmit={onAssign} style={{ display: "flex", flexDirection: "column" }}>
+          <div className="adm-num-field">
+            <span className="num">01</span>
+            <label htmlFor="assign-case">القضية</label>
+            <select id="assign-case" className="assign-select" value={caseId} onChange={(e) => setCaseId(e.target.value)} required>
+              <option value="">{openCases.length === 0 ? "لا توجد قضايا مفتوحة حالياً" : "اختاري قضية…"}</option>
+              {openCases.map((c) => (
+                <option key={c.id} value={c.id}>
+                  قضية #{c.case_number || c.id} — {c.title} {c.assignedName ? `(المسؤول الحالي: ${c.assignedName})` : "(غير مُسنّدة)"}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <Field label="الموظف">
-              <select className="input" value={userId} onChange={(e) => setUserId(e.target.value)} required>
-                <option value="">اختاري موظف…</option>
-                {employees.map((u) => <option key={u.id} value={u.id}>{u.name || u.full_name || u.email}</option>)}
-              </select>
-              {employees.length === 0 && <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginTop: 4 }}>لا يوجد موظفون معتمدون بعد.</div>}
-            </Field>
+          <div className="adm-num-field">
+            <span className="num">02</span>
+            <label htmlFor="assign-employee">الموظف المسؤول</label>
+            <select id="assign-employee" className="assign-select" value={userId} onChange={(e) => setUserId(e.target.value)} required>
+              <option value="">اختاري موظف…</option>
+              {employees.map((u) => <option key={u.id} value={u.id}>{u.name || u.full_name || u.email}</option>)}
+            </select>
+            {employees.length === 0 && <div style={{ fontSize: 12, color: "var(--color-neutral-600)", marginTop: 8 }}>لا يوجد موظفون معتمدون بعد.</div>}
+          </div>
 
-            <Field label="ملاحظة (اختياري)">
-              <textarea className="input" style={{ height: 110 }} value={note} onChange={(e) => setNote(e.target.value)} placeholder="تفاصيل إضافية عن الإسناد إن لزم…" />
-            </Field>
+          <div className="adm-num-field">
+            <span className="num muted">03 — اختياري</span>
+            <label htmlFor="assign-note">ملاحظة</label>
+            <textarea id="assign-note" className="assign-select" style={{ height: 96, resize: "none" }} value={note} onChange={(e) => setNote(e.target.value)} placeholder="تفاصيل إضافية عن الإسناد إن لزم…" />
+          </div>
 
-            <div style={{ display: "flex", gap: 8 }}>
-              <button className="btn btn-primary" disabled={loadingForm}>{loadingForm ? "جاري الإسناد…" : "إسناد القضية"}</button>
-              <button type="button" className="btn btn-ghost" onClick={() => { setCaseId(""); setUserId(""); setNote(""); }} disabled={loadingForm}>مسح الحقول</button>
-            </div>
+          <div style={{ paddingTop: 30, display: "flex", gap: 12, alignItems: "center" }}>
+            <button className="btn btn-primary" style={{ padding: "13px 30px", fontSize: 15 }} disabled={loadingForm}>{loadingForm ? "جاري الإسناد…" : "إسناد القضية"}</button>
+            <button type="button" className="btn btn-ghost" onClick={() => { setCaseId(""); setUserId(""); setNote(""); }} disabled={loadingForm}>مسح الحقول</button>
+          </div>
 
-            <FormError>{err}</FormError>
-          </form>
-
-          <Section title="ملخص القضية المختارة" bordered>
-            {!selectedCase ? (
-              <div style={{ color: "var(--color-neutral-600)" }}>اختاري قضية من القائمة لعرض التفاصيل.</div>
-            ) : (
-              <div style={{ display: "grid", gap: 6, fontSize: 14 }}>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>رقم القضية:</span> <b>#{selectedCase.case_number || selectedCase.id}</b></div>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>العنوان:</span> {selectedCase.title}</div>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>المحكمة:</span> {selectedCase.court || "—"}</div>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>الحالة:</span> <span className="tag tag-accent">{STATUS_LABELS[selectedCase.status] || selectedCase.status}</span></div>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>المسؤول الحالي:</span> <b>{selectedCase.assignedName || "غير مُسنّدة"}</b></div>
-                <div><span style={{ color: "var(--color-neutral-600)" }}>تاريخ الإنشاء:</span> {selectedCase.created_at ? new Date(selectedCase.created_at).toLocaleString("ar-SA") : "—"}</div>
-                {selectedUser && (
-                  <div style={{ marginTop: 8, paddingTop: 8, borderTop: "1px solid var(--color-neutral-200)" }}>
-                    <span style={{ color: "var(--color-neutral-600)" }}>سيتم الإسناد إلى:</span> <b>{selectedUser.name || selectedUser.email}</b>
-                  </div>
-                )}
-              </div>
-            )}
-          </Section>
-        </div>
+          <FormError>{err}</FormError>
+        </form>
       )}
     </div>
   );

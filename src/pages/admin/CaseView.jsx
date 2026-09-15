@@ -253,24 +253,24 @@ export default function CaseView() {
               <form onSubmit={onSaveMeta} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 <FormGrid cols={2}>
                   <Field label="عنوان القضية">
-                    <input className="input" value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} />
+                    <input className="assign-select" value={form.title} onChange={(e) => setForm((s) => ({ ...s, title: e.target.value }))} />
                   </Field>
                   <Field label="المحكمة">
-                    <input className="input" value={form.court} onChange={(e) => setForm((s) => ({ ...s, court: e.target.value }))} />
+                    <input className="assign-select" value={form.court} onChange={(e) => setForm((s) => ({ ...s, court: e.target.value }))} />
                   </Field>
                   <Field label="الحالة">
-                    <select className="input" value={form.status} onChange={(e) => setForm((s) => ({ ...s, status: e.target.value }))}>
+                    <select className="assign-select" value={form.status} onChange={(e) => setForm((s) => ({ ...s, status: e.target.value }))}>
                       {STATUS_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
                     </select>
                   </Field>
                   <Field label="الموعد القادم">
-                    <input className="input" type="datetime-local" value={form.next} onChange={(e) => setForm((s) => ({ ...s, next: e.target.value }))} />
+                    <input className="assign-select" type="datetime-local" value={form.next} onChange={(e) => setForm((s) => ({ ...s, next: e.target.value }))} />
                   </Field>
                 </FormGrid>
                 <FormGrid cols={2}>
                   <Field label="إسناد إلى">
                     <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 8 }}>
-                      <select className="input" value={form.assignedTo} onChange={(e) => setForm((s) => ({ ...s, assignedTo: e.target.value }))}>
+                      <select className="assign-select" value={form.assignedTo} onChange={(e) => setForm((s) => ({ ...s, assignedTo: e.target.value }))}>
                         <option value="">— بدون —</option>
                         {staffEmps.map((u) => <option key={u.id} value={u.id}>{u.full_name || u.email}</option>)}
                       </select>
@@ -288,10 +288,10 @@ export default function CaseView() {
           {activeTab === "sessions" && (
             <Section title="الجلسات" bordered>
               <form onSubmit={onCreateSession} style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 2fr auto", gap: 8 }}>
-                <input className="input" type="datetime-local" value={newSession.session_at} onChange={(e) => setNewSession((s) => ({ ...s, session_at: e.target.value }))} />
-                <input className="input" placeholder="المحكمة" value={newSession.court} onChange={(e) => setNewSession((s) => ({ ...s, court: e.target.value }))} />
-                <input className="input" placeholder="القاعة/الغرفة" value={newSession.room} onChange={(e) => setNewSession((s) => ({ ...s, room: e.target.value }))} />
-                <input className="input" placeholder="ملاحظات للجلسة (اختياري)" value={newSession.notes} onChange={(e) => setNewSession((s) => ({ ...s, notes: e.target.value }))} />
+                <input className="assign-select" type="datetime-local" value={newSession.session_at} onChange={(e) => setNewSession((s) => ({ ...s, session_at: e.target.value }))} />
+                <input className="assign-select" placeholder="المحكمة" value={newSession.court} onChange={(e) => setNewSession((s) => ({ ...s, court: e.target.value }))} />
+                <input className="assign-select" placeholder="القاعة/الغرفة" value={newSession.room} onChange={(e) => setNewSession((s) => ({ ...s, room: e.target.value }))} />
+                <input className="assign-select" placeholder="ملاحظات للجلسة (اختياري)" value={newSession.notes} onChange={(e) => setNewSession((s) => ({ ...s, notes: e.target.value }))} />
                 <button className="btn btn-primary" type="submit" disabled={tabLoading}>{tabLoading ? "..." : "إضافة"}</button>
               </form>
 
@@ -319,7 +319,7 @@ export default function CaseView() {
                               <div style={{ color: "var(--color-neutral-600)", fontSize: 12, marginTop: 4 }}>{(s.summaryAt || s.summary_at) ? `آخر تحديث: ${humanDT(s.summaryAt || s.summary_at)}` : ""}</div>
                             </div>
                           ) : <div style={{ color: "var(--color-neutral-600)", fontSize: 13 }}>لا يوجد ملخص بعد.</div>}
-                          <textarea className="input" style={{ marginTop: 8, minHeight: 80 }} placeholder="اكتب/حدّث ملخص الجلسة هنا..." value={summaryDraft[sid] ?? ""} onChange={(e) => setSummaryDraft((st) => ({ ...st, [sid]: e.target.value }))} />
+                          <textarea className="assign-select" style={{ marginTop: 8, minHeight: 80 }} placeholder="اكتب/حدّث ملخص الجلسة هنا..." value={summaryDraft[sid] ?? ""} onChange={(e) => setSummaryDraft((st) => ({ ...st, [sid]: e.target.value }))} />
                           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8 }}>
                             <button type="button" className="btn btn-primary" onClick={() => onSaveSummary(sid)} disabled={savingSummaryId === sid}>{savingSummaryId === sid ? "يحفظ..." : "حفظ الملخص"}</button>
                           </div>
@@ -343,8 +343,8 @@ export default function CaseView() {
               }
             >
               <form onSubmit={onAddDocLink} style={{ display: "grid", gridTemplateColumns: "1.2fr 2fr auto", gap: 8 }}>
-                <input className="input" placeholder="اسم المستند" value={newDoc.name} onChange={(e) => setNewDoc((s) => ({ ...s, name: e.target.value }))} />
-                <input className="input" placeholder="رابط الملف (اختياري)" value={newDoc.fileUrl} onChange={(e) => setNewDoc((s) => ({ ...s, fileUrl: e.target.value }))} />
+                <input className="assign-select" placeholder="اسم المستند" value={newDoc.name} onChange={(e) => setNewDoc((s) => ({ ...s, name: e.target.value }))} />
+                <input className="assign-select" placeholder="رابط الملف (اختياري)" value={newDoc.fileUrl} onChange={(e) => setNewDoc((s) => ({ ...s, fileUrl: e.target.value }))} />
                 <button className="btn btn-primary" type="submit" disabled={tabLoading}>إضافة</button>
               </form>
 
@@ -376,7 +376,7 @@ export default function CaseView() {
           {activeTab === "notes" && (
             <Section title="الملاحظات" bordered>
               <form onSubmit={onAddNote} style={{ display: "grid", gap: 10 }}>
-                <textarea className="input" style={{ minHeight: 100 }} placeholder="اكتب الملاحظة..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
+                <textarea className="assign-select" style={{ minHeight: 100 }} placeholder="اكتب الملاحظة..." value={newNote} onChange={(e) => setNewNote(e.target.value)} />
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <button className="btn btn-primary" type="submit" disabled={savingNote}>{savingNote ? "يحفظ..." : "حفظ الملاحظة"}</button>
                 </div>

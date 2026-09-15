@@ -37,7 +37,7 @@
   display: flex; justify-content: space-between; align-items: flex-start;
   gap: 16px; flex-wrap: wrap;
 }
-.adm-header h2 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 20px; margin: 0; }
+.adm-header h2 { font-family: var(--font-heading); font-weight: 700; font-size: 30px; margin: 0; }
 .adm-header p { margin: 4px 0 0; font-size: 13px; color: var(--color-neutral-600); max-width: 60ch; }
 .adm-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -186,7 +186,13 @@
 }
 .adm-quick-link:last-child { border-bottom: none; }
 .adm-quick-link span.lbl { flex: 1; font-size: 14px; }
-.adm-quick-link span.arw { color: var(--color-neutral-400); }
+.adm-quick-link span.arw { color: var(--color-neutral-400); transition: color .15s ease; }
+.adm-quick-link:hover { color: var(--color-accent-700); }
+.adm-quick-link:hover span.arw { color: var(--color-accent-700); }
+@media (prefers-reduced-motion: no-preference) {
+  .adm-quick-link span.arw { display: inline-block; transition: color .15s ease, transform .15s ease; }
+  .adm-quick-link:hover span.arw { transform: translateX(-3px); }
+}
 .adm-quick-title, .adm-path-title-h {
   font-family: var(--font-heading); font-size: 14px; letter-spacing: .06em;
   color: var(--color-neutral-600); text-transform: uppercase; margin: 0 0 12px;
@@ -222,3 +228,36 @@
     border-top: 1px solid var(--color-divider); padding-top: 20px; margin-top: 20px;
   }
 }
+
+/* — حقل نموذج بأسلوب خط سفلي هادئ (بديل صندوق .input للنماذج التحريرية) — */
+.assign-select {
+  display: block; width: 100%; font-family: var(--font-body); font-size: 15px;
+  color: var(--color-text); background: transparent; border: none;
+  border-bottom: 1px solid var(--color-neutral-400); border-radius: 0;
+  padding: 8px 0; outline: none; transition: border-color .2s ease;
+}
+.assign-select:focus { border-bottom-color: var(--color-accent-500); }
+.assign-select::placeholder { color: var(--color-neutral-500); }
+
+/* — حقل نموذج مرقّم (01/02...) بعرض كامل — يُستخدم في القضية الجديدة/الإسناد/إلخ — */
+.adm-num-field { padding: 30px 0; border-bottom: 1px solid var(--color-divider); display: flex; flex-direction: column; }
+.adm-num-field:last-of-type { border-bottom: none; }
+.adm-num-field .num {
+  font-family: var(--font-heading); font-size: 12px; font-weight: 600; letter-spacing: .1em;
+  color: var(--color-accent-700); text-transform: uppercase;
+}
+.adm-num-field .num.muted { color: var(--color-neutral-500); }
+.adm-num-field label {
+  font-family: var(--font-heading); font-size: 19px; font-weight: 600; color: var(--color-text); margin-top: 8px;
+}
+.adm-num-field .assign-select, .adm-num-field .adm-form-grid { margin-top: 16px; max-width: 460px; }
+
+/* — مسار خطوات أفقي (FARIS PATH) — لإسناد القضية/دورة المسودة — */
+.adm-steps { position: relative; padding: 24px 0 30px; border-bottom: 1px solid var(--color-divider); }
+.adm-steps-line { position: absolute; top: 37px; inset-inline: 6%; height: 1px; background: var(--color-divider); }
+.adm-steps-row { display: flex; justify-content: space-between; position: relative; }
+.adm-steps-item { display: flex; flex-direction: column; align-items: center; flex: 1; }
+.adm-steps-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--color-accent); background: var(--color-surface); z-index: 1; }
+.adm-steps-dot.done { background: var(--color-accent); }
+.adm-steps-label { margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--color-neutral-600); }
+.adm-steps-label.on { color: var(--color-text); }
